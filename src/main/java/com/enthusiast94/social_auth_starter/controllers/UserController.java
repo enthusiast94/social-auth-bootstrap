@@ -1,9 +1,10 @@
 package com.enthusiast94.social_auth_starter.controllers;
 
+import com.enthusiast94.social_auth_starter.models.User;
 import com.enthusiast94.social_auth_starter.services.UserService;
 import com.enthusiast94.social_auth_starter.utils.ApiResponse;
 import com.enthusiast94.social_auth_starter.utils.Helpers;
-import com.google.gson.Gson;
+import com.enthusiast94.social_auth_starter.utils.JsonTranformer;
 
 import static spark.Spark.get;
 import static spark.Spark.post;
@@ -48,7 +49,8 @@ public class UserController {
 
                     return new ApiResponse(200, null, userService.createUser(username, password).getId());
                 },
-                (object) -> new Gson().toJson(object));
+                new JsonTranformer()
+        );
 
 
         /**
@@ -59,7 +61,23 @@ public class UserController {
                 (req, res) -> {
                     return new ApiResponse(200, null, userService.getAllUsers());
                 },
-                (object) -> new Gson().toJson(object)
+                new JsonTranformer()
+        );
+
+        /**
+         * Get a specific user by id
+         */
+        get(
+                "/users/:id",
+                (req, res) -> {
+                    User requestedUser = userService.getUserById(req.params(":id"));
+
+                    if (requestedUser == null)
+                        return new ApiResponse(404, "user does not exist", null);
+
+                    return new ApiResponse(200, null, requestedUser);
+                },
+                new JsonTranformer()
         );
     }
 
