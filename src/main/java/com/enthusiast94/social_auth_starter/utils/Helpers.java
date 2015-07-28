@@ -12,7 +12,7 @@ public class Helpers {
         Pattern pattern = Pattern.compile(key + "=" + "([^&]*)");
         Matcher m = pattern.matcher(body);
         if (m.find()) {
-            return m.group(1);
+            return m.group(1).trim();
         }
 
         return null;

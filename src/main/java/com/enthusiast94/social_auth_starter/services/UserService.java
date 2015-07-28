@@ -1,6 +1,7 @@
 package com.enthusiast94.social_auth_starter.services;
 
 import com.enthusiast94.social_auth_starter.models.User;
+import org.mindrot.jbcrypt.BCrypt;
 import org.mongodb.morphia.Datastore;
 
 import java.util.List;
@@ -36,7 +37,9 @@ public class UserService {
     }
 
     public User createUser(String username, String password) {
-        User user = new User(username, password, null);
+        String hashedPassword = BCrypt.hashpw(password, BCrypt.gensalt());
+
+        User user = new User(username, hashedPassword, null);
         db.save(user);
 
         return user;
@@ -44,8 +47,6 @@ public class UserService {
 
     // returns error message if validation fails, else returns null
     public String validateUsername(String username) {
-        username = username.trim();
-
         if (username.length() < 6) {
             return "Username must be at least 6 characters long";
         }
@@ -64,8 +65,6 @@ public class UserService {
 
     // returns error message if validation fails, else returns null
     public String validatePassword(String password) {
-        password = password.trim();
-
         if (password.length() < 8) {
             return "Password must be at least 8 characters long";
         }
