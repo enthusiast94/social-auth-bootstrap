@@ -5,12 +5,15 @@ package com.enthusiast94.social_auth_starter;
  */
 
 import com.enthusiast94.social_auth_starter.controllers.UserController;
+import com.enthusiast94.social_auth_starter.services.AccessTokenService;
 import com.enthusiast94.social_auth_starter.services.UserService;
+import com.enthusiast94.social_auth_starter.utils.ApiResponse;
 import com.mongodb.MongoClient;
 import org.mongodb.morphia.Datastore;
 import org.mongodb.morphia.Morphia;
-import spark.Spark;
 
+import static spark.Spark.before;
+import static spark.Spark.halt;
 import static spark.SparkBase.port;
 
 public class Main {
@@ -40,13 +43,31 @@ public class Main {
 
 
         /**
-         * Setup controllers
+         * Setup endpoints
          */
 
-        // set response type for all requests to json
-        Spark.before((req, res) -> res.type("application/json"));
+        AccessTokenService accessTokenService = new AccessTokenService(db);
+        UserService userService = new UserService(db);
 
-        new UserController(new UserService(db)).setupEndpoints();
+        // set response type for all requests to json
+        before((req, res) -> res.type("application/json"));
+
+        // require authentication for all me/ requests
+        before("/me", (req, res) -> {
+            String authHeader = req.headers("Authorization");
+
+            if (authHeader == null) {
+                halt(new ApiResponse(401, "no authorization header found", null).toJson());
+                return;
+            }
+
+            String accessToken = authHeader.substring("Token".length()+1, authHeader.length());
+            if (!accessTokenService.isAccessTokenValid(accessToken)) {
+                halt(new ApiResponse(401, "invalid access token", null).toJson());
+            }
+        });
+
+        new UserController(userService, accessTokenService).setupEndpoints();
 
     }
 }

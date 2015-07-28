@@ -1,6 +1,8 @@
 package com.enthusiast94.social_auth_starter.controllers;
 
+import com.enthusiast94.social_auth_starter.models.AccessToken;
 import com.enthusiast94.social_auth_starter.models.User;
+import com.enthusiast94.social_auth_starter.services.AccessTokenService;
 import com.enthusiast94.social_auth_starter.services.UserService;
 import com.enthusiast94.social_auth_starter.utils.ApiResponse;
 import com.enthusiast94.social_auth_starter.utils.Helpers;
@@ -16,9 +18,11 @@ import static spark.Spark.post;
 public class UserController {
 
     UserService userService;
+    AccessTokenService accessTokenService;
 
-    public UserController(UserService userService) {
+    public UserController(UserService userService, AccessTokenService accessTokenService) {
         this.userService = userService;
+        this.accessTokenService = accessTokenService;
     }
 
     public void setupEndpoints() {
@@ -47,35 +51,34 @@ public class UserController {
                         return new ApiResponse(500, passwordError, null);
                     }
 
-                    return new ApiResponse(200, null, userService.createUser(username, password).getId());
-                },
-                new JsonTranformer()
-        );
+                    User user = userService.createUser(username, password);
 
+                    AccessToken accessToken = accessTokenService.createAccessToken(user);
 
-        /**
-         * Get all users
-         */
-        get(
-                "/users",
-                (req, res) -> {
-                    return new ApiResponse(200, null, userService.getAllUsers());
+                    // set unneeded fields to null
+                    accessToken.setId(null);
+                    accessToken.setUser(null);
+
+                    return new ApiResponse(200, null, accessToken);
                 },
                 new JsonTranformer()
         );
 
         /**
-         * Get a specific user by id
+         * Returns currently authenticated user
          */
         get(
-                "/users/:id",
+                "/me",
                 (req, res) -> {
-                    User requestedUser = userService.getUserById(req.params(":id"));
+                    // TODO crashes if length < Token.length
+                    String accessTokenString = req.headers("Authorization").substring("Token".length()+1, req.headers("Authorization").length());
+                    User user = accessTokenService.getAccessTokenUser(accessTokenString);
 
-                    if (requestedUser == null)
-                        return new ApiResponse(404, "user does not exist", null);
+                    // set unneeded fields to null
+                    user.setId(null);
+                    user.setPasswordHash(null);
 
-                    return new ApiResponse(200, null, requestedUser);
+                    return new ApiResponse(200, null, user);
                 },
                 new JsonTranformer()
         );

@@ -17,4 +17,9 @@ public class ApiResponse {
         this.error = error;
         this.data = data;
     }
+
+    // only used when JsonTransformer cannot be used
+    public String toJson() {
+        return new Gson().toJson(this);
+    }
 }
