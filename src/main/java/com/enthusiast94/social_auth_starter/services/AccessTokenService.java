@@ -2,6 +2,7 @@ package com.enthusiast94.social_auth_starter.services;
 
 import com.enthusiast94.social_auth_starter.models.AccessToken;
 import org.mongodb.morphia.Datastore;
+import spark.Access;
 
 /**
  * Created by ManasB on 7/28/2015.
@@ -22,12 +23,10 @@ public class AccessTokenService {
         return accessToken;
     }
 
-    public String getAccessTokenUserId(String accessTokenString) {
+    public AccessToken getAccessTokenByAccessTokenString(String accessTokenString) {
         return db.createQuery(AccessToken.class)
                 .field("accessToken").equal(accessTokenString)
-                .retrievedFields(true, "userId")
-                .get()
-                .getUserId();
+                .get();
     }
 
     public AccessToken getAccessTokenByUserId(String userId) {
@@ -38,20 +37,5 @@ public class AccessTokenService {
 
     public void deleteAccessToken(AccessToken accessTokenToDelete) {
         db.delete(accessTokenToDelete);
-    }
-
-    public boolean isAccessTokenValid(String accessTokenString) {
-        AccessToken accessToken = db.createQuery(AccessToken.class)
-                .field("accessToken").equal(accessTokenString)
-                .retrievedFields(true, "createdAt", "expiresIn")
-                .get();
-
-        if (accessToken != null) {
-            if (((System.currentTimeMillis() / 1000) - accessToken.getCreatedAt()) <= accessToken.getExpiresIn()) {
-                return true;
-            }
-        }
-
-        return false;
     }
 }

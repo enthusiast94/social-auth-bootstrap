@@ -1,6 +1,5 @@
 package com.enthusiast94.social_auth_starter.models;
 
-import jdk.nashorn.internal.ir.annotations.Reference;
 import org.bson.types.ObjectId;
 import org.mongodb.morphia.annotations.Entity;
 import org.mongodb.morphia.annotations.Id;
@@ -72,6 +71,10 @@ public class AccessToken {
 
     public String getUserId() {
         return userId;
+    }
+
+    public boolean hasExpired() {
+        return ((System.currentTimeMillis() / 1000) - this.createdAt) > this.expiresIn;
     }
 }
 

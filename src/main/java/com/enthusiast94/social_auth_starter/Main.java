@@ -5,6 +5,7 @@ package com.enthusiast94.social_auth_starter;
  */
 
 import com.enthusiast94.social_auth_starter.controllers.UserController;
+import com.enthusiast94.social_auth_starter.models.AccessToken;
 import com.enthusiast94.social_auth_starter.services.AccessTokenService;
 import com.enthusiast94.social_auth_starter.services.UserService;
 import com.enthusiast94.social_auth_starter.utils.ApiResponse;
@@ -53,7 +54,7 @@ public class Main {
         before((req, res) -> res.type("application/json"));
 
         // require authentication for all me/ requests
-        before("/me", (req, res) -> {
+        before("/me/*", (req, res) -> {
             String authHeader = req.headers("Authorization");
 
             if (authHeader == null) {
@@ -62,14 +63,20 @@ public class Main {
             }
 
             if (authHeader.length() < (36 /* Access Token is 36 characters long */ + "Token".length() + 1 /* SPACE after 'Token' */)) {
-                halt(new ApiResponse(401, "authorization header is too short", null).toJson());
+                halt(new ApiResponse(401, "invalid access token", null).toJson());
                 return;
             }
 
-            String accessToken = authHeader.substring("Token".length()+1, authHeader.length());
-            if (!accessTokenService.isAccessTokenValid(accessToken)) {
+            String accessTokenString = authHeader.substring("Token".length()+1, authHeader.length());
+            AccessToken accessToken = accessTokenService.getAccessTokenByAccessTokenString(accessTokenString);
+
+            if (accessToken == null || accessToken.hasExpired()) {
                 halt(new ApiResponse(401, "invalid access token", null).toJson());
+                return;
             }
+
+            // add parsed access token to attributes list so that it can be reused by other routes
+            req.attribute("accessToken", accessTokenString);
         });
 
         new UserController(userService, accessTokenService).setupEndpoints();
