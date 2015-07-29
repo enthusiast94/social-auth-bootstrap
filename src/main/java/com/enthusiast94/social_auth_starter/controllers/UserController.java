@@ -32,7 +32,7 @@ public class UserController {
         post(
                 "/users",
                 (req, res) -> {
-                    if (!req.contentType().equals("application/x-www-form-urlencoded"))
+                    if (req.contentType() == null || !req.contentType().equals("application/x-www-form-urlencoded"))
                         return new ApiResponse(500, "content-type must be 'application/x-www-form-urlencoded'", null);
 
                     String username = Helpers.bodyParams(req.body(), "username");
@@ -70,7 +70,6 @@ public class UserController {
         get(
                 "/me",
                 (req, res) -> {
-                    // TODO crashes if length < Token.length
                     String accessTokenString = req.headers("Authorization").substring("Token".length()+1, req.headers("Authorization").length());
                     User user = accessTokenService.getAccessTokenUser(accessTokenString);
 
