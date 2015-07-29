@@ -75,4 +75,8 @@ public class UserService {
 
         return null;
     }
+
+    public boolean doesPasswordMatch(String password, String passwordHash) {
+        return BCrypt.checkpw(password, passwordHash);
+    }
 }

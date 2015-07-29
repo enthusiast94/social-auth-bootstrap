@@ -57,7 +57,12 @@ public class Main {
             String authHeader = req.headers("Authorization");
 
             if (authHeader == null) {
-                halt(new ApiResponse(401, "no authorization header found", null).toJson());
+                halt(new ApiResponse(401, "authorization header not found", null).toJson());
+                return;
+            }
+
+            if (authHeader.length() < (36 /* Access Token is 36 characters long */ + "Token".length() + 1 /* SPACE after 'Token' */)) {
+                halt(new ApiResponse(401, "authorization header is too short", null).toJson());
                 return;
             }
 

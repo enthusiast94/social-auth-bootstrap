@@ -1,7 +1,6 @@
 package com.enthusiast94.social_auth_starter.services;
 
 import com.enthusiast94.social_auth_starter.models.AccessToken;
-import com.enthusiast94.social_auth_starter.models.User;
 import org.mongodb.morphia.Datastore;
 
 /**
@@ -16,19 +15,29 @@ public class AccessTokenService {
         this.db = db;
     }
 
-    public AccessToken createAccessToken(User user) {
-        AccessToken accessToken = new AccessToken(user);
+    public AccessToken createAccessToken(String userId) {
+        AccessToken accessToken = new AccessToken(userId);
         db.save(accessToken);
 
         return accessToken;
     }
 
-    public User getAccessTokenUser(String accessTokenString) {
+    public String getAccessTokenUserId(String accessTokenString) {
         return db.createQuery(AccessToken.class)
                 .field("accessToken").equal(accessTokenString)
-                .retrievedFields(true, "user")
+                .retrievedFields(true, "userId")
                 .get()
-                .getUser();
+                .getUserId();
+    }
+
+    public AccessToken getAccessTokenByUserId(String userId) {
+        return db.createQuery(AccessToken.class)
+                .field("userId").equal(userId)
+                .get();
+    }
+
+    public void deleteAccessToken(AccessToken accessTokenToDelete) {
+        db.delete(accessTokenToDelete);
     }
 
     public boolean isAccessTokenValid(String accessTokenString) {

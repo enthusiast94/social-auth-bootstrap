@@ -16,8 +16,7 @@ public class AccessToken {
 
     @Id
     private String id;
-    @Reference
-    private User user;
+    private String userId;
     private String accessToken;
     private long createdAt;
     private int expiresIn;
@@ -26,13 +25,13 @@ public class AccessToken {
         // empty constructor required by Morphia for querying
     }
 
-    public AccessToken(User user) {
+    public AccessToken(String userId) {
         id = new ObjectId().toString();
         accessToken = UUID.randomUUID().toString();
         createdAt = System.currentTimeMillis() / 1000;
         expiresIn = 86400; // 1 day for now
 
-        this.user = user;
+        this.userId = userId;
     }
 
     public String getId() {
@@ -55,8 +54,8 @@ public class AccessToken {
         this.expiresIn = expiresIn;
     }
 
-    public User getUser() {
-        return user;
+    public void setUserId(String userId) {
+        this.userId = userId;
     }
 
     public String getAccessToken() {
@@ -71,8 +70,8 @@ public class AccessToken {
         return expiresIn;
     }
 
-    public void setUser(User user) {
-        this.user = user;
+    public String getUserId() {
+        return userId;
     }
 }
 

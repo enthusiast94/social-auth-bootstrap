@@ -53,11 +53,11 @@ public class UserController {
 
                     User user = userService.createUser(username, password);
 
-                    AccessToken accessToken = accessTokenService.createAccessToken(user);
+                    AccessToken accessToken = accessTokenService.createAccessToken(user.getId());
 
                     // set unneeded fields to null
                     accessToken.setId(null);
-                    accessToken.setUser(null);
+                    accessToken.setUserId(null);
 
                     return new ApiResponse(200, null, accessToken);
                 },
@@ -71,13 +71,51 @@ public class UserController {
                 "/me",
                 (req, res) -> {
                     String accessTokenString = req.headers("Authorization").substring("Token".length()+1, req.headers("Authorization").length());
-                    User user = accessTokenService.getAccessTokenUser(accessTokenString);
+                    User user = userService.getUserById(accessTokenService.getAccessTokenUserId(accessTokenString));
 
                     // set unneeded fields to null
                     user.setId(null);
                     user.setPasswordHash(null);
 
                     return new ApiResponse(200, null, user);
+                },
+                new JsonTranformer()
+        );
+
+        /**
+         * Authenticates an existing user
+         */
+        post(
+                "/auth",
+                (req, res) -> {
+                    if (req.contentType() == null || !req.contentType().equals("application/x-www-form-urlencoded"))
+                        return new ApiResponse(500, "content-type must be 'application/x-www-form-urlencoded'", null);
+
+                    String username = Helpers.bodyParams(req.body(), "username");
+                    String password = Helpers.bodyParams(req.body(), "password");
+
+                    if (username == null || password == null)
+                        return new ApiResponse(500, "username and password are both required", null);
+
+                    // check if user who is trying to authenticate exists
+                    User requestedUser = userService.getUserByUsername(username);
+                    if (requestedUser == null) return new ApiResponse(401, "username is incorrect", null);
+
+                    // check if the sent password matches the stored password hash
+                    if (!userService.doesPasswordMatch(password, requestedUser.getPasswordHash()))
+                        return new ApiResponse(401, "password is incorrect", null);
+
+                    // if an access token already exists, delete it and create a new one, else simply create a new one
+                    AccessToken existingAccessToken = accessTokenService.getAccessTokenByUserId(requestedUser.getId());
+                    if (existingAccessToken != null) accessTokenService.deleteAccessToken(existingAccessToken);
+
+                    AccessToken newAccessToken = accessTokenService.createAccessToken(requestedUser.getId());
+
+                    // set unneeded fields to null
+                    newAccessToken.setId(null);
+                    newAccessToken.setUserId(null);
+
+                    return new ApiResponse(200, null, newAccessToken);
                 },
                 new JsonTranformer()
         );
