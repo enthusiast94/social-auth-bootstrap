@@ -134,6 +134,25 @@ public class UserController {
                 },
                 new JsonTranformer()
         );
+
+        /**
+         * Deletes currently authenticated user
+         */
+        post(
+                "/me/delete",
+                (req, res) -> {
+                    // delete currently authenticated user's access token
+                    AccessToken accessToken = (AccessToken) req.attribute("accessToken");
+                    accessTokenService.deleteAccessToken(accessToken);
+
+                    // delete currently authenticated user
+                    User userToDelete = userService.getUserById(accessToken.getUserId());
+                    userService.deleteUser(userToDelete);
+
+                    return new ApiResponse(200, null, null);
+                },
+                new JsonTranformer()
+        );
     }
 
 }

@@ -45,6 +45,10 @@ public class UserService {
         return user;
     }
 
+    public void deleteUser(User userToDelete) {
+        db.delete(userToDelete);
+    }
+
     // returns error message if validation fails, else returns null
     public String validateUsername(String username) {
         if (username.length() < 6) {
