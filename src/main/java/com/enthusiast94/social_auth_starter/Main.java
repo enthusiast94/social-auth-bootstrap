@@ -75,8 +75,8 @@ public class Main {
                 return;
             }
 
-            // add parsed access token to attributes list so that it can be reused by other routes
-            req.attribute("accessToken", accessTokenString);
+            // add access token to attributes list so that it can be reused by other routes
+            req.attribute("accessToken", accessToken);
         });
 
         new UserController(userService, accessTokenService).setupEndpoints();

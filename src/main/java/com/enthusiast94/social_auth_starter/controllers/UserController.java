@@ -70,8 +70,8 @@ public class UserController {
         get(
                 "/me/",
                 (req, res) -> {
-                    String accessTokenString = (String) req.attribute("accessToken");
-                    User user = userService.getUserById(accessTokenService.getAccessTokenByAccessTokenString(accessTokenString).getUserId());
+                    AccessToken accessToken = (AccessToken) req.attribute("accessToken");
+                    User user = userService.getUserById(accessToken.getUserId());
 
                     // set unneeded fields to null
                     user.setId(null);
@@ -127,8 +127,7 @@ public class UserController {
                 "/me/deauth",
                 (req, res) -> {
                     // delete access token of currently authenticated user
-                    String accessTokenString = (String) req.attribute("accessToken");
-                    AccessToken accessTokenToDelete = accessTokenService.getAccessTokenByAccessTokenString(accessTokenString);
+                    AccessToken accessTokenToDelete = (AccessToken) req.attribute("accessToken");
                     accessTokenService.deleteAccessToken(accessTokenToDelete);
 
                     return new ApiResponse(200, null, null);
