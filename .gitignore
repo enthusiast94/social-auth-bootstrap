@@ -10,3 +10,7 @@ data/
 
 # auto genererated java files
 build/
+
+# batch scripts
+start_db.bat
+frontend_web/start_app.bat
