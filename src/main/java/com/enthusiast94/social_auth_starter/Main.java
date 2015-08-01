@@ -13,6 +13,7 @@ import com.mongodb.MongoClient;
 import org.mongodb.morphia.Datastore;
 import org.mongodb.morphia.Morphia;
 
+import static spark.Spark.after;
 import static spark.Spark.before;
 import static spark.Spark.halt;
 import static spark.SparkBase.port;
@@ -50,8 +51,14 @@ public class Main {
         AccessTokenService accessTokenService = new AccessTokenService(db);
         UserService userService = new UserService(db);
 
-        // set response type for all requests to json
-        before((req, res) -> res.type("application/json"));
+        // set response type for all requests to json and enable CORS
+        before((req, res) -> {
+            res.type("application/json");
+
+            res.header("Access-Control-Allow-Origin", "*");
+            res.header("Access-Control-Allow-Headers", "Authorization");
+            res.header("Access-Control-Allow-Methods", "GET,POST,PUT,DELETE,OPTIONS");
+        });
 
         // require authentication for all me/ requests
         before("/me/*", (req, res) -> {
@@ -80,6 +87,5 @@ public class Main {
         });
 
         new UserController(userService, accessTokenService).setupEndpoints();
-
     }
 }
