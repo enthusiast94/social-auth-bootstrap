@@ -1,0 +1,18 @@
+#content {
+    margin-top: 50px;
+}
+
+#login-container {
+    background: white;
+    border: 1px solid lightgray;
+    border-radius: 3px;
+    padding: 10px;
+}
+
+#password-input {
+    margin-top: 5px;
+}
+
+#submit-button {
+    margin-top: 10px;
+}

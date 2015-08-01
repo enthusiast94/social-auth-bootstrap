@@ -5,7 +5,8 @@
     "backbone": "latest",
     "bootstrap": "latest",
     "http-server": "latest",
-    "jquery ": "latest"
+    "jquery ": "latest",
+    "swig": "latest"
   },
   "scripts": {
     "build": "browserify ./javascripts/main.js -o ./javascripts/main.min.js",

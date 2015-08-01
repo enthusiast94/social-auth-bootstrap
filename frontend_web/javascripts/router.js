@@ -6,6 +6,7 @@ var Backbone = require("Backbone");
 var $ = require("jquery");
 var loginView = require("./views/login");
 var meView = require("./views/me");
+var authController = require("./auth_controller");
 
 var AppRouter = Backbone.Router.extend({
     routes: {
@@ -14,10 +15,18 @@ var AppRouter = Backbone.Router.extend({
         "*any": "defaultAction"
     },
     showMe: function () {
-        meView.render();
+        if (authController.getUserFromCache()) {
+            meView.render();
+        } else {
+            this.navigate("login", true);
+        }
     },
     showLogin: function () {
-        loginView.render();
+        if (!authController.getUserFromCache()) {
+            loginView.render();
+        } else {
+            this.navigate("me", true);
+        }
     },
     defaultAction: function () {
         this.navigate("me", true);
