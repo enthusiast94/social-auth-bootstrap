@@ -4,6 +4,7 @@
   "dependencies": {
     "backbone": "latest",
     "bootstrap": "latest",
+    "browserify": "latest",
     "http-server": "latest",
     "jquery ": "latest",
     "swig": "latest"
