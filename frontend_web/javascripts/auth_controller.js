@@ -9,8 +9,18 @@ var authController = {
     basicAuth: function (options) {
         var self = this;
 
+        var types = {
+            "new": apiBase + "/users",
+            "existing": apiBase + "/auth"
+        };
+
+
+        if (Object.keys(types).indexOf(options.type) == -1) {
+            throw new Error("Invalid userType provided. Allowed values are: " + Object.keys(types));
+        }
+
         $.ajax({
-            url: apiBase + "/auth",
+            url: types[options.type],
             method: "POST",
             dataType: "json",
             data: {username: options.username, password: options.password},
