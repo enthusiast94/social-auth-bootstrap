@@ -9,34 +9,50 @@
 <body>
 
 <!-- Main content -->
-<div id="content"></div>
+<div class="container">
+    <div class="page-header">
+        <h2>social-auth-starter</h2>
+    </div>
+    <div id="content"></div>
+</div>
 
 <!-- Me template -->
 <script id="me-template" type="text/template">
-    <div class="container text-center">
-        <h1>You are logged in as: {{user.username}}</h1>
-        <button class="btn btn-danger" id="logout-button">Logout</button>
-    </div>
+    <h4>You are logged in as: <strong>{{user.username}}</strong></h4>
+    <button class="btn btn-danger btn-sm" id="logout-button">Logout</button>
 </script>
 
 <!-- Login template -->
 <script id="login-template" type="text/template">
-    <div class="container">
-        <div class="row">
-            <div class="col-md-4 col-md-offset-4" id="login-container">
-                <div class="page-header">
-                    <h2 class="text-center">Login to social-auth-starter</h2>
-                </div>
-                <a href="{{googleUrl}}" class="btn btn-danger btn-block">Login with Google</a>
+    <div class="row">
+        <div class="col-md-6 col-sm-6" id="create-account-container">
+            <p class="text-uppercase text-primary"><strong>Create a new account</strong></p>
+            <form class="form-group" id="create-account-form">
+                <input class="form-control input-sm" id="create-account-username-input" placeholder="Username">
+                <input class="form-control input-sm" id="create-account-password-input" type="password" placeholder="Password">
+                <input class="form-control input-sm" id="create-account-confirm-password-input" type="password" placeholder="Confirm password">
+                <button class="btn btn-sm btn-primary" type="submit" id="create-account-submit-button">Create account</button>
+            </form>
+        </div>
 
-                <br>
-                <p class="text-center">OR</p>
-                <div class="form-group">
-                    <input class="form-control" placeholder="Username" id="username-input">
-                    <input class="form-control" type="password" placeholder="Password" id="password-input">
-                    <button class="btn btn-primary btn-block" id="submit-button">Submit</button>
+        <br class="visible-xs">
+        <br class="visible-xs">
+
+        <div class="col-md-6 col-sm-6" id="login-container">
+            <p class="text-uppercase text-primary"><strong>Login</strong></p>
+
+            <div class="row">
+                <div class="col-md-6 col-sm-6 col-xs-6">
+                    <a class="btn btn-default btn-block btn-sm">Login with Google</a>
                 </div>
             </div>
+
+            <p class="text-center">OR</p>
+            <form class="form-group" id="login-form">
+                <input class="form-control input-sm" placeholder="Username" id="login-username-input">
+                <input class="form-control input-sm" type="password" placeholder="Password" id="login-password-input">
+                <button class="btn btn-primary btn-sm" type="submit" id="login-submit-button">Login</button>
+            </form>
         </div>
     </div>
 </script>

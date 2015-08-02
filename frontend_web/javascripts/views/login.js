@@ -11,21 +11,23 @@ var LoginView = Backbone.View.extend({
     el: "#content",
     template: $("#login-template").html(),
     events: {
-        "click #submit-button": "submit"
+        "submit #login-form": "login"
     },
     render: function () {
         var compiledTemplate = swig.render(this.template);
         this.$el.html(compiledTemplate);
 
-        this.$usernameInput = $("#username-input");
-        this.$passwordInput = $("#password-input");
+        this.$loginUsernameInput = $("#login-username-input");
+        this.$loginPasswordInput = $("#login-password-input");
     },
-    submit: function () {
-        var username = this.$usernameInput.val().trim();
-        var password = this.$passwordInput.val().trim();
+    login: function (event) {
+        event.preventDefault();
+
+        var username = this.$loginUsernameInput.val().trim();
+        var password = this.$loginPasswordInput.val().trim();
 
         if (username.length == 0 || password.length == 0) {
-            alert("username and password are both required fields");
+            alert("Username and password are both required");
         } else {
             authController.basicAuth({
                 username: username,
