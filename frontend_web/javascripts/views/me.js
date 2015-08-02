@@ -21,9 +21,6 @@ var MeView = Backbone.View.extend({
         authController.deauth({
             success: function () {
                 Backbone.history.navigate("login", {trigger: true});
-            },
-            error: function (error) {
-                alert(error);
             }
         });
     }

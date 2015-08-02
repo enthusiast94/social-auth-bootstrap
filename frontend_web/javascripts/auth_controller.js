@@ -79,14 +79,9 @@ var authController = {
                 beforeSend: function (jqXHR) {
                     jqXHR.setRequestHeader("Authorization", "Token " + user.accessToken);
                 },
-                success: function (response) {
-                    if (response.status == 200) {
-                        localStorage.clear();
-
-                        if (options.success) options.success();
-                    } else {
-                        if (options.error) options.error(response.error);
-                    }
+                success: function () {
+                    localStorage.clear();
+                    if (options.success) options.success();
                 }
             });
         }
