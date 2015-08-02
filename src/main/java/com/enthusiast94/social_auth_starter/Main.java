@@ -13,7 +13,6 @@ import com.mongodb.MongoClient;
 import org.mongodb.morphia.Datastore;
 import org.mongodb.morphia.Morphia;
 
-import static spark.Spark.after;
 import static spark.Spark.before;
 import static spark.Spark.halt;
 import static spark.SparkBase.port;
