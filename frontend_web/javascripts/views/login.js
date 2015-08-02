@@ -15,14 +15,23 @@ var LoginView = Backbone.View.extend({
         "submit #create-account-form": "createAccount"
     },
     render: function () {
-        var compiledTemplate = swig.render(this.template);
-        this.$el.html(compiledTemplate);
+        var self = this;
 
-        this.$loginUsernameInput = $("#login-username-input");
-        this.$loginPasswordInput = $("#login-password-input");
-        this.$createAccountUsernameInput = $("#create-account-username-input");
-        this.$createAccountPasswordInput = $("#create-account-password-input");
-        this.$createAccountConfimPasswordInput = $("#create-account-confirm-password-input");
+        authController.getAllOauth2Urls({
+            success: function (authUrls) {
+                var compiledTemplate = swig.render(self.template, {locals: {authUrls: authUrls}});
+                self.$el.html(compiledTemplate);
+
+                self.$loginUsernameInput = $("#login-username-input");
+                self.$loginPasswordInput = $("#login-password-input");
+                self.$createAccountUsernameInput = $("#create-account-username-input");
+                self.$createAccountPasswordInput = $("#create-account-password-input");
+                self.$createAccountConfimPasswordInput = $("#create-account-confirm-password-input");
+            },
+            error: function (error) {
+                alert(error);
+            }
+        });
     },
     login: function (event) {
         event.preventDefault();

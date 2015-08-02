@@ -3,15 +3,15 @@
  */
 
 var $ = require("jquery");
-var apiBase = "http://localhost:3000";
+var API_BASE = "http://localhost:3000";
 
 var authController = {
     basicAuth: function (options) {
         var self = this;
 
         var types = {
-            "new": apiBase + "/users",
-            "existing": apiBase + "/auth"
+            "new": API_BASE + "/users",
+            "existing": API_BASE + "/auth"
         };
 
 
@@ -34,7 +34,8 @@ var authController = {
                                     username: response2.data.username,
                                     accessToken: response.data.accessToken,
                                     expiresIn: response.data.expiresIn,
-                                    createdAt: response.data.createdAt})
+                                    createdAt: response.data.createdAt
+                                })
                             );
 
                             if (options.success) options.success();
@@ -48,31 +49,31 @@ var authController = {
             }
         });
     },
-    _getUser: function (accessToken, cb) {
-        $.ajax({
-            url: apiBase + "/me/",
-            method: "GET",
-            dataType: "json",
-            beforeSend: function (jqXHR) {
-                jqXHR.setRequestHeader("Authorization", "Token " + accessToken);
-            },
-            success: function (response) {
-                cb(response);
+    oauth: function (options) {
+        this._getUser(options.accessToken, function (response) {
+            if (response.status == 200) {
+                localStorage.setItem(
+                    "user",
+                    JSON.stringify({
+                        username: response.data.username,
+                        accessToken: options.accessToken,
+                        expiresIn: options.expiresIn,
+                        createdAt: options.createdAt
+                    })
+                );
+
+                if (options.success) options.success();
+            } else {
+                if (options.error) options.error(response.error);
             }
         });
-    },
-    getOAuthUrls: function () {
-
-    },
-    oauth: function () {
-
     },
     deauth: function (options) {
         var user = this.getUserFromCache();
 
         if (user) {
             $.ajax({
-                url: apiBase + "/me/deauth",
+                url: API_BASE + "/me/deauth",
                 method: "POST",
                 dataType: "json",
                 beforeSend: function (jqXHR) {
@@ -90,6 +91,19 @@ var authController = {
             });
         }
     },
+    _getUser: function (accessToken, cb) {
+        $.ajax({
+            url: API_BASE + "/me/",
+            method: "GET",
+            dataType: "json",
+            beforeSend: function (jqXHR) {
+                jqXHR.setRequestHeader("Authorization", "Token " + accessToken);
+            },
+            success: function (response) {
+                cb(response);
+            }
+        });
+    },
     getUserFromCache: function () {
         var user = localStorage.getItem("user");
         if (user) {
@@ -106,6 +120,20 @@ var authController = {
         }
 
         return !hasExpired;
+    },
+    getAllOauth2Urls: function (options) {
+        $.ajax({
+            url: API_BASE + "/oauth2-urls",
+            method: "GET",
+            dataType: "json",
+            success: function (response) {
+                if (response.status == 200) {
+                    if (options.success) options.success(response.data);
+                } else {
+                    if (options.error) options.error(response.error);
+                }
+            }
+        });
     }
 };
 

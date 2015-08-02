@@ -3,22 +3,32 @@
     margin-top: 50px;
 }
 
+#login-container {
+    padding-left: 40px;
+}
+
+#create-account-container {
+    padding-right: 40px;
+}
+
 #login-container input, #create-account-container input {
     margin-bottom: 7px;
 }
-
 
 #create-account-submit-button, #login-submit-button {
     float: right;
     margin-top: 5px;
 }
 
-@media (min-width: 767px) {
+
+/* Small screen devices */
+
+@media (max-width: 767px) {
     #login-container {
-        padding-left: 40px;
+        padding-left: 15px;
     }
 
     #create-account-container {
-        padding-right: 40px;
+        padding-right: 15px;
     }
 }
