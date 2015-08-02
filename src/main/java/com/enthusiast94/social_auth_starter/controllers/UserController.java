@@ -104,17 +104,17 @@ public class UserController {
                     if (!userService.doesPasswordMatch(password, requestedUser.getPasswordHash()))
                         return new ApiResponse(401, "password is incorrect", null);
 
-                    // if an access token already exists, delete it and create a new one, else simply create a new one
-                    AccessToken existingAccessToken = accessTokenService.getAccessTokenByUserId(requestedUser.getId());
-                    if (existingAccessToken != null) accessTokenService.deleteAccessToken(existingAccessToken);
-
-                    AccessToken newAccessToken = accessTokenService.createAccessToken(requestedUser.getId());
+                    // if an access token already exists, simply return it, else create a new one
+                    AccessToken accessToken = accessTokenService.getAccessTokenByUserId(requestedUser.getId());
+                    if (accessToken == null) {
+                        accessToken = accessTokenService.createAccessToken(requestedUser.getId());
+                    }
 
                     // set unneeded fields to null
-                    newAccessToken.setId(null);
-                    newAccessToken.setUserId(null);
+                    accessToken.setId(null);
+                    accessToken.setUserId(null);
 
-                    return new ApiResponse(200, null, newAccessToken);
+                    return new ApiResponse(200, null, accessToken);
                 },
                 new JsonTranformer()
         );

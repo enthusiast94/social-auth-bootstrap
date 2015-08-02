@@ -27,17 +27,22 @@ public abstract class OAuthStrategy {
     public abstract String getAuthUrl();
 
     protected AccessToken generateAccessToken(String username) {
-        // if another user with same username already exists, just create a new auth token
+        AccessToken accessToken;
+
+        // if user already exists, just create a new auth token
         // else create a new user and then a new auth token
         User user = userService.getUserByUsername(username);
         if (user != null) {
-            // if an access token already exists, delete it and create a new one, else simply create a new one
-            AccessToken existingAccessToken = accessTokenService.getAccessTokenByUserId(user.getId());
-            if (existingAccessToken != null) accessTokenService.deleteAccessToken(existingAccessToken);
+            // if an access token already exists, simply return it, else create a new one
+            accessToken = accessTokenService.getAccessTokenByUserId(user.getId());
+            if (accessToken == null) {
+                accessToken = accessTokenService.createAccessToken(user.getId());
+            }
         } else {
             user = userService.createUser(username, USER_PASSWORD);
+            accessToken = accessTokenService.createAccessToken(user.getId());
         }
 
-        return accessTokenService.createAccessToken(user.getId());
+        return accessToken;
     }
 }
