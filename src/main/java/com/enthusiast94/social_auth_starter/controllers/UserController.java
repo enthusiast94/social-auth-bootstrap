@@ -2,6 +2,8 @@ package com.enthusiast94.social_auth_starter.controllers;
 
 import com.enthusiast94.social_auth_starter.models.AccessToken;
 import com.enthusiast94.social_auth_starter.models.User;
+import com.enthusiast94.social_auth_starter.oauth_strategies.OAuthStrategy;
+import com.enthusiast94.social_auth_starter.oauth_strategies.OAuthStrategyFactory;
 import com.enthusiast94.social_auth_starter.services.AccessTokenService;
 import com.enthusiast94.social_auth_starter.services.UserService;
 import com.enthusiast94.social_auth_starter.utils.ApiResponse;
@@ -17,12 +19,15 @@ import static spark.Spark.post;
 
 public class UserController {
 
-    UserService userService;
-    AccessTokenService accessTokenService;
+    private UserService userService;
+    private AccessTokenService accessTokenService;
+    private OAuthStrategyFactory oAuthStrategyFactory;
 
     public UserController(UserService userService, AccessTokenService accessTokenService) {
         this.userService = userService;
         this.accessTokenService = accessTokenService;
+
+        oAuthStrategyFactory = new OAuthStrategyFactory(userService, accessTokenService);
     }
 
     public void setupEndpoints() {
@@ -32,9 +37,6 @@ public class UserController {
         post(
                 "/users",
                 (req, res) -> {
-                    if (req.contentType() == null || !req.contentType().equals("application/x-www-form-urlencoded"))
-                        return new ApiResponse(500, "content-type must be 'application/x-www-form-urlencoded'", null);
-
                     String username = Helpers.bodyParams(req.body(), "username");
                     String password = Helpers.bodyParams(req.body(), "password");
 
@@ -88,9 +90,6 @@ public class UserController {
         post(
                 "/auth",
                 (req, res) -> {
-                    if (req.contentType() == null || !req.contentType().equals("application/x-www-form-urlencoded"))
-                        return new ApiResponse(500, "content-type must be 'application/x-www-form-urlencoded'", null);
-
                     String username = Helpers.bodyParams(req.body(), "username");
                     String password = Helpers.bodyParams(req.body(), "password");
 
@@ -150,6 +149,31 @@ public class UserController {
                     userService.deleteUser(userToDelete);
 
                     return new ApiResponse(200, null, null);
+                },
+                new JsonTranformer()
+        );
+
+        /**
+         * Creates new user or authenticates existing user using details fetched from the specified oauth provider
+         */
+        get(
+                "/oauth2-callback/:provider",
+                (req, res) -> {
+                    OAuthStrategy oAuthStrategy = oAuthStrategyFactory.getStrategy(req.params("provider"));
+                    String redirectUrl = oAuthStrategy.authorize(req.queryParams("code"), req.queryParams("error"));
+                    res.redirect(redirectUrl);
+
+                    return null;
+                }
+        );
+
+        /**
+         * Returns auth urls for all available providers
+         */
+        get(
+                "/oauth2-urls",
+                (req, res) -> {
+                    return new ApiResponse(200, null, oAuthStrategyFactory.getAllAuthUrls());
                 },
                 new JsonTranformer()
         );
