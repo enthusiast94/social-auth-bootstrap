@@ -120,7 +120,7 @@ public class Helpers {
         String accessTokenValue = authHeader.substring("Token".length()+1, authHeader.length());
         AccessToken accessToken = accessTokenService.getAccessTokenByValue(accessTokenValue);
 
-        if (accessToken == null || accessToken.hasExpired()) {
+        if (accessToken == null) {
             halt(new ApiResponse(401, "invalid access token", null).toJson());
             return;
         }

@@ -28,9 +28,7 @@ var authController = {
                         "user",
                         JSON.stringify({
                             userId: response.data.accessToken.userId,
-                            accessToken: response.data.accessToken.value,
-                            expiresIn: response.data.accessToken.expiresIn,
-                            createdAt: response.data.accessToken.createdAt
+                            accessToken: response.data.accessToken.value
                         })
                     );
 
@@ -46,9 +44,7 @@ var authController = {
             "user",
             JSON.stringify({
                 userId: options.userId,
-                accessToken: options.accessToken,
-                expiresIn: options.expiresIn,
-                createdAt: options.createdAt
+                accessToken: options.accessToken
             })
         );
 
@@ -126,15 +122,6 @@ var authController = {
     },
     isAuthenticated: function () {
         return (localStorage.getItem("user") != undefined);
-    },
-    _checkAccessToken: function (user) {
-        var hasExpired = (Date.now() - user.createdAt) >= user.expiresIn;
-        if (hasExpired) {
-            this.deauth();
-            $(document).trigger("access.token.expired");
-        }
-
-        return !hasExpired;
     },
     getAllOauth2Urls: function (options) {
         $.ajax({

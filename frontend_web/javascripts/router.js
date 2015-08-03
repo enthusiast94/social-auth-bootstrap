@@ -38,8 +38,6 @@ var AppRouter = Backbone.Router.extend({
             authController.oauth({
                 userId: params.userId,
                 accessToken: params.accessToken,
-                expiresIn: params.expiresIn,
-                createdAt: params.createdAt,
                 success: function () {
                     self.navigate("me", true);
                 }

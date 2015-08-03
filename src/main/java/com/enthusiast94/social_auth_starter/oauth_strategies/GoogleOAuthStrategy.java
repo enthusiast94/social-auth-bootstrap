@@ -55,8 +55,6 @@ public class GoogleOAuthStrategy extends OAuthStrategy {
 
             responseParams.put("userId", accessToken.getUserId());
             responseParams.put("accessToken", accessToken.getValue());
-            responseParams.put("expiresIn", String.valueOf(accessToken.getExpiresIn()));
-            responseParams.put("createdAt", String.valueOf(accessToken.getCreatedAt()));
         }
 
         return CLIENT_REDIRECT_URI + "?" + Helpers.stringifyParams(responseParams);
