@@ -7,7 +7,9 @@
     "browserify": "latest",
     "http-server": "latest",
     "jquery ": "latest",
-    "swig": "latest"
+    "swig": "latest",
+    "font-awesome": "latest",
+    "bootstrap-social": "latest"
   },
   "scripts": {
     "build": "browserify ./javascripts/main.js -o ./javascripts/main.min.js",
