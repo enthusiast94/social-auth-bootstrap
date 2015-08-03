@@ -16,17 +16,17 @@ var AppRouter = Backbone.Router.extend({
         "*any": "defaultAction"
     },
     showMe: function () {
-        if (authController.getUserFromCache()) {
+        if (authController.isAuthenticated()) {
             meView.render();
         } else {
             this.navigate("login", true);
         }
     },
     showLogin: function () {
-        if (!authController.getUserFromCache()) {
-            loginView.render();
-        } else {
+        if (authController.isAuthenticated()) {
             this.navigate("me", true);
+        } else {
+            loginView.render();
         }
     },
     oauth2Callback: function () {
@@ -36,16 +36,14 @@ var AppRouter = Backbone.Router.extend({
 
         if (!params.error) {
             authController.oauth({
+                userId: params.userId,
                 accessToken: params.accessToken,
                 expiresIn: params.expiresIn,
                 createdAt: params.createdAt,
                 success: function () {
                     self.navigate("me", true);
-                },
-                error: function (error) {
-                    alert(error);
                 }
-            })
+            });
         } else {
             alert(params.error);
         }

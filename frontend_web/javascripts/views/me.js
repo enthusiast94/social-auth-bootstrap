@@ -14,8 +14,17 @@ var MeView = Backbone.View.extend({
         "click #logout-button": "logout"
     },
     render: function () {
-        var compiledTemplate = swig.render(this.template, {locals: {user: authController.getUserFromCache()}});
-        this.$el.html(compiledTemplate);
+        var self = this;
+
+        authController.getUser({
+            success: function (user) {
+                var compiledTemplate = swig.render(self.template, {locals: {user: user}});
+                self.$el.html(compiledTemplate);
+            },
+            error: function (error) {
+                alert(error);
+            }
+        });
     },
     logout: function () {
         authController.deauth({
