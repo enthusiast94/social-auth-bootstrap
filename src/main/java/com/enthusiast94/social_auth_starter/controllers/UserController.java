@@ -101,7 +101,7 @@ public class UserController {
         /**
          * [REQUIRES AUTHENTICATION]
          *
-         * Deletes currently authenticated user
+         * Deletes requested user
          */
         post(
                 "/users/destroy/:id",
@@ -128,7 +128,7 @@ public class UserController {
 
 
         /**
-         * Authenticates an existing user
+         * Authenticates requested user
          */
         post(
                 "/auth",
@@ -167,7 +167,7 @@ public class UserController {
         /**
          * [REQUIRES AUTHENTICATION]
          *
-         * Invalidates provided access token
+         * Deletes supplied access token
          */
         post(
                 "/deauth",
