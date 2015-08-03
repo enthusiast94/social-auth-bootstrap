@@ -27,8 +27,8 @@ var authController = {
                     localStorage.setItem(
                         "user",
                         JSON.stringify({
-                            userId: response.data.accessToken.userId,
-                            accessToken: response.data.accessToken.value
+                            userId: response.data.userId,
+                            accessToken: response.data.accessToken
                         })
                     );
 
@@ -105,7 +105,7 @@ var authController = {
             },
             success: function (response) {
                 if (response.status == 200) {
-                    if (options.success) options.success(response.data.user);
+                    if (options.success) options.success(response.data);
                 } else {
                     if (options.error) options.error(response.error);
                 }
@@ -130,7 +130,7 @@ var authController = {
             dataType: "json",
             success: function (response) {
                 if (response.status == 200) {
-                    if (options.success) options.success(response.data.oauth2Urls);
+                    if (options.success) options.success(response.data);
                 } else {
                     if (options.error) options.error(response.error);
                 }

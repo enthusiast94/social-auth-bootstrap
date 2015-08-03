@@ -63,8 +63,8 @@ public class UserController {
 
                     // prepare response
                     HashMap<String, Object> responseMap = new HashMap<>();
-                    accessToken.setId(null);
-                    responseMap.put("accessToken", accessToken);
+                    responseMap.put("accessToken", accessToken.getValue());
+                    responseMap.put("userId", accessToken.getUserId());
 
                     return new ApiResponse(200, null, responseMap);
                 },
@@ -88,11 +88,9 @@ public class UserController {
                         return new ApiResponse(404, "User with id '" + req.params("id") + "' not found", null);
 
                     // prepare response
-                    HashMap<String, Object> responseMap = new HashMap<>();
                     user.setPasswordHash(null);
-                    responseMap.put("user", user);
 
-                    return new ApiResponse(200, null, responseMap);
+                    return new ApiResponse(200, null, user);
                 },
                 new JsonTranformer()
         );
@@ -111,8 +109,7 @@ public class UserController {
                     // check if user id mapped to the provided access token matches the requested user id
                     AccessToken accessToken = (AccessToken) req.attribute("accessToken");
                     User user = userService.getUserById(accessToken.getUserId());
-                    System.out.println(req.params("id"));
-                    System.out.println(user.getId());
+
                     if (!user.getId().equals(req.params("id"))) return new ApiResponse(401, "Invalid access token", null);
 
                     // delete currently authenticated user's access token
@@ -155,8 +152,8 @@ public class UserController {
 
                     // prepare response
                     HashMap<String, Object> responseMap = new HashMap<>();
-                    accessToken.setId(null);
-                    responseMap.put("accessToken", accessToken);
+                    responseMap.put("accessToken", accessToken.getValue());
+                    responseMap.put("userId", accessToken.getUserId());
 
                     return new ApiResponse(200, null, responseMap);
                 },
@@ -204,10 +201,7 @@ public class UserController {
         get(
                 "/oauth2-urls",
                 (req, res) -> {
-                    HashMap<String, Object> resposneMap = new HashMap<>();
-                    resposneMap.put("oauth2Urls", oAuthStrategyFactory.getAllAuthUrls());
-
-                    return new ApiResponse(200, null, resposneMap);
+                    return new ApiResponse(200, null, oAuthStrategyFactory.getAllAuthUrls());
                 },
                 new JsonTranformer()
         );
