@@ -9,6 +9,9 @@ import com.enthusiast94.social_auth_starter.services.UserService;
 import com.enthusiast94.social_auth_starter.utils.ApiResponse;
 import com.enthusiast94.social_auth_starter.utils.Helpers;
 import com.enthusiast94.social_auth_starter.utils.JsonTranformer;
+import spark.Request;
+
+import java.util.HashMap;
 
 import static spark.Spark.get;
 import static spark.Spark.post;
@@ -31,11 +34,12 @@ public class UserController {
     }
 
     public void setupEndpoints() {
+
         /**
          * Create new user
          */
         post(
-                "/users",
+                "/users/create",
                 (req, res) -> {
                     String username = Helpers.bodyParams(req.body(), "username");
                     String password = Helpers.bodyParams(req.body(), "password");
@@ -57,32 +61,64 @@ public class UserController {
 
                     AccessToken accessToken = accessTokenService.createAccessToken(user.getId());
 
-                    // set unneeded fields to null
+                    // prepare response
+                    HashMap<String, Object> responseMap = new HashMap<>();
+                    user.setPasswordHash(null);
+                    responseMap.put("user", user);
                     accessToken.setId(null);
                     accessToken.setUserId(null);
+                    responseMap.put("accessToken", accessToken);
 
-                    return new ApiResponse(200, null, accessToken);
+                    return new ApiResponse(200, null, responseMap);
                 },
                 new JsonTranformer()
         );
 
+
         /**
-         * Returns currently authenticated user
+         * Returns requested user
          */
         get(
-                "/me/",
+                "/users/:id",
                 (req, res) -> {
-                    AccessToken accessToken = (AccessToken) req.attribute("accessToken");
-                    User user = userService.getUserById(accessToken.getUserId());
+                    User user = userService.getUserById(req.params("id"));
 
-                    // set unneeded fields to null
-                    user.setId(null);
+                    if (user == null)
+                        return new ApiResponse(404, "User with id '" + req.params("id") + "' not found", null);
+
+                    // prepare response
                     user.setPasswordHash(null);
 
                     return new ApiResponse(200, null, user);
                 },
                 new JsonTranformer()
         );
+
+
+        /**
+         * Deletes currently authenticated user
+         */
+        post(
+                "/users/destroy/:id",
+                (req, res) -> {
+                    // check if user id mapped to the provided access token matches the requested user id
+                    AccessToken accessToken = (AccessToken) req.attribute("accessToken");
+                    User user = userService.getUserById(accessToken.getUserId());
+                    System.out.println(req.params("id"));
+                    System.out.println(user.getId());
+                    if (!user.getId().equals(req.params("id"))) return new ApiResponse(401, "Invalid access token", null);
+
+                    // delete currently authenticated user's access token
+                    accessTokenService.deleteAccessToken(accessToken);
+
+                    // delete currently authenticated user
+                    userService.deleteUser(user);
+
+                    return new ApiResponse(200, null, null);
+                },
+                new JsonTranformer()
+        );
+
 
         /**
          * Authenticates an existing user
@@ -110,20 +146,25 @@ public class UserController {
                         accessToken = accessTokenService.createAccessToken(requestedUser.getId());
                     }
 
-                    // set unneeded fields to null
+                    // prepare response
+                    HashMap<String, Object> responseMap = new HashMap<>();
+                    requestedUser.setPasswordHash(null);
+                    responseMap.put("user", requestedUser);
                     accessToken.setId(null);
                     accessToken.setUserId(null);
+                    responseMap.put("accessToken", accessToken);
 
-                    return new ApiResponse(200, null, accessToken);
+                    return new ApiResponse(200, null, responseMap);
                 },
                 new JsonTranformer()
         );
+
 
         /**
          * De-authenticates currently authenticated user
          */
         post(
-                "/me/deauth",
+                "/deauth",
                 (req, res) -> {
                     // delete access token of currently authenticated user
                     AccessToken accessTokenToDelete = (AccessToken) req.attribute("accessToken");
@@ -134,24 +175,6 @@ public class UserController {
                 new JsonTranformer()
         );
 
-        /**
-         * Deletes currently authenticated user
-         */
-        post(
-                "/me/delete",
-                (req, res) -> {
-                    // delete currently authenticated user's access token
-                    AccessToken accessToken = (AccessToken) req.attribute("accessToken");
-                    accessTokenService.deleteAccessToken(accessToken);
-
-                    // delete currently authenticated user
-                    User userToDelete = userService.getUserById(accessToken.getUserId());
-                    userService.deleteUser(userToDelete);
-
-                    return new ApiResponse(200, null, null);
-                },
-                new JsonTranformer()
-        );
 
         /**
          * Creates new user or authenticates existing user using details fetched from the specified oauth provider
@@ -167,6 +190,7 @@ public class UserController {
                 }
         );
 
+
         /**
          * Returns auth urls for all available providers
          */
@@ -178,5 +202,4 @@ public class UserController {
                 new JsonTranformer()
         );
     }
-
 }

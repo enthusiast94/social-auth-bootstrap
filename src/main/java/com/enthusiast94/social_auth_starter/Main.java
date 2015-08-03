@@ -12,6 +12,7 @@ import com.enthusiast94.social_auth_starter.utils.ApiResponse;
 import com.mongodb.MongoClient;
 import org.mongodb.morphia.Datastore;
 import org.mongodb.morphia.Morphia;
+import spark.Request;
 
 import static spark.Spark.before;
 import static spark.Spark.halt;
@@ -59,32 +60,41 @@ public class Main {
             res.header("Access-Control-Allow-Methods", "GET,POST,PUT,DELETE,OPTIONS");
         });
 
-        // require authentication for all me/ requests
-        before("/me/*", (req, res) -> {
-            String authHeader = req.headers("Authorization");
-
-            if (authHeader == null) {
-                halt(new ApiResponse(401, "authorization header not found", null).toJson());
-                return;
-            }
-
-            if (authHeader.length() < (36 /* Access Token is 36 characters long */ + "Token".length() + 1 /* SPACE after 'Token' */)) {
-                halt(new ApiResponse(401, "invalid access token", null).toJson());
-                return;
-            }
-
-            String accessTokenString = authHeader.substring("Token".length()+1, authHeader.length());
-            AccessToken accessToken = accessTokenService.getAccessTokenByAccessTokenString(accessTokenString);
-
-            if (accessToken == null || accessToken.hasExpired()) {
-                halt(new ApiResponse(401, "invalid access token", null).toJson());
-                return;
-            }
-
-            // add access token to attributes list so that it can be reused by other routes
-            req.attribute("accessToken", accessToken);
+        // require authentication for specific requests
+        before("/users/destroy/*", (req, res) -> {
+            requireAuthentication(req, accessTokenService);
         });
 
         new UserController(userService, accessTokenService).setupEndpoints();
+    }
+
+
+    /**
+     * Helper method that checks if a valid access token is provided. Also appends the access token object to Request
+     * attributes.
+     */
+    private static void requireAuthentication(Request req, AccessTokenService accessTokenService) {
+        String authHeader = req.headers("Authorization");
+
+        if (authHeader == null) {
+            halt(new ApiResponse(401, "authorization header not found", null).toJson());
+            return;
+        }
+
+        if (authHeader.length() < (36 /* Access Token is 36 characters long */ + "Token".length() + 1 /* SPACE after 'Token' */)) {
+            halt(new ApiResponse(401, "invalid access token", null).toJson());
+            return;
+        }
+
+        String accessTokenString = authHeader.substring("Token".length()+1, authHeader.length());
+        AccessToken accessToken = accessTokenService.getAccessTokenByAccessTokenString(accessTokenString);
+
+        if (accessToken == null || accessToken.hasExpired()) {
+            halt(new ApiResponse(401, "invalid access token", null).toJson());
+            return;
+        }
+
+        // add access token to attributes list so that it can be reused by other routes
+        req.attribute("accessToken", accessToken);
     }
 }
