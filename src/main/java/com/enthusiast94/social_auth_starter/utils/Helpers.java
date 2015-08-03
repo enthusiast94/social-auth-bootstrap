@@ -1,5 +1,9 @@
 package com.enthusiast94.social_auth_starter.utils;
 
+import com.enthusiast94.social_auth_starter.models.AccessToken;
+import com.enthusiast94.social_auth_starter.services.AccessTokenService;
+import spark.Request;
+
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
@@ -8,6 +12,8 @@ import java.net.URL;
 import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
+import static spark.Spark.halt;
 
 /**
  * Created by ManasB on 7/28/2015.
@@ -92,5 +98,34 @@ public class Helpers {
         reader.close();
 
         return response.toString();
+    }
+
+    /**
+     * Helper method that checks if a valid access token is provided. Also appends the access token object to Request
+     * attributes.
+     */
+    public static void requireAuthentication(Request req, AccessTokenService accessTokenService) {
+        String authHeader = req.headers("Authorization");
+
+        if (authHeader == null) {
+            halt(new ApiResponse(401, "authorization header not found", null).toJson());
+            return;
+        }
+
+        if (authHeader.length() < (36 /* Access Token is 36 characters long */ + "Token".length() + 1 /* SPACE after 'Token' */)) {
+            halt(new ApiResponse(401, "invalid access token", null).toJson());
+            return;
+        }
+
+        String accessTokenValue = authHeader.substring("Token".length()+1, authHeader.length());
+        AccessToken accessToken = accessTokenService.getAccessTokenByValue(accessTokenValue);
+
+        if (accessToken == null || accessToken.hasExpired()) {
+            halt(new ApiResponse(401, "invalid access token", null).toJson());
+            return;
+        }
+
+        // add access token to attributes list so that it can be reused by other routes
+        req.attribute("accessToken", accessToken);
     }
 }

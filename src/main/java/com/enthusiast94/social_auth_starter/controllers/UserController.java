@@ -73,11 +73,15 @@ public class UserController {
 
 
         /**
+         * [REQUIRES AUTHENTICATION]
+         *
          * Returns requested user
          */
         get(
                 "/users/:id",
                 (req, res) -> {
+                    Helpers.requireAuthentication(req, accessTokenService);
+
                     User user = userService.getUserById(req.params("id"));
 
                     if (user == null)
@@ -95,11 +99,15 @@ public class UserController {
 
 
         /**
+         * [REQUIRES AUTHENTICATION]
+         *
          * Deletes currently authenticated user
          */
         post(
                 "/users/destroy/:id",
                 (req, res) -> {
+                    Helpers.requireAuthentication(req, accessTokenService);
+
                     // check if user id mapped to the provided access token matches the requested user id
                     AccessToken accessToken = (AccessToken) req.attribute("accessToken");
                     User user = userService.getUserById(accessToken.getUserId());
@@ -157,11 +165,15 @@ public class UserController {
 
 
         /**
+         * [REQUIRES AUTHENTICATION]
+         *
          * Invalidates provided access token
          */
         post(
                 "/deauth",
                 (req, res) -> {
+                    Helpers.requireAuthentication(req, accessTokenService);
+
                     AccessToken accessTokenToDelete = (AccessToken) req.attribute("accessToken");
                     accessTokenService.deleteAccessToken(accessTokenToDelete);
 
