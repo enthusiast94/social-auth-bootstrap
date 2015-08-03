@@ -65,12 +65,37 @@ var authController = {
                 beforeSend: function (jqXHR) {
                     jqXHR.setRequestHeader("Authorization", "Token " + user.accessToken);
                 },
-                success: function () {
-                    localStorage.clear();
-                    if (options.success) options.success();
+                success: function (response) {
+                    if (response.status == 200) {
+                        localStorage.clear();
+                        if (options.success) options.success();
+                    } else {
+                        if (options.error) options.error(response.error);
+                    }
                 }
             });
         }
+    },
+    deleteAccount: function (options) {
+        var user = this._getUserFromCache();
+
+        $.ajax({
+            url: API_BASE + "/users/destroy/" + user.userId,
+            method: "POST",
+            dataType: "json",
+            beforeSend: function (jqXHR) {
+                jqXHR.setRequestHeader("Authorization", "Token " + user.accessToken);
+            },
+            success: function (response) {
+                if (response.status == 200) {
+                    localStorage.clear();
+
+                    if (options.success) options.success();
+                } else {
+                    if (options.error) options.error(response.error);
+                }
+            }
+        });
     },
     getUser: function (options) {
         var user = this._getUserFromCache();
@@ -79,9 +104,9 @@ var authController = {
             url: API_BASE + "/users/" + user.userId,
             method: "GET",
             dataType: "json",
-            //beforeSend: function (jqXHR) {
-            //    jqXHR.setRequestHeader("Authorization", "Token " + user.accessToken);
-            //},
+            beforeSend: function (jqXHR) {
+                jqXHR.setRequestHeader("Authorization", "Token " + user.accessToken);
+            },
             success: function (response) {
                 if (response.status == 200) {
                     if (options.success) options.success(response.data.user);
