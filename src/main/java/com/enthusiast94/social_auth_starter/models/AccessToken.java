@@ -16,7 +16,7 @@ public class AccessToken {
     @Id
     private String id;
     private String userId;
-    private String accessToken;
+    private String value;
     private long createdAt;
     private int expiresIn;
 
@@ -26,7 +26,7 @@ public class AccessToken {
 
     public AccessToken(String userId) {
         id = new ObjectId().toString();
-        accessToken = UUID.randomUUID().toString();
+        value = UUID.randomUUID().toString();
         createdAt = System.currentTimeMillis() / 1000;
         expiresIn = 86400; // 1 day for now
 
@@ -41,8 +41,8 @@ public class AccessToken {
         this.id = id;
     }
 
-    public void setAccessToken(String accessToken) {
-        this.accessToken = accessToken;
+    public void setValue(String value) {
+        this.value = value;
     }
 
     public void setCreatedAt(long createdAt) {
@@ -57,8 +57,8 @@ public class AccessToken {
         this.userId = userId;
     }
 
-    public String getAccessToken() {
-        return accessToken;
+    public String getValue() {
+        return value;
     }
 
     public long getCreatedAt() {

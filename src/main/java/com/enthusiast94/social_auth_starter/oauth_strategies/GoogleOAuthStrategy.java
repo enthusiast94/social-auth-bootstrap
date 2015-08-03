@@ -53,7 +53,7 @@ public class GoogleOAuthStrategy extends OAuthStrategy {
             // generate access token for user
             AccessToken accessToken = generateAccessToken(parsedMeResponse.get("email"));
 
-            responseParams.put("accessToken", accessToken.getAccessToken());
+            responseParams.put("accessToken", accessToken.getValue());
             responseParams.put("expiresIn", String.valueOf(accessToken.getExpiresIn()));
             responseParams.put("createdAt", String.valueOf(accessToken.getCreatedAt()));
         }

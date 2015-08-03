@@ -23,9 +23,9 @@ public class AccessTokenService {
         return accessToken;
     }
 
-    public AccessToken getAccessTokenByAccessTokenString(String accessTokenString) {
+    public AccessToken getAccessTokenByValue(String value) {
         return db.createQuery(AccessToken.class)
-                .field("accessToken").equal(accessTokenString)
+                .field("value").equal(value)
                 .get();
     }
 

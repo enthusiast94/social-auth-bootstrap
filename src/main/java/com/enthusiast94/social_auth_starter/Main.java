@@ -85,8 +85,8 @@ public class Main {
             return;
         }
 
-        String accessTokenString = authHeader.substring("Token".length()+1, authHeader.length());
-        AccessToken accessToken = accessTokenService.getAccessTokenByAccessTokenString(accessTokenString);
+        String accessTokenValue = authHeader.substring("Token".length()+1, authHeader.length());
+        AccessToken accessToken = accessTokenService.getAccessTokenByValue(accessTokenValue);
 
         if (accessToken == null || accessToken.hasExpired()) {
             halt(new ApiResponse(401, "invalid access token", null).toJson());
