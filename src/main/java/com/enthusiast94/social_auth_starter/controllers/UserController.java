@@ -161,12 +161,11 @@ public class UserController {
 
 
         /**
-         * De-authenticates currently authenticated user
+         * Invalidates provided access token
          */
         post(
                 "/deauth",
                 (req, res) -> {
-                    // delete access token of currently authenticated user
                     AccessToken accessTokenToDelete = (AccessToken) req.attribute("accessToken");
                     accessTokenService.deleteAccessToken(accessTokenToDelete);
 

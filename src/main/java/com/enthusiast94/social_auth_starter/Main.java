@@ -61,9 +61,8 @@ public class Main {
         });
 
         // require authentication for specific requests
-        before("/users/destroy/*", (req, res) -> {
-            requireAuthentication(req, accessTokenService);
-        });
+        before("/users/destroy/*", (req, res) -> requireAuthentication(req, accessTokenService));
+        before("/deauth", (req, res) -> requireAuthentication(req, accessTokenService));
 
         new UserController(userService, accessTokenService).setupEndpoints();
     }
