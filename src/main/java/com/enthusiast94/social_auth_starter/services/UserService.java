@@ -39,7 +39,7 @@ public class UserService {
     public User createUser(String username, String password) {
         String hashedPassword = BCrypt.hashpw(password, BCrypt.gensalt());
 
-        User user = new User(username, hashedPassword, null);
+        User user = new User(username, hashedPassword);
         db.save(user);
 
         return user;

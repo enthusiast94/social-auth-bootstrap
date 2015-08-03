@@ -15,18 +15,16 @@ public class User {
     private String id;
     private String username;
     private String passwordHash;
-    private String email;
 
     public User() {
         // empty constructor required by Morphia for querying
     }
 
-    public User(String username, String passwordHash, String email) {
+    public User(String username, String passwordHash) {
         id = new ObjectId().toString();
 
         this.username = username;
         this.passwordHash = passwordHash;
-        this.email = email;
     }
 
     public String getId() {
@@ -51,13 +49,5 @@ public class User {
 
     public void setPasswordHash(String passwordHash) {
         this.passwordHash = passwordHash;
-    }
-
-    public String getEmail() {
-        return email;
-    }
-
-    public void setEmail(String email) {
-        this.email = email;
     }
 }
