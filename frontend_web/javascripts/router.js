@@ -2,16 +2,21 @@
  * Created by ManasB on 7/31/2015.
  */
 
+window.$ = window.jQuery = require("jquery"); // needed in order to make bootstrap's javascript work
 var Backbone = require("Backbone");
-var $ = require("jquery");
 var loginView = require("./views/login");
 var meView = require("./views/me");
+var navView = require("./views/nav");
+var homeView = require("./views/home");
+var createAccountView = require("./views/create_account");
 var authController = require("./auth_controller");
 
 var AppRouter = Backbone.Router.extend({
     routes: {
         "me": "showMe",
         "login": "showLogin",
+        "create-account": "showCreateAccount",
+        "home": "showHome",
         "oauth2-callback": "oauth2Callback",
         "*any": "defaultAction"
     },
@@ -24,10 +29,20 @@ var AppRouter = Backbone.Router.extend({
     },
     showLogin: function () {
         if (authController.isAuthenticated()) {
-            this.navigate("me", true);
+            this.navigate("home", true);
         } else {
             loginView.render();
         }
+    },
+    showCreateAccount: function () {
+        if (authController.isAuthenticated()) {
+            this.navigate("home", true);
+        } else {
+            createAccountView.render();
+        }
+    },
+    showHome: function () {
+        homeView.render();
     },
     oauth2Callback: function () {
         var params = this.parseQueryParams(window.location.href);
@@ -40,6 +55,8 @@ var AppRouter = Backbone.Router.extend({
                 accessToken: params.accessToken,
                 success: function () {
                     self.navigate("me", true);
+
+                    $(document).trigger("authenticated");
                 }
             });
         } else {
@@ -66,6 +83,8 @@ var AppRouter = Backbone.Router.extend({
 
 module.exports = {
     init: function () {
+        navView.render();
+
         new AppRouter();
 
         Backbone.history.start();

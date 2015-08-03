@@ -51,7 +51,7 @@ var authController = {
         if (options.success) options.success();
     },
     deauth: function (options) {
-        var user = this._getUserFromCache();
+        var user = this.getUserFromCache();
 
         if (user) {
             $.ajax({
@@ -73,7 +73,7 @@ var authController = {
         }
     },
     deleteAccount: function (options) {
-        var user = this._getUserFromCache();
+        var user = this.getUserFromCache();
 
         $.ajax({
             url: API_BASE + "/users/destroy/" + user.userId,
@@ -94,7 +94,7 @@ var authController = {
         });
     },
     getUser: function (options) {
-        var user = this._getUserFromCache();
+        var user = this.getUserFromCache();
 
         $.ajax({
             url: API_BASE + "/users/" + user.userId,
@@ -112,7 +112,7 @@ var authController = {
             }
         });
     },
-    _getUserFromCache: function () {
+    getUserFromCache: function () {
         var user = localStorage.getItem("user");
         if (user) {
             return JSON.parse(user);

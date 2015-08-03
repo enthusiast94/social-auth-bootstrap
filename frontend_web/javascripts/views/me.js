@@ -31,6 +31,8 @@ var MeView = Backbone.View.extend({
         authController.deauth({
             success: function () {
                 Backbone.history.navigate("login", {trigger: true});
+
+                $(document).trigger("deauthenticated");
             },
             error: function (error) {
                 alert(error);
@@ -41,6 +43,8 @@ var MeView = Backbone.View.extend({
         authController.deleteAccount({
             success: function () {
                 Backbone.history.navigate("login", {trigger: true});
+
+                $(document).trigger("deauthenticated");
             },
             error: function (error) {
                 alert(error)
