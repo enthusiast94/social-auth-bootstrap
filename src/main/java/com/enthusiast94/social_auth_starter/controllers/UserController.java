@@ -63,10 +63,7 @@ public class UserController {
 
                     // prepare response
                     HashMap<String, Object> responseMap = new HashMap<>();
-                    user.setPasswordHash(null);
-                    responseMap.put("user", user);
                     accessToken.setId(null);
-                    accessToken.setUserId(null);
                     responseMap.put("accessToken", accessToken);
 
                     return new ApiResponse(200, null, responseMap);
@@ -87,9 +84,11 @@ public class UserController {
                         return new ApiResponse(404, "User with id '" + req.params("id") + "' not found", null);
 
                     // prepare response
+                    HashMap<String, Object> responseMap = new HashMap<>();
                     user.setPasswordHash(null);
+                    responseMap.put("user", user);
 
-                    return new ApiResponse(200, null, user);
+                    return new ApiResponse(200, null, responseMap);
                 },
                 new JsonTranformer()
         );
@@ -148,10 +147,7 @@ public class UserController {
 
                     // prepare response
                     HashMap<String, Object> responseMap = new HashMap<>();
-                    requestedUser.setPasswordHash(null);
-                    responseMap.put("user", requestedUser);
                     accessToken.setId(null);
-                    accessToken.setUserId(null);
                     responseMap.put("accessToken", accessToken);
 
                     return new ApiResponse(200, null, responseMap);
@@ -196,7 +192,10 @@ public class UserController {
         get(
                 "/oauth2-urls",
                 (req, res) -> {
-                    return new ApiResponse(200, null, oAuthStrategyFactory.getAllAuthUrls());
+                    HashMap<String, Object> resposneMap = new HashMap<>();
+                    resposneMap.put("oauth2Urls", oAuthStrategyFactory.getAllAuthUrls());
+
+                    return new ApiResponse(200, null, resposneMap);
                 },
                 new JsonTranformer()
         );
