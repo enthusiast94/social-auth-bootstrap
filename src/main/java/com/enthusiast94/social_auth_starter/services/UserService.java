@@ -36,10 +36,10 @@ public class UserService {
                 .get();
     }
 
-    public User createUser(String username, String password) {
+    public User createUser(String username, String name, String password) {
         String hashedPassword = BCrypt.hashpw(password, BCrypt.gensalt());
 
-        User user = new User(username, hashedPassword);
+        User user = new User(username, name, hashedPassword);
         db.save(user);
 
         return user;
@@ -51,6 +51,10 @@ public class UserService {
 
     // returns error message if validation fails, else returns null
     public String validateUsername(String username) {
+        if (username == null) {
+            return "Username is required";
+        }
+
         if (username.length() < 6) {
             return "Username must be at least 6 characters long";
         }
@@ -68,7 +72,24 @@ public class UserService {
     }
 
     // returns error message if validation fails, else returns null
+    public String validateName(String name) {
+        if (name == null) {
+            return "Name is required";
+        }
+
+        if (name.length() == 0) {
+            return "Name must be at least 1 character long";
+        }
+
+        return null;
+    }
+
+    // returns error message if validation fails, else returns null
     public String validatePassword(String password) {
+        if (password == null) {
+            return "Password is required";
+        }
+
         if (password.length() < 8) {
             return "Password must be at least 8 characters long";
         }

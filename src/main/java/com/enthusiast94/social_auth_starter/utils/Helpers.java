@@ -7,8 +7,11 @@ import spark.Request;
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
+import java.io.UnsupportedEncodingException;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.net.URLDecoder;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -20,14 +23,18 @@ import static spark.Spark.halt;
  */
 public class Helpers {
 
-    public static String bodyParams(String body, String key) {
-        Pattern pattern = Pattern.compile(key + "=" + "([^&]*)");
-        Matcher m = pattern.matcher(body);
-        if (m.find()) {
-            return m.group(1).trim();
+    public static HashMap<String, String> bodyParams(String body) throws UnsupportedEncodingException {
+        body = URLDecoder.decode(body, "UTF-8");
+
+        HashMap<String, String> bodyParams = new HashMap<>();
+
+        String[] split = body.split("&");
+        for (String el : split) {
+            String[] split2 = el.split("=");
+            bodyParams.put(split2[0], split2[1]);
         }
 
-        return null;
+        return bodyParams;
     }
 
     public static String stringifyParams(Map<String, String> queryParams) {

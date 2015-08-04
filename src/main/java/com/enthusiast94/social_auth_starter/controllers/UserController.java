@@ -9,7 +9,6 @@ import com.enthusiast94.social_auth_starter.services.UserService;
 import com.enthusiast94.social_auth_starter.utils.ApiResponse;
 import com.enthusiast94.social_auth_starter.utils.Helpers;
 import com.enthusiast94.social_auth_starter.utils.JsonTranformer;
-import spark.Request;
 
 import java.util.HashMap;
 
@@ -41,15 +40,19 @@ public class UserController {
         post(
                 "/users/create",
                 (req, res) -> {
-                    String username = Helpers.bodyParams(req.body(), "username");
-                    String password = Helpers.bodyParams(req.body(), "password");
-
-                    if (username == null || password == null)
-                        return new ApiResponse(500, "username and password are both required", null);
+                    HashMap<String, String> bodyParams = Helpers.bodyParams(req.body());
+                    String username = bodyParams.get("username");
+                    String name = bodyParams.get("name");
+                    String password = bodyParams.get("password");
 
                     String usernameError = userService.validateUsername(username);
                     if (usernameError != null) {
                         return new ApiResponse(500, usernameError, null);
+                    }
+
+                    String nameError = userService.validateName(name);
+                    if (nameError != null) {
+                        return new ApiResponse(500, nameError, null);
                     }
 
                     String passwordError = userService.validatePassword(password);
@@ -57,7 +60,7 @@ public class UserController {
                         return new ApiResponse(500, passwordError, null);
                     }
 
-                    User user = userService.createUser(username, password);
+                    User user = userService.createUser(username, name, password);
 
                     AccessToken accessToken = accessTokenService.createAccessToken(user.getId());
 
@@ -130,11 +133,17 @@ public class UserController {
         post(
                 "/auth",
                 (req, res) -> {
-                    String username = Helpers.bodyParams(req.body(), "username");
-                    String password = Helpers.bodyParams(req.body(), "password");
+                    HashMap<String, String> bodyParams = Helpers.bodyParams(req.body());
+                    String username = bodyParams.get("username");
+                    String password = bodyParams.get("password");
 
-                    if (username == null || password == null)
-                        return new ApiResponse(500, "username and password are both required", null);
+                    if (username == null) {
+                        return new ApiResponse(500, "Username is required", null);
+                    }
+
+                    if (password == null) {
+                        return new ApiResponse(500, "Password is required", null);
+                    }
 
                     // check if user who is trying to authenticate exists
                     User requestedUser = userService.getUserByUsername(username);

@@ -51,7 +51,7 @@ public class GoogleOAuthStrategy extends OAuthStrategy {
             HashMap<String, String> parsedMeResponse = parseEmail(meResponse);
 
             // generate access token for user
-            AccessToken accessToken = generateAccessToken(parsedMeResponse.get("email"));
+            AccessToken accessToken = generateAccessToken(parsedMeResponse.get("email"), null);
 
             responseParams.put("userId", accessToken.getUserId());
             responseParams.put("accessToken", accessToken.getValue());
