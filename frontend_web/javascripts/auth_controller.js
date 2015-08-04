@@ -21,7 +21,7 @@ var authController = {
             url: types[options.type],
             method: "POST",
             dataType: "json",
-            data: {username: options.username, password: options.password},
+            data: options.data,
             success: function (response) {
                 if (response.status == 200) {
                     localStorage.setItem(

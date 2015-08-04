@@ -18,6 +18,7 @@ var CreateAccountView = Backbone.View.extend({
         this.$el.html(compiledTemplate);
 
         this.$createAccountUsernameInput = $("#create-account-username-input");
+        this.$createAccountNameInput = $("#create-account-name-input");
         this.$createAccountPasswordInput = $("#create-account-password-input");
         this.$createAccountConfimPasswordInput = $("#create-account-confirm-password-input");
     },
@@ -25,18 +26,22 @@ var CreateAccountView = Backbone.View.extend({
         event.preventDefault();
 
         var username = this.$createAccountUsernameInput.val().trim();
+        var name = this.$createAccountNameInput.val().trim();
         var password = this.$createAccountPasswordInput.val().trim();
         var confirmedPassword = this.$createAccountConfimPasswordInput.val().trim();
 
-        if (username.length == 0 || password.length == 0 || confirmedPassword.length == 0) {
+        if (username.length == 0 || password.length == 0 || name.length == 0 || confirmedPassword.length == 0) {
             alert("All fields must be filled");
         } else if (password != confirmedPassword) {
             alert("Passwords do not match");
         } else {
             authController.basicAuth({
                 type: "new",
-                username: username,
-                password: password,
+                data: {
+                    username: username,
+                    name: name,
+                    password: password
+                },
                 success: function () {
                     Backbone.history.navigate("me", {trigger: true});
 

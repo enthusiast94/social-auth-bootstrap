@@ -78,7 +78,8 @@
         <div class="page-header">
             <h3>Account information</h3>
         </div>
-        <p>You are logged in as: <strong>{{user.username}}</strong></p>
+        <div>Username: <strong>{{user.username}}</strong></div>
+        <div>Name: <strong>{{user.name}}</strong></div>
 
         <div class="page-header">
             <h3>Delete account</h3>
@@ -132,6 +133,11 @@
                     <div class="form-group">
                         <label for="create-account-username-input">Username</label>
                         <input class="form-control" id="create-account-username-input" placeholder="Username" autocomplete="off">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="create-account-name-input">Name</label>
+                        <input class="form-control" id="create-account-name-input" placeholder="Name" autocomplete="off">
                     </div>
 
                     <div class="form-group">
