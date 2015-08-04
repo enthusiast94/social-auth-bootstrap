@@ -46,12 +46,12 @@ public class GoogleOAuthStrategy extends OAuthStrategy {
             String tokenResponse = Helpers.httpPost(TOKEN_ENDPOINT, postParams);
             HashMap<String, String> parsedTokenResponse = parseAccessToken(tokenResponse);
 
-            // get user's email address to be used as their email
+            // get required user info
             String meResponse = Helpers.httpGet(ME_ENDPOINT, parsedTokenResponse);
-            HashMap<String, String> parsedMeResponse = parseEmail(meResponse);
+            HashMap<String, String> parsedMeResponse = parseUserInfo(meResponse);
 
             // generate access token for user
-            AccessToken accessToken = generateAccessToken(parsedMeResponse.get("email"), null);
+            AccessToken accessToken = generateAccessToken(parsedMeResponse.get("email"), parsedMeResponse.get("name"));
 
             responseParams.put("userId", accessToken.getUserId());
             responseParams.put("accessToken", accessToken.getValue());
@@ -84,12 +84,14 @@ public class GoogleOAuthStrategy extends OAuthStrategy {
         return parsed;
     }
 
-    private HashMap<String, String> parseEmail(String response) throws Exception {
+    private HashMap<String, String> parseUserInfo(String response) throws Exception {
         HashMap<String, String> parsed = new HashMap<>();
 
         JsonParser parser = new JsonParser();
         JsonObject json = (JsonObject) parser.parse(response);
         JsonArray emailsJson = json.getAsJsonArray("emails");
+
+        parsed.put("name", json.get("displayName").getAsString());
 
         for (JsonElement element : emailsJson) {
             JsonObject emailJson = (JsonObject) element;
