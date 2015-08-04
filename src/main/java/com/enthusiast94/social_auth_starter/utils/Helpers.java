@@ -63,6 +63,7 @@ public class Helpers {
         URL url = new URL(urlString);
         HttpURLConnection conn = (HttpURLConnection) url.openConnection();
         conn.setRequestMethod("GET");
+        conn.setRequestProperty("Accept", "application/json");
 
         // read response
         BufferedReader reader = new BufferedReader(new InputStreamReader(conn.getInputStream()));
@@ -83,6 +84,7 @@ public class Helpers {
         URL url = new URL(urlString);
         HttpURLConnection conn = (HttpURLConnection) url.openConnection();
         conn.setRequestMethod("POST");
+        conn.setRequestProperty("Accept", "application/json");
         conn.setDoOutput(true);
 
         // convert post params to string

@@ -21,6 +21,7 @@ public class OAuthStrategyFactory {
 
         strategies = new HashMap<>();
         strategies.put("google", new GoogleOAuthStrategy(userService, accessTokenService));
+        strategies.put("github", new GithubOAuthStrategy(userService, accessTokenService));
     }
 
     public OAuthStrategy getStrategy(String name) {

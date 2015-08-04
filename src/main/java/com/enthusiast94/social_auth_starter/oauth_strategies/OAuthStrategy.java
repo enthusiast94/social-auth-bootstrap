@@ -5,6 +5,8 @@ import com.enthusiast94.social_auth_starter.models.User;
 import com.enthusiast94.social_auth_starter.services.AccessTokenService;
 import com.enthusiast94.social_auth_starter.services.UserService;
 
+import java.util.HashMap;
+
 /**
  * Created by ManasB on 8/1/2015.
  */
@@ -25,6 +27,10 @@ public abstract class OAuthStrategy {
     public abstract String authorize(String code, String error) throws Exception;
 
     public abstract String getAuthUrl();
+
+    protected abstract HashMap<String, String> parseAccessToken(String response);
+
+    protected abstract HashMap<String, String> parseUserInfo(String response);
 
     protected AccessToken generateAccessToken(String email, String name) {
         AccessToken accessToken;

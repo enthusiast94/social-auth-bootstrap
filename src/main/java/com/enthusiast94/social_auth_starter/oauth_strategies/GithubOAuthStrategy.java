@@ -4,8 +4,6 @@ import com.enthusiast94.social_auth_starter.models.AccessToken;
 import com.enthusiast94.social_auth_starter.services.AccessTokenService;
 import com.enthusiast94.social_auth_starter.services.UserService;
 import com.enthusiast94.social_auth_starter.utils.Helpers;
-import com.google.gson.JsonArray;
-import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 
@@ -13,18 +11,18 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * Created by ManasB on 8/1/2015.
+ * Created by manas on 05-08-2015.
  */
-public class GoogleOAuthStrategy extends OAuthStrategy {
+public class GithubOAuthStrategy extends OAuthStrategy {
 
-    private static final String CLIENT_ID = "22650997142-72e53ltr1648it12eqjvlo79fh8l7l7o.apps.googleusercontent.com";
-    private static final String CLIENT_SECRET = "_Vt6ORzdvJ0K7j_-XQovtotO";
-    private static final String REDIRECT_URI = SERVER_REDIRECT_URI_BASE + "/google";
-    private static final String AUTH_ENDPOINT = "https://accounts.google.com/o/oauth2/auth";
-    private static final String TOKEN_ENDPOINT = "https://www.googleapis.com/oauth2/v3/token";
-    private static final String USER_ENDPOINT = "https://www.googleapis.com/plus/v1/people/me";
+    private static final String CLIENT_ID = "1ffc3eb1fa0c7faa6f86";
+    private static final String CLIENT_SECRET = "eca5e03e495ad7c2413ef84d1269d2badc175c7d";
+    private static final String REDIRECT_URI = SERVER_REDIRECT_URI_BASE + "/github";
+    private static final String AUTH_ENDPOINT = "https://github.com/login/oauth/authorize";
+    private static final String TOKEN_ENDPOINT = "https://github.com/login/oauth/access_token";
+    private static final String USER_ENDPOINT = "https://api.github.com/user";
 
-    public GoogleOAuthStrategy(UserService userService, AccessTokenService accessTokenService) {
+    public GithubOAuthStrategy(UserService userService, AccessTokenService accessTokenService) {
         super(userService, accessTokenService);
     }
 
@@ -41,7 +39,6 @@ public class GoogleOAuthStrategy extends OAuthStrategy {
             postParams.put("client_id", CLIENT_ID);
             postParams.put("client_secret", CLIENT_SECRET);
             postParams.put("redirect_uri", REDIRECT_URI);
-            postParams.put("grant_type", "authorization_code");
 
             String tokenResponse = Helpers.httpPost(TOKEN_ENDPOINT, postParams);
             HashMap<String, String> parsedTokenResponse = parseAccessToken(tokenResponse);
@@ -63,16 +60,14 @@ public class GoogleOAuthStrategy extends OAuthStrategy {
     @Override
     public String getAuthUrl() {
         Map<String, String> queryParams = new HashMap<>();
-        queryParams.put("response_type", "code");
         queryParams.put("client_id", CLIENT_ID);
         queryParams.put("redirect_uri", REDIRECT_URI);
-        queryParams.put("scope", "email");
-        queryParams.put("access_type", "online");
-        queryParams.put("approval_prompt", "auto");
+        queryParams.put("scope", "user:email");
 
         return AUTH_ENDPOINT + "?" + Helpers.stringifyParams(queryParams);
     }
 
+    @Override
     protected HashMap<String, String> parseAccessToken(String response) {
         HashMap<String, String> parsed = new HashMap<>();
 
@@ -84,22 +79,15 @@ public class GoogleOAuthStrategy extends OAuthStrategy {
         return parsed;
     }
 
-     protected HashMap<String, String> parseUserInfo(String response) {
+    @Override
+    protected HashMap<String, String> parseUserInfo(String response) {
         HashMap<String, String> parsed = new HashMap<>();
 
         JsonParser parser = new JsonParser();
         JsonObject json = (JsonObject) parser.parse(response);
-        JsonArray emailsJson = json.getAsJsonArray("emails");
 
-        parsed.put("name", json.get("displayName").getAsString());
-
-        for (JsonElement element : emailsJson) {
-            JsonObject emailJson = (JsonObject) element;
-            if (emailJson.get("type").getAsString().equals("account")) {
-                parsed.put("email", emailJson.get("value").getAsString());
-                break;
-            }
-        }
+        parsed.put("email", json.get("email").getAsString());
+        parsed.put("name", json.get("name").getAsString());
 
         return parsed;
     }
