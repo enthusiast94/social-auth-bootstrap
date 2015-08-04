@@ -17,7 +17,7 @@ var CreateAccountView = Backbone.View.extend({
         var compiledTemplate = swig.render(this.template);
         this.$el.html(compiledTemplate);
 
-        this.$createAccountUsernameInput = $("#create-account-username-input");
+        this.$createAccountEmailInput = $("#create-account-email-input");
         this.$createAccountNameInput = $("#create-account-name-input");
         this.$createAccountPasswordInput = $("#create-account-password-input");
         this.$createAccountConfimPasswordInput = $("#create-account-confirm-password-input");
@@ -25,12 +25,12 @@ var CreateAccountView = Backbone.View.extend({
     createAccount: function (event) {
         event.preventDefault();
 
-        var username = this.$createAccountUsernameInput.val().trim();
+        var email = this.$createAccountEmailInput.val().trim();
         var name = this.$createAccountNameInput.val().trim();
         var password = this.$createAccountPasswordInput.val().trim();
         var confirmedPassword = this.$createAccountConfimPasswordInput.val().trim();
 
-        if (username.length == 0 || password.length == 0 || name.length == 0 || confirmedPassword.length == 0) {
+        if (email.length == 0 || password.length == 0 || name.length == 0 || confirmedPassword.length == 0) {
             alert("All fields must be filled");
         } else if (password != confirmedPassword) {
             alert("Passwords do not match");
@@ -38,7 +38,7 @@ var CreateAccountView = Backbone.View.extend({
             authController.basicAuth({
                 type: "new",
                 data: {
-                    username: username,
+                    email: email,
                     name: name,
                     password: password
                 },

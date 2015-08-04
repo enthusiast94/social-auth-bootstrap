@@ -21,7 +21,7 @@ var LoginView = Backbone.View.extend({
                 var compiledTemplate = swig.render(self.template, {locals: {authUrls: authUrls}});
                 self.$el.html(compiledTemplate);
 
-                self.$loginUsernameInput = $("#login-username-input");
+                self.$loginEmailInput = $("#login-email-input");
                 self.$loginPasswordInput = $("#login-password-input");
             },
             error: function (error) {
@@ -32,16 +32,18 @@ var LoginView = Backbone.View.extend({
     login: function (event) {
         event.preventDefault();
 
-        var username = this.$loginUsernameInput.val().trim();
+        var email = this.$loginEmailInput.val().trim();
         var password = this.$loginPasswordInput.val().trim();
 
-        if (username.length == 0 || password.length == 0) {
+        if (email.length == 0 || password.length == 0) {
             alert("All fields must be filled");
         } else {
             authController.basicAuth({
                 type: "existing",
-                username: username,
-                password: password,
+                data: {
+                    email: email,
+                    password: password
+                },
                 success: function () {
                     Backbone.history.navigate("me", {trigger: true});
 
