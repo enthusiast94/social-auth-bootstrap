@@ -30,9 +30,7 @@ var CreateAccountView = Backbone.View.extend({
         var password = this.$createAccountPasswordInput.val().trim();
         var confirmedPassword = this.$createAccountConfimPasswordInput.val().trim();
 
-        if (email.length == 0 || password.length == 0 || name.length == 0 || confirmedPassword.length == 0) {
-            alert("All fields must be filled");
-        } else if (password != confirmedPassword) {
+        if (password != confirmedPassword) {
             alert("Passwords do not match");
         } else {
             authController.basicAuth({

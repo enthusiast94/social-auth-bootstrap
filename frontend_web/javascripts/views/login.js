@@ -35,25 +35,21 @@ var LoginView = Backbone.View.extend({
         var email = this.$loginEmailInput.val().trim();
         var password = this.$loginPasswordInput.val().trim();
 
-        if (email.length == 0 || password.length == 0) {
-            alert("All fields must be filled");
-        } else {
-            authController.basicAuth({
-                type: "existing",
-                data: {
-                    email: email,
-                    password: password
-                },
-                success: function () {
-                    Backbone.history.navigate("me", {trigger: true});
+        authController.basicAuth({
+            type: "existing",
+            data: {
+                email: email,
+                password: password
+            },
+            success: function () {
+                Backbone.history.navigate("me", {trigger: true});
 
-                    $(document).trigger("authenticated");
-                },
-                error: function (error) {
-                    alert(error);
-                }
-            });
-        }
+                $(document).trigger("authenticated");
+            },
+            error: function (error) {
+                alert(error);
+            }
+        });
     }
 });
 
