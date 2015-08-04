@@ -26,7 +26,7 @@
                     <span class="icon-bar"></span>
                     <span class="icon-bar"></span>
                 </button>
-                <a class="navbar-brand" href="#">Project name</a>
+                <a class="navbar-brand" href="#home">social-auth-starter</a>
             </div>
             <div id="navbar" class="navbar-collapse collapse">
                 <ul class="nav navbar-nav">
@@ -38,7 +38,7 @@
                             <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false"> {{user.userId}} <span class="caret"></span></a>
                             <ul class="dropdown-menu">
                                 <li><a href="#me">My account</a></li>
-                                <li><a>Logout</a></li>
+                                <li><a href="#logout">Logout</a></li>
                             </ul>
                         </li>
                     {% else %}
@@ -78,10 +78,13 @@
         <div class="page-header">
             <h3>Account information</h3>
         </div>
+        <p>You are logged in as: <strong>{{user.username}}</strong></p>
 
-        <h4>You are logged in as: <strong>{{user.username}}</strong></h4>
-        <button class="btn btn-warning btn-sm" id="logout-button">Logout</button>
-        <button class="btn btn-danger btn-sm" id="delete-account-button">Delete account</button>
+        <div class="page-header">
+            <h3>Delete account</h3>
+        </div>
+        <p>Note that this action is irreversible</p>
+        <button class="btn btn-danger btn-sm" id="delete-account-button"><span class="glyphicon glyphicon-trash"></span> Delete my account</button>
     </div>
 </script>
 

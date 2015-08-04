@@ -17,6 +17,7 @@ var AppRouter = Backbone.Router.extend({
         "login": "showLogin",
         "create-account": "showCreateAccount",
         "home": "showHome",
+        "logout": "logout",
         "oauth2-callback": "oauth2Callback",
         "*any": "defaultAction"
     },
@@ -64,8 +65,24 @@ var AppRouter = Backbone.Router.extend({
         }
 
     },
+    logout: function () {
+        if (authController.isAuthenticated()) {
+            authController.deauth({
+                success: function () {
+                    Backbone.history.navigate("home", {trigger: true});
+
+                    $(document).trigger("deauthenticated");
+                },
+                error: function (error) {
+                    alert(error);
+                }
+            });
+        } else {
+            this.navigate("login", true);
+        }
+    },
     defaultAction: function () {
-        this.navigate("me", true);
+        this.navigate("home", true);
     },
     parseQueryParams: function (url) {
         url = url.substring(url.indexOf("?") + 1, url.length);

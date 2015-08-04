@@ -11,7 +11,6 @@ var MeView = Backbone.View.extend({
     el: "#content",
     template: $("#me-template").html(),
     events: {
-        "click #logout-button": "logout",
         "click #delete-account-button": "deleteAccount"
     },
     render: function () {
@@ -27,22 +26,10 @@ var MeView = Backbone.View.extend({
             }
         });
     },
-    logout: function () {
-        authController.deauth({
-            success: function () {
-                Backbone.history.navigate("login", {trigger: true});
-
-                $(document).trigger("deauthenticated");
-            },
-            error: function (error) {
-                alert(error);
-            }
-        });
-    },
     deleteAccount: function () {
         authController.deleteAccount({
             success: function () {
-                Backbone.history.navigate("login", {trigger: true});
+                Backbone.history.navigate("home", {trigger: true});
 
                 $(document).trigger("deauthenticated");
             },
