@@ -30,16 +30,16 @@ public class UserService {
                 .get();
     }
 
-    public User getUserByUsername(String username) {
+    public User getUserByEmail(String email) {
         return db.createQuery(User.class)
-                .field("username").equal(username)
+                .field("email").equal(email)
                 .get();
     }
 
-    public User createUser(String username, String name, String password) {
+    public User createUser(String email, String name, String password) {
         String hashedPassword = BCrypt.hashpw(password, BCrypt.gensalt());
 
-        User user = new User(username, name, hashedPassword);
+        User user = new User(email, name, hashedPassword);
         db.save(user);
 
         return user;
@@ -50,22 +50,22 @@ public class UserService {
     }
 
     // returns error message if validation fails, else returns null
-    public String validateUsername(String username) {
-        if (username == null) {
-            return "Username is required";
+    public String validateEmail(String email) {
+        if (email == null) {
+            return "Email is required";
         }
 
-        if (username.length() < 6) {
-            return "Username must be at least 6 characters long";
+        if (email.length() < 6) {
+            return "Email must be at least 6 characters long";
         }
 
-        if (Pattern.compile("[^a-zA-Z0-9_]").matcher(username).find()) {
-            return "Username cannot contain special characters other than underscore";
+        if (Pattern.compile("[^a-zA-Z0-9_@.]").matcher(email).find()) {
+            return "Email cannot contain special characters other than underscore";
         }
 
-        // check if another user already exists with same username
-        if (getUserByUsername(username) != null) {
-            return "Another user with the same username already exists";
+        // check if another user already exists with same email
+        if (getUserByEmail(email) != null) {
+            return "Another user with the same email already exists";
         }
 
         return null;

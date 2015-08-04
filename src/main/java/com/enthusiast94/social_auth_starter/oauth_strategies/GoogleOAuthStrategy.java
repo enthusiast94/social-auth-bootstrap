@@ -46,7 +46,7 @@ public class GoogleOAuthStrategy extends OAuthStrategy {
             String tokenResponse = Helpers.httpPost(TOKEN_ENDPOINT, postParams);
             HashMap<String, String> parsedTokenResponse = parseAccessToken(tokenResponse);
 
-            // get user's email address to be used as their username
+            // get user's email address to be used as their email
             String meResponse = Helpers.httpGet(ME_ENDPOINT, parsedTokenResponse);
             HashMap<String, String> parsedMeResponse = parseEmail(meResponse);
 

@@ -41,13 +41,13 @@ public class UserController {
                 "/users/create",
                 (req, res) -> {
                     HashMap<String, String> bodyParams = Helpers.bodyParams(req.body());
-                    String username = bodyParams.get("username");
+                    String email = bodyParams.get("email");
                     String name = bodyParams.get("name");
                     String password = bodyParams.get("password");
 
-                    String usernameError = userService.validateUsername(username);
-                    if (usernameError != null) {
-                        return new ApiResponse(500, usernameError, null);
+                    String emailError = userService.validateEmail(email);
+                    if (emailError != null) {
+                        return new ApiResponse(500, emailError, null);
                     }
 
                     String nameError = userService.validateName(name);
@@ -60,7 +60,7 @@ public class UserController {
                         return new ApiResponse(500, passwordError, null);
                     }
 
-                    User user = userService.createUser(username, name, password);
+                    User user = userService.createUser(email, name, password);
 
                     AccessToken accessToken = accessTokenService.createAccessToken(user.getId());
 
@@ -134,11 +134,11 @@ public class UserController {
                 "/auth",
                 (req, res) -> {
                     HashMap<String, String> bodyParams = Helpers.bodyParams(req.body());
-                    String username = bodyParams.get("username");
+                    String email = bodyParams.get("email");
                     String password = bodyParams.get("password");
 
-                    if (username == null) {
-                        return new ApiResponse(500, "Username is required", null);
+                    if (email == null) {
+                        return new ApiResponse(500, "Email is required", null);
                     }
 
                     if (password == null) {
@@ -146,12 +146,12 @@ public class UserController {
                     }
 
                     // check if user who is trying to authenticate exists
-                    User requestedUser = userService.getUserByUsername(username);
-                    if (requestedUser == null) return new ApiResponse(401, "username is incorrect", null);
+                    User requestedUser = userService.getUserByEmail(email);
+                    if (requestedUser == null) return new ApiResponse(401, "Incorrect credentials", null);
 
                     // check if the sent password matches the stored password hash
                     if (!userService.doesPasswordMatch(password, requestedUser.getPasswordHash()))
-                        return new ApiResponse(401, "password is incorrect", null);
+                        return new ApiResponse(401, "Incorrect credentials", null);
 
                     // if an access token already exists, simply return it, else create a new one
                     AccessToken accessToken = accessTokenService.getAccessTokenByUserId(requestedUser.getId());
