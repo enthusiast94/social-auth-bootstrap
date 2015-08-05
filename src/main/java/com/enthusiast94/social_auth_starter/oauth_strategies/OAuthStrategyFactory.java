@@ -1,6 +1,7 @@
 package com.enthusiast94.social_auth_starter.oauth_strategies;
 
 import com.enthusiast94.social_auth_starter.services.AccessTokenService;
+import com.enthusiast94.social_auth_starter.services.LinkedAccountService;
 import com.enthusiast94.social_auth_starter.services.UserService;
 
 import java.util.HashMap;
@@ -13,16 +14,17 @@ public class OAuthStrategyFactory {
 
     private UserService userService;
     private AccessTokenService accessTokenService;
+    private LinkedAccountService linkedAccountService;
     private HashMap<String, OAuthStrategy> strategies;
 
-    public OAuthStrategyFactory(UserService userService, AccessTokenService accessTokenService) {
+    public OAuthStrategyFactory(UserService userService, AccessTokenService accessTokenService, LinkedAccountService linkedAccountService) {
         this.userService = userService;
         this.accessTokenService = accessTokenService;
 
         strategies = new HashMap<>();
-        strategies.put("google", new GoogleOAuthStrategy(userService, accessTokenService));
-        strategies.put("github", new GithubOAuthStrategy(userService, accessTokenService));
-        strategies.put("facebook", new FacebookOAuthStrategy(userService, accessTokenService));
+        strategies.put(GoogleOAuthStrategy.PROVIDER_NAME, new GoogleOAuthStrategy(userService, accessTokenService, linkedAccountService));
+        strategies.put(GithubOAuthStrategy.PROVIDER_NAME, new GithubOAuthStrategy(userService, accessTokenService, linkedAccountService));
+        strategies.put(FacebookOAuthStrategy.PROVIDER_NAME, new FacebookOAuthStrategy(userService, accessTokenService, linkedAccountService));
     }
 
     public OAuthStrategy getStrategy(String name) {

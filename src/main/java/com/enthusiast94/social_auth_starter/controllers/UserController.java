@@ -5,6 +5,7 @@ import com.enthusiast94.social_auth_starter.models.User;
 import com.enthusiast94.social_auth_starter.oauth_strategies.OAuthStrategy;
 import com.enthusiast94.social_auth_starter.oauth_strategies.OAuthStrategyFactory;
 import com.enthusiast94.social_auth_starter.services.AccessTokenService;
+import com.enthusiast94.social_auth_starter.services.LinkedAccountService;
 import com.enthusiast94.social_auth_starter.services.UserService;
 import com.enthusiast94.social_auth_starter.utils.ApiResponse;
 import com.enthusiast94.social_auth_starter.utils.Helpers;
@@ -23,13 +24,15 @@ public class UserController {
 
     private UserService userService;
     private AccessTokenService accessTokenService;
+    private LinkedAccountService linkedAccountService;
     private OAuthStrategyFactory oAuthStrategyFactory;
 
-    public UserController(UserService userService, AccessTokenService accessTokenService) {
+    public UserController(UserService userService, AccessTokenService accessTokenService, LinkedAccountService linkedAccountService) {
         this.userService = userService;
         this.accessTokenService = accessTokenService;
+        this.linkedAccountService = linkedAccountService;
 
-        oAuthStrategyFactory = new OAuthStrategyFactory(userService, accessTokenService);
+        this.oAuthStrategyFactory = new OAuthStrategyFactory(userService, accessTokenService, linkedAccountService);
     }
 
     public void setupEndpoints() {
@@ -117,6 +120,11 @@ public class UserController {
 
                     // delete currently authenticated user's access token
                     accessTokenService.deleteAccessToken(accessToken);
+
+                    // delete currently authenticated user's linked accounts
+                    linkedAccountService.getLinkedAccountsByUserId(user.getId()).forEach((linkedAccount ->
+                            linkedAccountService.deleteLinkedAccount(linkedAccount))
+                    );
 
                     // delete currently authenticated user
                     userService.deleteUser(user);

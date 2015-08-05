@@ -5,19 +5,14 @@ package com.enthusiast94.social_auth_starter;
  */
 
 import com.enthusiast94.social_auth_starter.controllers.UserController;
-import com.enthusiast94.social_auth_starter.models.AccessToken;
 import com.enthusiast94.social_auth_starter.services.AccessTokenService;
+import com.enthusiast94.social_auth_starter.services.LinkedAccountService;
 import com.enthusiast94.social_auth_starter.services.UserService;
-import com.enthusiast94.social_auth_starter.utils.ApiResponse;
-import com.enthusiast94.social_auth_starter.utils.JsonTranformer;
 import com.mongodb.MongoClient;
 import org.mongodb.morphia.Datastore;
 import org.mongodb.morphia.Morphia;
-import spark.Request;
-import spark.Spark;
 
 import static spark.Spark.before;
-import static spark.Spark.halt;
 import static spark.Spark.options;
 import static spark.SparkBase.port;
 
@@ -71,7 +66,8 @@ public class Main {
 
         AccessTokenService accessTokenService = new AccessTokenService(db);
         UserService userService = new UserService(db);
+        LinkedAccountService linkedAccountService = new LinkedAccountService(db);
 
-        new UserController(userService, accessTokenService).setupEndpoints();
+        new UserController(userService, accessTokenService, linkedAccountService).setupEndpoints();
     }
 }

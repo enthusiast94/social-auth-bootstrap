@@ -2,6 +2,7 @@ package com.enthusiast94.social_auth_starter.oauth_strategies;
 
 import com.enthusiast94.social_auth_starter.models.AccessToken;
 import com.enthusiast94.social_auth_starter.services.AccessTokenService;
+import com.enthusiast94.social_auth_starter.services.LinkedAccountService;
 import com.enthusiast94.social_auth_starter.services.UserService;
 import com.enthusiast94.social_auth_starter.utils.Helpers;
 import com.google.gson.JsonObject;
@@ -15,6 +16,7 @@ import java.util.Map;
  */
 public class FacebookOAuthStrategy extends OAuthStrategy {
 
+    public static final String PROVIDER_NAME = "facebook";
     private static final String CLIENT_ID = "1481355242174753";
     private static final String CLIENT_SECRET = "62a96bbdf56b9046b89892461a7b172b";
     private static final String REDIRECT_URI = SERVER_REDIRECT_URI_BASE + "/facebook";
@@ -22,8 +24,8 @@ public class FacebookOAuthStrategy extends OAuthStrategy {
     private static final String TOKEN_ENDPOINT = "https://graph.facebook.com/v2.3/oauth/access_token";
     private static final String USER_ENDPOINT = "https://graph.facebook.com/me";
 
-    public FacebookOAuthStrategy(UserService userService, AccessTokenService accessTokenService) {
-        super(userService, accessTokenService);
+    public FacebookOAuthStrategy(UserService userService, AccessTokenService accessTokenService, LinkedAccountService linkedAccountService) {
+        super(userService, accessTokenService, linkedAccountService);
     }
 
     @Override
@@ -46,10 +48,10 @@ public class FacebookOAuthStrategy extends OAuthStrategy {
             // get required user info
             parsedTokenResponse.put("fields", "name,email");
             String userResponse = Helpers.httpGet(USER_ENDPOINT, parsedTokenResponse);
-            HashMap<String, String> parsedMeResponse = parseUserInfo(userResponse);
+            HashMap<String, String> parsedUserResponse = parseUserInfo(userResponse);
 
             // generate access token for user
-            AccessToken accessToken = generateAccessToken(parsedMeResponse.get("email"), parsedMeResponse.get("name"));
+            AccessToken accessToken = generateAccessToken(PROVIDER_NAME, parsedTokenResponse.get("access_token"), parsedUserResponse.get("email"), parsedUserResponse.get("name"));
 
             responseParams.put("userId", accessToken.getUserId());
             responseParams.put("accessToken", accessToken.getValue());

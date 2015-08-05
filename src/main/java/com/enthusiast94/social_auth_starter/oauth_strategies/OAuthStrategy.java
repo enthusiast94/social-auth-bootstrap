@@ -1,11 +1,14 @@
 package com.enthusiast94.social_auth_starter.oauth_strategies;
 
 import com.enthusiast94.social_auth_starter.models.AccessToken;
+import com.enthusiast94.social_auth_starter.models.LinkedAccount;
 import com.enthusiast94.social_auth_starter.models.User;
 import com.enthusiast94.social_auth_starter.services.AccessTokenService;
+import com.enthusiast94.social_auth_starter.services.LinkedAccountService;
 import com.enthusiast94.social_auth_starter.services.UserService;
 
 import java.util.HashMap;
+import java.util.List;
 
 /**
  * Created by ManasB on 8/1/2015.
@@ -18,10 +21,12 @@ public abstract class OAuthStrategy {
 
     protected UserService userService;
     protected AccessTokenService accessTokenService;
+    protected LinkedAccountService linkedAccountService;
 
-    public OAuthStrategy(UserService userService, AccessTokenService accessTokenService) {
+    public OAuthStrategy(UserService userService, AccessTokenService accessTokenService, LinkedAccountService linkedAccountService) {
         this.userService = userService;
         this.accessTokenService = accessTokenService;
+        this.linkedAccountService = linkedAccountService;
     }
 
     public abstract String authorize(String code, String error) throws Exception;
@@ -32,21 +37,49 @@ public abstract class OAuthStrategy {
 
     protected abstract HashMap<String, String> parseUserInfo(String response);
 
-    protected AccessToken generateAccessToken(String email, String name) {
+    protected AccessToken generateAccessToken(String providerName, String providerAccessToken, String email, String name) {
         AccessToken accessToken;
 
-        // if user already exists, just create a new auth token
-        // else create a new user and then a new auth token
-        User user = userService.getUserByEmail(email);
-        if (user != null) {
+        List<LinkedAccount> linkedAccounts = linkedAccountService.getLinkedAccountsByEmail(email);
+
+        if (linkedAccounts.size() > 0) {
+            User user = userService.getUserById(linkedAccounts.get(0).getUserId());
+
+            boolean alreadyLinkedWithSameProvider = false;
+
+            for (int i=0; i<linkedAccounts.size(); i++) {
+                if (linkedAccounts.get(i).getProviderName().equals(providerName)) {
+                    alreadyLinkedWithSameProvider = true;
+                    break;
+                }
+            }
+
+            if (!alreadyLinkedWithSameProvider) {
+                linkedAccountService.createLinkedAccount(user.getId(), providerName, providerAccessToken, name, email);
+            }
+
             // if an access token already exists, simply return it, else create a new one
             accessToken = accessTokenService.getAccessTokenByUserId(user.getId());
             if (accessToken == null) {
                 accessToken = accessTokenService.createAccessToken(user.getId());
             }
         } else {
-            user = userService.createUser(email, name, USER_PASSWORD);
-            accessToken = accessTokenService.createAccessToken(user.getId());
+            // Since there are no linked accounts, there are two possibilities: either the user doesn't exist, or
+            // the user authenticated without using any oauth2 strategy.
+            User user2 = userService.getUserByEmail(email);
+
+            if (user2 != null) {
+                // if an access token already exists, simply return it, else create a new one
+                accessToken = accessTokenService.getAccessTokenByUserId(user2.getId());
+                if (accessToken == null) {
+                    accessToken = accessTokenService.createAccessToken(user2.getId());
+                }
+            } else {
+                user2 = userService.createUser(email, name, USER_PASSWORD);
+                accessToken = accessTokenService.createAccessToken(user2.getId());
+            }
+
+            linkedAccountService.createLinkedAccount(user2.getId(), providerName, providerAccessToken, name, email);
         }
 
         return accessToken;

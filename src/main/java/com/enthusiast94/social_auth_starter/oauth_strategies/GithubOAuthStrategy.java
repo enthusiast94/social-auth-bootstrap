@@ -2,6 +2,7 @@ package com.enthusiast94.social_auth_starter.oauth_strategies;
 
 import com.enthusiast94.social_auth_starter.models.AccessToken;
 import com.enthusiast94.social_auth_starter.services.AccessTokenService;
+import com.enthusiast94.social_auth_starter.services.LinkedAccountService;
 import com.enthusiast94.social_auth_starter.services.UserService;
 import com.enthusiast94.social_auth_starter.utils.Helpers;
 import com.google.gson.JsonObject;
@@ -15,6 +16,7 @@ import java.util.Map;
  */
 public class GithubOAuthStrategy extends OAuthStrategy {
 
+    public static final String PROVIDER_NAME = "github";
     private static final String CLIENT_ID = "1ffc3eb1fa0c7faa6f86";
     private static final String CLIENT_SECRET = "eca5e03e495ad7c2413ef84d1269d2badc175c7d";
     private static final String REDIRECT_URI = SERVER_REDIRECT_URI_BASE + "/github";
@@ -22,8 +24,8 @@ public class GithubOAuthStrategy extends OAuthStrategy {
     private static final String TOKEN_ENDPOINT = "https://github.com/login/oauth/access_token";
     private static final String USER_ENDPOINT = "https://api.github.com/user";
 
-    public GithubOAuthStrategy(UserService userService, AccessTokenService accessTokenService) {
-        super(userService, accessTokenService);
+    public GithubOAuthStrategy(UserService userService, AccessTokenService accessTokenService, LinkedAccountService linkedAccountService) {
+        super(userService, accessTokenService, linkedAccountService);
     }
 
     @Override
@@ -45,10 +47,10 @@ public class GithubOAuthStrategy extends OAuthStrategy {
 
             // get required user info
             String userResponse = Helpers.httpGet(USER_ENDPOINT, parsedTokenResponse);
-            HashMap<String, String> parsedMeResponse = parseUserInfo(userResponse);
+            HashMap<String, String> parsedUserResponse = parseUserInfo(userResponse);
 
             // generate access token for user
-            AccessToken accessToken = generateAccessToken(parsedMeResponse.get("email"), parsedMeResponse.get("name"));
+            AccessToken accessToken = generateAccessToken(PROVIDER_NAME, parsedTokenResponse.get("access_token"), parsedUserResponse.get("email"), parsedUserResponse.get("name"));
 
             responseParams.put("userId", accessToken.getUserId());
             responseParams.put("accessToken", accessToken.getValue());
