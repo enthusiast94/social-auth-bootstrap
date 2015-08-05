@@ -38,7 +38,6 @@
                             <a href="#me" class="dropdown-toggle nav-tab" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false"> {{user.userId}} <span class="caret"></span></a>
                             <ul class="dropdown-menu">
                                 <li><a href="#me">My account</a></li>
-                                <li role="separator" class="divider"></li>
                                 <li><a href="#logout">Logout</a></li>
                             </ul>
                         </li>
@@ -79,8 +78,21 @@
         <div class="page-header">
             <h3>Account information</h3>
         </div>
-        <div>Email: <strong>{{user.email}}</strong></div>
-        <div>Name: <strong>{{user.name}}</strong></div>
+        <div class="row">
+            <div class="col-md-6">
+                <form id="update-account-form">
+                    <div class="form-group">
+                        <label for="update-account-email-input">Email</label>
+                        <input class="form-control input-sm" id="update-account-email-input" type="email" value="{{user.email}}" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="update-account-name-input">Name</label>
+                        <input class="form-control input-sm" id="update-account-name-input" value="{{user.name}}" required>
+                    </div>
+                    <button type="submit" class="btn btn-primary btn-sm">Update account</button>
+                </form>
+            </div>
+        </div>
 
         <div class="page-header">
             <h3>Delete account</h3>

@@ -72,6 +72,26 @@ var authController = {
             });
         }
     },
+    updateAccount: function (options) {
+        var user = this.getUserFromCache();
+
+        $.ajax({
+            url: API_BASE + "/users/update/" + user.userId,
+            method: "POST",
+            dataType: "json",
+            data: options.data,
+            beforeSend: function (jqXHR) {
+                jqXHR.setRequestHeader("Authorization", "Token " + user.accessToken);
+            },
+            success: function (response) {
+                if (response.status == 200) {
+                    if (options.success) options.success();
+                } else {
+                    if (options.error) options.error(response.error);
+                }
+            }
+        });
+    },
     deleteAccount: function (options) {
         var user = this.getUserFromCache();
 
