@@ -81,6 +81,56 @@ public class UserController {
         /**
          * [REQUIRES AUTHENTICATION]
          *
+         * Updates requested user with the provided details
+         */
+        post(
+                "/users/update/:id",
+                (req, res) -> {
+                    Helpers.requireAuthentication(req, accessTokenService);
+
+                    // check if user id mapped to the provided access token matches the requested user id
+                    AccessToken accessToken = (AccessToken) req.attribute("accessToken");
+                    User user = userService.getUserById(accessToken.getUserId());
+
+                    if (!user.getId().equals(req.params("id"))) return new ApiResponse(401, "Invalid access token", null);
+
+                    // validate provided details and update user
+                    HashMap<String, String> bodyParams = Helpers.bodyParams(req.body());
+                    String email = bodyParams.get("email");
+                    String name = bodyParams.get("name");
+
+                    // Only validate email if it not null AND not the same as the current email address.
+                    // This makes sure that the check to ensure that no other users have the same email address
+                    // is not performed
+                    if (email != null && !email.equals(user.getEmail())) {
+                        String emailError = userService.validateEmail(email);
+                        if (emailError != null) {
+                            return new ApiResponse(500, emailError, null);
+                        }
+
+                        user.setEmail(email);
+                    }
+
+                    if (name != null) {
+                        String nameError = userService.validateName(name);
+                        if (nameError != null) {
+                            return new ApiResponse(500, nameError, null);
+                        }
+
+                        user.setName(name);
+                    }
+
+                    userService.updateUser(user);
+
+                    return new ApiResponse(200, null, null);
+                },
+                new JsonTranformer()
+        );
+
+
+        /**
+         * [REQUIRES AUTHENTICATION]
+         *
          * Returns requested user
          */
         get(

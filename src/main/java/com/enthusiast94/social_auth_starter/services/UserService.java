@@ -45,6 +45,10 @@ public class UserService {
         return user;
     }
 
+    public void updateUser(User userToUpdate) {
+        db.save(userToUpdate);
+    }
+
     public void deleteUser(User userToDelete) {
         db.delete(userToDelete);
     }

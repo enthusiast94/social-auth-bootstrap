@@ -31,7 +31,11 @@ public class Helpers {
         String[] split = body.split("&");
         for (String el : split) {
             String[] split2 = el.split("=");
-            bodyParams.put(split2[0], split2[1]);
+            if (split2.length == 2) {
+                bodyParams.put(split2[0], split2[1]);
+            } else {
+                bodyParams.put(split2[0], "");
+            }
         }
 
         return bodyParams;
