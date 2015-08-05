@@ -1,6 +1,7 @@
 package com.enthusiast94.social_auth_starter.controllers;
 
 import com.enthusiast94.social_auth_starter.models.AccessToken;
+import com.enthusiast94.social_auth_starter.models.LinkedAccount;
 import com.enthusiast94.social_auth_starter.models.User;
 import com.enthusiast94.social_auth_starter.oauth_strategies.OAuthStrategy;
 import com.enthusiast94.social_auth_starter.oauth_strategies.OAuthStrategyFactory;
@@ -12,6 +13,9 @@ import com.enthusiast94.social_auth_starter.utils.Helpers;
 import com.enthusiast94.social_auth_starter.utils.JsonTranformer;
 
 import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
 
 import static spark.Spark.get;
 import static spark.Spark.post;
@@ -138,15 +142,32 @@ public class UserController {
                 (req, res) -> {
                     Helpers.requireAuthentication(req, accessTokenService);
 
-                    User user = userService.getUserById(req.params("id"));
+                    User requestedUser = userService.getUserById(req.params("id"));
 
-                    if (user == null)
+                    if (requestedUser == null)
                         return new ApiResponse(404, "User with id '" + req.params("id") + "' not found", null);
 
                     // prepare response
-                    user.setPasswordHash(null);
+                    Map<String, Object> responseMap = new LinkedHashMap<>();
+                    responseMap.put("id", requestedUser.getId());
+                    responseMap.put("email", requestedUser.getEmail());
+                    responseMap.put("name", requestedUser.getName());
 
-                    return new ApiResponse(200, null, user);
+                    // if user id mapped to the provided access token matches the requested user id, then attach some
+                    // extra information to the response
+                    AccessToken accessToken = (AccessToken) req.attribute("accessToken");
+                    User userMappedToAccessToken = userService.getUserById(accessToken.getUserId());
+                    if (userMappedToAccessToken.getId().equals(req.params("id"))) {
+                        List<LinkedAccount> linkedAccounts = linkedAccountService.getLinkedAccountsByUserId(requestedUser.getId());
+                        linkedAccounts.forEach((linkedAccount -> {
+                            linkedAccount.setUserId(null);
+                            linkedAccount.setId(null);
+                            linkedAccount.setAccessToken(null);
+                        }));
+                        responseMap.put("linkedAccounts", linkedAccounts);
+                    }
+
+                    return new ApiResponse(200, null, responseMap);
                 },
                 new JsonTranformer()
         );
@@ -173,7 +194,7 @@ public class UserController {
 
                     // delete currently authenticated user's linked accounts
                     linkedAccountService.getLinkedAccountsByUserId(user.getId()).forEach((linkedAccount ->
-                            linkedAccountService.deleteLinkedAccount(linkedAccount))
+                                    linkedAccountService.deleteLinkedAccount(linkedAccount))
                     );
 
                     // delete currently authenticated user
@@ -269,6 +290,41 @@ public class UserController {
                 "/oauth2-urls",
                 (req, res) -> {
                     return new ApiResponse(200, null, oAuthStrategyFactory.getAllAuthUrls());
+                },
+                new JsonTranformer()
+        );
+
+        /**
+         * [REQUIRES AUTHENTICATION]
+         *
+         * Unlinks the requested account for currently authenticated user
+         */
+        post(
+                "linked-accounts/destroy/:providerName",
+                (req, res) -> {
+                    Helpers.requireAuthentication(req, accessTokenService);
+
+                    String provderName = req.params("providerName");
+                    if (provderName == null)
+                        return new ApiResponse(500, "providerName is required", null);
+
+                    AccessToken accessToken = (AccessToken) req.attribute("accessToken");
+                    List<LinkedAccount> linkedAccounts = linkedAccountService.getLinkedAccountsByUserId(accessToken.getUserId());
+
+                    boolean found = false;
+
+                    for (LinkedAccount linkedAccount : linkedAccounts) {
+                        if (linkedAccount.getProviderName().equals(provderName)) {
+                            linkedAccountService.deleteLinkedAccount(linkedAccount);
+
+                            found = true;
+                        }
+                    }
+
+                    if (!found)
+                        return new ApiResponse(500, "No linked account with provider name '" + provderName + "' found", null);
+
+                    return new ApiResponse(200, null, null);
                 },
                 new JsonTranformer()
         );
