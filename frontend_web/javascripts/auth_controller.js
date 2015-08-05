@@ -113,6 +113,25 @@ var authController = {
             }
         });
     },
+    unlinkAccount: function (options) {
+        var user = this.getUserFromCache();
+
+        $.ajax({
+            url: API_BASE + "/linked-accounts/destroy/" + options.providerName,
+            method: "POST",
+            dataType: "json",
+            beforeSend: function (jqXHR) {
+                jqXHR.setRequestHeader("Authorization", "Token " + user.accessToken);
+            },
+            success: function (response) {
+                if (response.status == 200) {
+                    if (options.success) options.success();
+                } else {
+                    if (options.error) options.error(response.error);
+                }
+            }
+        });
+    },
     getUser: function (options) {
         var user = this.getUserFromCache();
 

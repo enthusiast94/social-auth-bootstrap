@@ -12,6 +12,7 @@ var MeView = Backbone.View.extend({
     template: $("#me-template").html(),
     events: {
         "submit #update-account-form": "updateAccount",
+        "click .unlink-button": "unlinkAccount",
         "click #delete-account-button": "deleteAccount"
     },
     render: function () {
@@ -45,6 +46,32 @@ var MeView = Backbone.View.extend({
                 alert(error);
             }
         });
+    },
+    unlinkAccount: function (event) {
+        var canUnlink = false;
+
+        // display a confirmation dialog if the last linked account is being unlinked
+        if ($(".unlink-button").length == 1) {
+            canUnlink = confirm("Note that since this is your last linked account, you would not be able to " +
+                "log back into your account if you created your account via an external provider (such as Google), " +
+                "unless you change your password before logging out.");
+        } else {
+            canUnlink = true;
+        }
+
+        if (canUnlink) {
+            var providerName = $(event.target).attr("data-provider-name");
+
+            authController.unlinkAccount({
+                providerName: providerName,
+                success: function () {
+                    Backbone.history.loadUrl();
+                },
+                error: function (error) {
+                    alert(error);
+                }
+            });
+        }
     },
     deleteAccount: function () {
         authController.deleteAccount({

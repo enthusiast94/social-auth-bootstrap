@@ -95,6 +95,19 @@
         </div>
 
         <div class="page-header">
+            <h3>Linked accounts</h3>
+        </div>
+        {% if user.linkedAccounts.length > 0 %}
+            {% for linkedAccount in user.linkedAccounts %}
+                <p class="text-primary">
+                    <i>{{linkedAccount.providerName|capitalize}}</i> ({{linkedAccount.userEmail}})
+                    <button class="btn btn-xs btn-danger unlink-button" data-provider-name="{{linkedAccount.providerName}}">Unlink</button>
+                </p>
+            {% endfor %}
+        {% else %}
+            <p>No accounts linked</p>
+        {% endif %}
+        <div class="page-header">
             <h3>Delete account</h3>
         </div>
         <p>Note that this action is irreversible</p>
