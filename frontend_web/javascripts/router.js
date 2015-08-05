@@ -3,7 +3,9 @@
  */
 
 window.$ = window.jQuery = require("jquery"); // needed in order to make bootstrap's javascript work
+
 var Backbone = require("Backbone");
+var $ = window.$;
 var loginView = require("./views/login");
 var meView = require("./views/me");
 var navView = require("./views/nav");
