@@ -1,6 +1,7 @@
 package com.enthusiast94.social_auth_starter.services;
 
 import com.enthusiast94.social_auth_starter.models.User;
+import org.apache.commons.validator.routines.EmailValidator;
 import org.mindrot.jbcrypt.BCrypt;
 import org.mongodb.morphia.Datastore;
 
@@ -63,9 +64,7 @@ public class UserService {
             return "Email must be at least 6 characters long";
         }
 
-        String emailPattern =
-                "^[_A-Za-z0-9-\\+]+(\\.[_A-Za-z0-9-]+)*@[A-Za-z0-9-]+(\\.[A-Za-z0-9]+)*(\\.[A-Za-z]{2,})$";
-        if (!Pattern.compile(emailPattern).matcher(email).find()) {
+        if (!EmailValidator.getInstance().isValid(email)) {
             return "Invalid email address format";
         }
 
