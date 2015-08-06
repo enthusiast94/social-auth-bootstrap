@@ -34,16 +34,16 @@
                 </ul>
                 <ul class="nav navbar-nav navbar-right">
                     {% if user %}
-                        <li class="dropdown">
-                            <a href="#me" class="dropdown-toggle nav-tab" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false"> {{user.userId}} <span class="caret"></span></a>
-                            <ul class="dropdown-menu">
-                                <li><a href="#me">My account</a></li>
-                                <li><a href="#logout">Logout</a></li>
-                            </ul>
-                        </li>
+                    <li class="dropdown">
+                        <a href="#me" class="dropdown-toggle nav-tab" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false"> {{user.userId}} <span class="caret"></span></a>
+                        <ul class="dropdown-menu">
+                            <li><a href="#me">My account</a></li>
+                            <li><a href="#logout">Logout</a></li>
+                        </ul>
+                    </li>
                     {% else %}
-                        <li><a href="#login" class="nav-tab">Login</a></li>
-                        <li><a href="#create-account" class="nav-tab">Create account</a></li>
+                    <li><a href="#login" class="nav-tab">Login</a></li>
+                    <li><a href="#create-account" class="nav-tab">Create account</a></li>
                     {% endif %}
                 </ul>
             </div><!--/.nav-collapse -->
@@ -95,17 +95,44 @@
         </div>
 
         <div class="page-header">
+            <h3>Change password</h3>
+        </div>
+        <div class="row">
+            <div class="col-md-8">
+                <form id="change-password-form" class="form-horizontal">
+                    <div class="form-group">
+                        <label for="change-password-new-password-input" class="col-sm-3 control-label">New password</label>
+                        <div class="col-sm-9">
+                            <input class="form-control input-sm" type="password" id="change-password-new-password-input" placeholder="New password" required autocomplete="off">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="change-password-confirm-password-input" class="col-sm-3 control-label">Confirm password</label>
+                        <div class="col-sm-9">
+                            <input class="form-control input-sm" type="password" id="change-password-confirm-password-input" placeholder="Confirm password" required autocomplete="off">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="col-sm-offset-3 col-sm-9">
+                            <button type="submit" class="btn btn-primary btn-sm">Change password</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <div class="page-header">
             <h3>Linked accounts</h3>
         </div>
         {% if user.linkedAccounts.length > 0 %}
-            {% for linkedAccount in user.linkedAccounts %}
-                <p class="text-primary">
-                    <i>{{linkedAccount.providerName|capitalize}}</i> ({{linkedAccount.userEmail}})
-                    <button class="btn btn-xs btn-danger unlink-button" data-provider-name="{{linkedAccount.providerName}}">Unlink</button>
-                </p>
-            {% endfor %}
+        {% for linkedAccount in user.linkedAccounts %}
+        <p class="text-primary">
+            <i>{{linkedAccount.providerName|capitalize}}</i> ({{linkedAccount.userEmail}})
+            <button class="btn btn-xs btn-danger unlink-button" data-provider-name="{{linkedAccount.providerName}}">Unlink</button>
+        </p>
+        {% endfor %}
         {% else %}
-            <p>No accounts linked</p>
+        <p>No accounts linked</p>
         {% endif %}
         <div class="page-header">
             <h3>Delete account</h3>

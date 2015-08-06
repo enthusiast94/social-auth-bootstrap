@@ -12,6 +12,7 @@ var MeView = Backbone.View.extend({
     template: $("#me-template").html(),
     events: {
         "submit #update-account-form": "updateAccount",
+        "submit #change-password-form": "updateAccount",
         "click .unlink-button": "unlinkAccount",
         "click #delete-account-button": "deleteAccount"
     },
@@ -25,6 +26,8 @@ var MeView = Backbone.View.extend({
 
                 self.$updateAccountEmailInput = $("#update-account-email-input");
                 self.$updateAccountNameInput = $("#update-account-name-input");
+                self.$changePasswordNewPasswordInput = $("#change-password-new-password-input");
+                self.$changePasswordConfirmPasswordInput = $("#change-password-confirm-password-input");
             },
             error: function (error) {
                 alert(error);
@@ -34,12 +37,33 @@ var MeView = Backbone.View.extend({
     updateAccount: function (event) {
         event.preventDefault();
 
-        authController.updateAccount({
-            data: {
+        var data;
+        if (event.target.id == "update-account-form") {
+            data = {
                 email: this.$updateAccountEmailInput.val().trim(),
                 name: this.$updateAccountNameInput.val().trim()
-            },
+            };
+        } else if (event.target.id == "change-password-form") {
+            var newPassword = this.$changePasswordNewPasswordInput.val().trim();
+            var confirmPassword = this.$changePasswordConfirmPasswordInput.val().trim();
+
+            console.log(newPassword);
+            console.log(confirmPassword);
+
+            if (newPassword != confirmPassword) {
+                alert("Passwords do not match");
+                return;
+            } else {
+                data = {
+                    password: newPassword
+                }
+            }
+        }
+
+        authController.updateAccount({
+            data: data,
             success: function () {
+                console.log("PW CHANGED");
                 Backbone.history.loadUrl();
             },
             error: function (error) {
