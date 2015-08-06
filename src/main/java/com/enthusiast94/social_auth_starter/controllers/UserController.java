@@ -102,6 +102,7 @@ public class UserController {
                     HashMap<String, String> bodyParams = Helpers.bodyParams(req.body());
                     String email = bodyParams.get("email");
                     String name = bodyParams.get("name");
+                    String password = bodyParams.get("password");
 
                     // Only validate email if it not null AND not the same as the current email address.
                     // This makes sure that the check to ensure that no other users have the same email address
@@ -122,6 +123,15 @@ public class UserController {
                         }
 
                         user.setName(name);
+                    }
+
+                    if (password != null) {
+                        String passwordError = userService.validatePassword(password);
+                        if (passwordError != null) {
+                            return new ApiResponse(500, passwordError, null);
+                        }
+
+                        user.setPassword(userService.hashPassword(password));
                     }
 
                     userService.updateUser(user);
@@ -229,7 +239,7 @@ public class UserController {
                     if (requestedUser == null) return new ApiResponse(401, "Incorrect credentials", null);
 
                     // check if the sent password matches the stored password hash
-                    if (!userService.doesPasswordMatch(password, requestedUser.getPasswordHash()))
+                    if (!userService.doesPasswordMatch(password, requestedUser.getPassword()))
                         return new ApiResponse(401, "Incorrect credentials", null);
 
                     // if an access token already exists, simply return it, else create a new one
