@@ -37,10 +37,10 @@ public class UserService {
                 .get();
     }
 
-    public User createUser(String email, String name, String password) {
+    public User createUser(String email, String name, String avatar, String password) {
         String hashedPassword = hashPassword(password);
 
-        User user = new User(email, name, hashedPassword);
+        User user = new User(email, name, avatar, hashedPassword);
         db.save(user);
 
         return user;

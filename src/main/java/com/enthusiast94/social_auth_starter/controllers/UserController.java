@@ -67,7 +67,7 @@ public class UserController {
                         return new ApiResponse(500, passwordError, null);
                     }
 
-                    User user = userService.createUser(email, name, password);
+                    User user = userService.createUser(email, name, Helpers.getGravatar(email), password);
 
                     AccessToken accessToken = accessTokenService.createAccessToken(user.getId());
 
@@ -162,6 +162,7 @@ public class UserController {
                     responseMap.put("id", requestedUser.getId());
                     responseMap.put("email", requestedUser.getEmail());
                     responseMap.put("name", requestedUser.getName());
+                    responseMap.put("avatar", requestedUser.getAvatar());
 
                     // if user id mapped to the provided access token matches the requested user id, then attach some
                     // extra information to the response

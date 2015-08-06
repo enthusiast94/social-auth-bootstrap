@@ -15,17 +15,19 @@ public class User {
     private String id;
     private String email;
     private String name;
+    private String avatar;
     private String password;
 
     public User() {
         // empty constructor required by Morphia for querying
     }
 
-    public User(String username, String name, String password) {
+    public User(String email, String name, String avatar, String password) {
         id = new ObjectId().toString();
 
-        this.email = username;
+        this.email = email;
         this.name = name;
+        this.avatar = avatar;
         this.password = password;
     }
 
@@ -51,6 +53,14 @@ public class User {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public String getAvatar() {
+        return avatar;
+    }
+
+    public void setAvatar(String avatar) {
+        this.avatar = avatar;
     }
 
     public String getPassword() {

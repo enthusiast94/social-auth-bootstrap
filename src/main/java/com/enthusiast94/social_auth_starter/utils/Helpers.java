@@ -2,6 +2,7 @@ package com.enthusiast94.social_auth_starter.utils;
 
 import com.enthusiast94.social_auth_starter.models.AccessToken;
 import com.enthusiast94.social_auth_starter.services.AccessTokenService;
+import org.apache.commons.codec.digest.DigestUtils;
 import spark.Request;
 
 import java.io.BufferedReader;
@@ -11,6 +12,7 @@ import java.io.UnsupportedEncodingException;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLDecoder;
+import java.security.MessageDigest;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.regex.Matcher;
@@ -145,5 +147,9 @@ public class Helpers {
 
         // add access token to attributes list so that it can be reused by other routes
         req.attribute("accessToken", accessToken);
+    }
+
+    public static String getGravatar(String email) {
+        return "http://www.gravatar.com/avatar/" + DigestUtils.md5Hex(email.toLowerCase());
     }
 }

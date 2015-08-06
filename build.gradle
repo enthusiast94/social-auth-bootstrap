@@ -19,4 +19,5 @@ dependencies {
     compile 'com.google.code.gson:gson:2.3.1'
     compile 'org.mindrot:jbcrypt:0.3m'
     compile 'commons-validator:commons-validator:1.4.1'
+    compile 'commons-codec:commons-codec:1.10'
 }
