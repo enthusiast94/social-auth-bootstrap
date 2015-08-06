@@ -25,6 +25,7 @@ public class OAuthStrategyFactory {
         strategies.put(GoogleOAuthStrategy.PROVIDER_NAME, new GoogleOAuthStrategy(userService, accessTokenService, linkedAccountService));
         strategies.put(GithubOAuthStrategy.PROVIDER_NAME, new GithubOAuthStrategy(userService, accessTokenService, linkedAccountService));
         strategies.put(FacebookOAuthStrategy.PROVIDER_NAME, new FacebookOAuthStrategy(userService, accessTokenService, linkedAccountService));
+        strategies.put(LinkedinOAuthStrategy.PROVIDER_NAME, new LinkedinOAuthStrategy(userService, accessTokenService, linkedAccountService));
     }
 
     public OAuthStrategy getStrategy(String name) {
