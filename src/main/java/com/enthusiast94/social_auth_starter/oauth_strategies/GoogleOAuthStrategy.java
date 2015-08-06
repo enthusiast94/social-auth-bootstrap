@@ -49,7 +49,7 @@ public class GoogleOAuthStrategy extends OAuthStrategy {
             HashMap<String, String> parsedTokenResponse = parseAccessToken(tokenResponse);
 
             // get required user info
-            String userResponse = Helpers.httpGet(USER_ENDPOINT, parsedTokenResponse);
+            String userResponse = Helpers.httpGet(USER_ENDPOINT, parsedTokenResponse, null);
             HashMap<String, String> parsedUserResponse = parseUserInfo(userResponse);
 
             // generate access token for user

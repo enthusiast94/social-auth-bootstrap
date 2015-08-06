@@ -47,7 +47,7 @@ public class FacebookOAuthStrategy extends OAuthStrategy {
 
             // get required user info
             parsedTokenResponse.put("fields", "name,email");
-            String userResponse = Helpers.httpGet(USER_ENDPOINT, parsedTokenResponse);
+            String userResponse = Helpers.httpGet(USER_ENDPOINT, parsedTokenResponse, null);
             HashMap<String, String> parsedUserResponse = parseUserInfo(userResponse);
 
             // generate access token for user

@@ -59,7 +59,7 @@ public class Helpers {
         return paramsString;
     }
 
-    public static String httpGet(String urlString, Map<String, String> queryParams) throws Exception {
+    public static String httpGet(String urlString, Map<String, String> queryParams, Map<String, String> headers) throws Exception {
         // add query params to url
         urlString += "?" + stringifyParams(queryParams);
 
@@ -68,6 +68,11 @@ public class Helpers {
         HttpURLConnection conn = (HttpURLConnection) url.openConnection();
         conn.setRequestMethod("GET");
         conn.setRequestProperty("Accept", "application/json");
+        if (headers != null) {
+            for (String key : headers.keySet()) {
+                conn.setRequestProperty(key, headers.get(key));
+            }
+        }
 
         // read response
         BufferedReader reader = new BufferedReader(new InputStreamReader(conn.getInputStream()));
