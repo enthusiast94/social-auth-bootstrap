@@ -63,8 +63,10 @@ public class UserService {
             return "Email must be at least 6 characters long";
         }
 
-        if (Pattern.compile("[^a-zA-Z0-9_@.]").matcher(email).find()) {
-            return "Email cannot contain special characters other than underscore";
+        String emailPattern =
+                "^[_A-Za-z0-9-\\+]+(\\.[_A-Za-z0-9-]+)*@[A-Za-z0-9-]+(\\.[A-Za-z0-9]+)*(\\.[A-Za-z]{2,})$";
+        if (!Pattern.compile(emailPattern).matcher(email).find()) {
+            return "Invalid email address format";
         }
 
         // check if another user already exists with same email
