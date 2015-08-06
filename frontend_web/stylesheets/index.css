@@ -16,3 +16,9 @@
     width: 70px;
     height: 70px;
 }
+
+#avatar-nav {
+    width: 25px;
+    height: 25px;
+    margin: -17px 2px -15px 0;
+}
