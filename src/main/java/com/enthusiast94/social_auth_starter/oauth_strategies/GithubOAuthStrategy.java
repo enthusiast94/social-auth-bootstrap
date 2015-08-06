@@ -50,7 +50,7 @@ public class GithubOAuthStrategy extends OAuthStrategy {
             HashMap<String, String> parsedUserResponse = parseUserInfo(userResponse);
 
             // generate access token for user
-            AccessToken accessToken = generateAccessToken(PROVIDER_NAME, parsedTokenResponse.get("access_token"), parsedUserResponse.get("email"), parsedUserResponse.get("name"));
+            AccessToken accessToken = generateAccessToken(PROVIDER_NAME, parsedTokenResponse.get("access_token"), parsedUserResponse.get("email"), parsedUserResponse.get("name"), parsedUserResponse.get("avatar"));
 
             responseParams.put("userId", accessToken.getUserId());
             responseParams.put("accessToken", accessToken.getValue());
@@ -90,6 +90,11 @@ public class GithubOAuthStrategy extends OAuthStrategy {
 
         parsed.put("email", json.get("email").getAsString());
         parsed.put("name", json.get("name").getAsString());
+        try {
+            parsed.put("avatar", json.get("avatar_url").getAsString());
+        } catch (NullPointerException e) {
+            parsed.put("avatar", null);
+        }
 
         return parsed;
     }

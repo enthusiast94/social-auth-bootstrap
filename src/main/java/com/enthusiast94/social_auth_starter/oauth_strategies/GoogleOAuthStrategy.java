@@ -53,7 +53,7 @@ public class GoogleOAuthStrategy extends OAuthStrategy {
             HashMap<String, String> parsedUserResponse = parseUserInfo(userResponse);
 
             // generate access token for user
-            AccessToken accessToken = generateAccessToken(PROVIDER_NAME, parsedTokenResponse.get("access_token"), parsedUserResponse.get("email"), parsedUserResponse.get("name"));
+            AccessToken accessToken = generateAccessToken(PROVIDER_NAME, parsedTokenResponse.get("access_token"), parsedUserResponse.get("email"), parsedUserResponse.get("name"), parsedUserResponse.get("avatar"));
 
             responseParams.put("userId", accessToken.getUserId());
             responseParams.put("accessToken", accessToken.getValue());
@@ -102,6 +102,14 @@ public class GoogleOAuthStrategy extends OAuthStrategy {
                 break;
             }
         }
+
+         JsonObject imageJson = json.getAsJsonObject("image");
+         if (imageJson != null) {
+             JsonElement avatar = imageJson.get("url");
+             if (avatar != null) {
+                 parsed.put("avatar", avatar.getAsString());
+             }
+         }
 
         return parsed;
     }

@@ -6,6 +6,7 @@ import com.enthusiast94.social_auth_starter.models.User;
 import com.enthusiast94.social_auth_starter.services.AccessTokenService;
 import com.enthusiast94.social_auth_starter.services.LinkedAccountService;
 import com.enthusiast94.social_auth_starter.services.UserService;
+import com.enthusiast94.social_auth_starter.utils.Helpers;
 
 import java.util.HashMap;
 import java.util.List;
@@ -37,7 +38,7 @@ public abstract class OAuthStrategy {
 
     protected abstract HashMap<String, String> parseUserInfo(String response);
 
-    protected AccessToken generateAccessToken(String providerName, String providerAccessToken, String email, String name) {
+    protected AccessToken generateAccessToken(String providerName, String providerAccessToken, String email, String name, String avatar) {
         AccessToken accessToken;
 
         List<LinkedAccount> linkedAccounts = linkedAccountService.getLinkedAccountsByEmail(email);
@@ -56,6 +57,12 @@ public abstract class OAuthStrategy {
 
             if (!alreadyLinkedWithSameProvider) {
                 linkedAccountService.createLinkedAccount(user.getId(), providerName, providerAccessToken, name, email);
+
+                // update user avatar
+                if (avatar != null) {
+                    user.setAvatar(avatar);
+                    userService.updateUser(user);
+                }
             }
 
             // if an access token already exists, simply return it, else create a new one
@@ -69,13 +76,24 @@ public abstract class OAuthStrategy {
             User user2 = userService.getUserByEmail(email);
 
             if (user2 != null) {
+                // update user avatar
+                if (avatar != null) {
+                    user2.setAvatar(avatar);
+                    userService.updateUser(user2);
+                }
+
                 // if an access token already exists, simply return it, else create a new one
                 accessToken = accessTokenService.getAccessTokenByUserId(user2.getId());
                 if (accessToken == null) {
                     accessToken = accessTokenService.createAccessToken(user2.getId());
                 }
             } else {
-                user2 = userService.createUser(email, name, USER_PASSWORD);
+                if (avatar != null) {
+                    user2 = userService.createUser(email, name, avatar, USER_PASSWORD);
+                } else {
+                    user2 = userService.createUser(email, name, Helpers.getGravatar(email), USER_PASSWORD);
+                }
+
                 accessToken = accessTokenService.createAccessToken(user2.getId());
             }
 

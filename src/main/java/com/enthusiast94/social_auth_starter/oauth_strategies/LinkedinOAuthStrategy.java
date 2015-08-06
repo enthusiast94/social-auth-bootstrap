@@ -22,7 +22,7 @@ public class LinkedinOAuthStrategy extends OAuthStrategy {
     private static final String REDIRECT_URI = SERVER_REDIRECT_URI_BASE + "/linkedin";
     private static final String AUTH_ENDPOINT = "https://www.linkedin.com/uas/oauth2/authorization";
     private static final String TOKEN_ENDPOINT = "https://www.linkedin.com/uas/oauth2/accessToken";
-    private static final String USER_ENDPOINT = "https://api.linkedin.com/v1/people/~:(email-address,first-name,last-name)";
+    private static final String USER_ENDPOINT = "https://api.linkedin.com/v1/people/~:(email-address,first-name,last-name,picture-url)";
 
     public LinkedinOAuthStrategy(UserService userService, AccessTokenService accessTokenService, LinkedAccountService linkedAccountService) {
         super(userService, accessTokenService, linkedAccountService);
@@ -55,7 +55,7 @@ public class LinkedinOAuthStrategy extends OAuthStrategy {
             HashMap<String, String> parsedUserResponse = parseUserInfo(userResponse);
 
             // generate access token for user
-            AccessToken accessToken = generateAccessToken(PROVIDER_NAME, parsedTokenResponse.get("access_token"), parsedUserResponse.get("email"), parsedUserResponse.get("name"));
+            AccessToken accessToken = generateAccessToken(PROVIDER_NAME, parsedTokenResponse.get("access_token"), parsedUserResponse.get("email"), parsedUserResponse.get("name"), parsedUserResponse.get("avatar"));
 
             responseParams.put("userId", accessToken.getUserId());
             responseParams.put("accessToken", accessToken.getValue());
@@ -97,6 +97,11 @@ public class LinkedinOAuthStrategy extends OAuthStrategy {
 
         parsed.put("email", json.get("emailAddress").getAsString());
         parsed.put("name", json.get("firstName").getAsString() + " " + json.get("lastName").getAsString());
+        try {
+            parsed.put("avatar", json.get("pictureUrl").getAsString());
+        } catch (NullPointerException e) {
+            parsed.put("avatar", null);
+        }
 
         return parsed;
     }
