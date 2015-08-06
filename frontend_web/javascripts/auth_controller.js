@@ -7,11 +7,12 @@ var API_BASE = "http://localhost:3000";
 
 var authController = {
     basicAuth: function (options) {
+        var self = this;
+
         var types = {
             "new": API_BASE + "/users/create",
             "existing": API_BASE + "/auth"
         };
-
 
         if (Object.keys(types).indexOf(options.type) == -1) {
             throw new Error("Invalid userType provided. Allowed values are: " + Object.keys(types));
@@ -24,15 +25,16 @@ var authController = {
             data: options.data,
             success: function (response) {
                 if (response.status == 200) {
-                    localStorage.setItem(
-                        "user",
-                        JSON.stringify({
-                            userId: response.data.userId,
-                            accessToken: response.data.accessToken
-                        })
-                    );
-
-                    if (options.success) options.success();
+                    self.getUser({
+                        userId: response.data.userId,
+                        accessToken: response.data.accessToken,
+                        success: function (user) {
+                            if (options.success) options.success();
+                        },
+                        error: function (error) {
+                            if (options.error) options.error(error);
+                        }
+                    });
                 } else {
                     if (options.error) options.error(response.error);
                 }
@@ -40,15 +42,16 @@ var authController = {
         });
     },
     oauth: function (options) {
-        localStorage.setItem(
-            "user",
-            JSON.stringify({
-                userId: options.userId,
-                accessToken: options.accessToken
-            })
-        );
-
-        if (options.success) options.success();
+        this.getUser({
+            userId: options.userId,
+            accessToken: options.accessToken,
+            success: function (user) {
+                if (options.success) options.success();
+            },
+            error: function (error) {
+                if (options.error) options.error(error);
+            }
+        });
     },
     deauth: function (options) {
         var user = this.getUserFromCache();
@@ -132,18 +135,32 @@ var authController = {
             }
         });
     },
+    /**
+     * Gets currently authenticated user and saves it in cache. If this method is invoked when there is no authenticated user in cache, then
+     * userId and accessToken of the newly authenticated user must be a part of the provided options object.
+     */
     getUser: function (options) {
         var user = this.getUserFromCache();
 
         $.ajax({
-            url: API_BASE + "/users/" + user.userId,
+            url: user ? API_BASE + "/users/" + user.userId : API_BASE + "/users/" + options.userId,
             method: "GET",
             dataType: "json",
             beforeSend: function (jqXHR) {
-                jqXHR.setRequestHeader("Authorization", "Token " + user.accessToken);
+                jqXHR.setRequestHeader("Authorization", user ? "Token " + user.accessToken : "Token " + options.accessToken);
             },
             success: function (response) {
                 if (response.status == 200) {
+                    localStorage.setItem(
+                        "user",
+                        JSON.stringify({
+                            userId: user ? user.userId : options.userId,
+                            accessToken: user ? user.accessToken : options.accessToken,
+                            userName: response.data.name,
+                            userAvatar: response.data.avatar
+                        })
+                    );
+
                     if (options.success) options.success(response.data);
                 } else {
                     if (options.error) options.error(response.error);
