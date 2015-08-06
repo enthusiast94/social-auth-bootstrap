@@ -47,9 +47,6 @@ var MeView = Backbone.View.extend({
             var newPassword = this.$changePasswordNewPasswordInput.val().trim();
             var confirmPassword = this.$changePasswordConfirmPasswordInput.val().trim();
 
-            console.log(newPassword);
-            console.log(confirmPassword);
-
             if (newPassword != confirmPassword) {
                 alert("Passwords do not match");
                 return;
@@ -63,7 +60,6 @@ var MeView = Backbone.View.extend({
         authController.updateAccount({
             data: data,
             success: function () {
-                console.log("PW CHANGED");
                 Backbone.history.loadUrl();
             },
             error: function (error) {
