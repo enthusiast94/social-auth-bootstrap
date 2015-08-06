@@ -37,7 +37,7 @@ public class UserService {
     }
 
     public User createUser(String email, String name, String password) {
-        String hashedPassword = BCrypt.hashpw(password, BCrypt.gensalt());
+        String hashedPassword = hashPassword(password);
 
         User user = new User(email, name, hashedPassword);
         db.save(user);
@@ -107,5 +107,9 @@ public class UserService {
 
     public boolean doesPasswordMatch(String password, String passwordHash) {
         return BCrypt.checkpw(password, passwordHash);
+    }
+
+    public String hashPassword(String password) {
+        return BCrypt.hashpw(password, BCrypt.gensalt());
     }
 }
