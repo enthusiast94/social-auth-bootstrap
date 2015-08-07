@@ -8,7 +8,7 @@ import org.mongodb.morphia.annotations.Id;
  * Created by manas on 05-08-2015.
  */
 
-@Entity("linked_account")
+@Entity("linked_accounts")
 public class LinkedAccount {
 
     @Id
