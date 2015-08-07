@@ -12,6 +12,7 @@ var navView = require("./views/nav");
 var homeView = require("./views/home");
 var createAccountView = require("./views/create_account");
 var authController = require("./auth_controller");
+var Notification = require("./views/notification");
 
 var AppRouter = Backbone.Router.extend({
     routes: {
@@ -60,10 +61,20 @@ var AppRouter = Backbone.Router.extend({
                     self.navigate("me", true);
 
                     $(document).trigger("authenticated");
+
+                    new Notification({
+                        $container: $("#notifications"),
+                        message: "Logged in as: <strong>" + authController.getUserFromCache().userName + "</strong>",
+                        style: "info"
+                    }).notify("show");
                 }
             });
         } else {
-            alert(params.error);
+            new Notification({
+                $container: $("#notifications"),
+                message: "<strong>Error! </strong>" + params.error,
+                style: "danger"
+            }).notify("show");
         }
 
     },
@@ -76,7 +87,11 @@ var AppRouter = Backbone.Router.extend({
                     $(document).trigger("deauthenticated");
                 },
                 error: function (error) {
-                    alert(error);
+                    new Notification({
+                        $container: $("#notifications"),
+                        message: "<strong>Error! </strong>" + error,
+                        style: "danger"
+                    }).notify("show");;
                 }
             });
         } else {

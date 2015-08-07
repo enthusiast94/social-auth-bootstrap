@@ -6,6 +6,7 @@ var Backbone = require("Backbone");
 var $ = require("jquery");
 var swig = require("swig");
 var authController = require("../auth_controller");
+var Notification = require("./notification");
 
 var MeView = Backbone.View.extend({
     el: "#content",
@@ -30,7 +31,11 @@ var MeView = Backbone.View.extend({
                 self.$changePasswordConfirmPasswordInput = $("#change-password-confirm-password-input");
             },
             error: function (error) {
-                alert(error);
+                new Notification({
+                    $container: $("#notifications"),
+                    message: "<strong>Error! </strong>" + error,
+                    style: "danger"
+                }).notify("show");
             }
         });
     },
@@ -48,7 +53,11 @@ var MeView = Backbone.View.extend({
             var confirmPassword = this.$changePasswordConfirmPasswordInput.val().trim();
 
             if (newPassword != confirmPassword) {
-                alert("Passwords do not match");
+                new Notification({
+                    $container: $("#notifications"),
+                    message: "<strong>Error! </strong> Passwords do not match!",
+                    style: "danger"
+                }).notify("show");
                 return;
             } else {
                 data = {
@@ -61,9 +70,19 @@ var MeView = Backbone.View.extend({
             data: data,
             success: function () {
                 Backbone.history.loadUrl();
+
+                new Notification({
+                    $container: $("#notifications"),
+                    message: "<strong>Success! </strong>Account information successfully updated.",
+                    style: "success"
+                }).notify("show");
             },
             error: function (error) {
-                alert(error);
+                new Notification({
+                    $container: $("#notifications"),
+                    message: "<strong>Error! </strong>" + error,
+                    style: "danger"
+                }).notify("show");
             }
         });
     },
@@ -86,9 +105,19 @@ var MeView = Backbone.View.extend({
                 providerName: providerName,
                 success: function () {
                     Backbone.history.loadUrl();
+
+                    new Notification({
+                        $container: $("#notifications"),
+                        message: "<strong>Success! </strong>" + providerName + " account successfully delinked.",
+                        style: "success"
+                    }).notify("show");
                 },
                 error: function (error) {
-                    alert(error);
+                    new Notification({
+                        $container: $("#notifications"),
+                        message: "<strong>Error! </strong>" + error,
+                        style: "danger"
+                    }).notify("show");
                 }
             });
         }
@@ -99,9 +128,19 @@ var MeView = Backbone.View.extend({
                 Backbone.history.navigate("home", {trigger: true});
 
                 $(document).trigger("deauthenticated");
+
+                new Notification({
+                    $container: $("#notifications"),
+                    message: "<strong>Success! </strong> Account successfully deleted.",
+                    style: "success"
+                }).notify("show");
             },
             error: function (error) {
-                alert(error)
+                new Notification({
+                    $container: $("#notifications"),
+                    message: "<strong>Error! </strong>" + error,
+                    style: "danger"
+                }).notify("show");
             }
         });
     }

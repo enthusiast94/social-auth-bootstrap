@@ -6,6 +6,7 @@ var Backbone = require("Backbone");
 var $ = require("jquery");
 var authController = require("../auth_controller");
 var swig = require("swig");
+var Notification = require("./notification");
 
 var LoginView = Backbone.View.extend({
     el: "#content",
@@ -45,9 +46,19 @@ var LoginView = Backbone.View.extend({
                 Backbone.history.navigate("me", {trigger: true});
 
                 $(document).trigger("authenticated");
+
+                new Notification({
+                    $container: $("#notifications"),
+                    message: "Logged in as: <strong>" + authController.getUserFromCache().userName + "</strong>",
+                    style: "info"
+                }).notify("show");
             },
             error: function (error) {
-                alert(error);
+                new Notification({
+                    $container: $("#notifications"),
+                    message: "<strong>Error! </strong>" + error,
+                    style: "danger"
+                }).notify("show");
             }
         });
     }

@@ -6,6 +6,7 @@ var Backbone = require("Backbone");
 var $ = require("jquery");
 var swig = require("swig");
 var authController = require("../auth_controller");
+var Notification = require("./notification");
 
 var CreateAccountView = Backbone.View.extend({
     el: "#content",
@@ -31,7 +32,11 @@ var CreateAccountView = Backbone.View.extend({
         var confirmedPassword = this.$createAccountConfimPasswordInput.val().trim();
 
         if (password != confirmedPassword) {
-            alert("Passwords do not match");
+            new Notification({
+                $container: $("#notifications"),
+                message: "<strong>Error! </strong> Passwords do not match.",
+                style: "danger"
+            }).notify("show");
         } else {
             authController.basicAuth({
                 type: "new",
@@ -44,9 +49,19 @@ var CreateAccountView = Backbone.View.extend({
                     Backbone.history.navigate("me", {trigger: true});
 
                     $(document).trigger("authenticated");
+
+                    new Notification({
+                        $container: $("#notifications"),
+                        message: "Logged in as: <strong>" + authController.getUserFromCache().userName + "</strong>",
+                        style: "info"
+                    }).notify("show");
                 },
                 error: function (error) {
-                    alert(error);
+                    new Notification({
+                        $container: $("#notifications"),
+                        message: "<strong>Error! </strong>" + error,
+                        style: "danger"
+                    }).notify("show");
                 }
             });
         }
