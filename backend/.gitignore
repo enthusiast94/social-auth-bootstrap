@@ -5,11 +5,5 @@
 # gradle
 .gradle/
 
-# mongodb
-data/
-
 # auto genererated java files
 build/
-
-# batch scripts
-start.bat

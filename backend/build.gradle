@@ -1,12 +1,9 @@
-group 'com.enthusiast94.social-auth-starter'
+group 'social-auth-starter'
 version '1.0-SNAPSHOT'
 
 apply plugin: 'java'
-apply plugin: 'application'
 
 sourceCompatibility = 1.8
-
-mainClassName = 'com.enthusiast94.social_auth_starter.Main'
 
 repositories {
     mavenCentral()
