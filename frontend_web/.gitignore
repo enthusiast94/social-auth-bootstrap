@@ -1,3 +1,4 @@
 node_modules/
 javascripts/npm-debug.log
 javascripts/main.min.js
+.idea/
