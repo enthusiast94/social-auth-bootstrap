@@ -2,6 +2,9 @@ group 'social-auth-starter'
 version '1.0-SNAPSHOT'
 
 apply plugin: 'java'
+apply plugin: 'application'
+
+mainClassName = "com.enthusiast94.social_auth_starter.Main"
 
 sourceCompatibility = 1.8
 
