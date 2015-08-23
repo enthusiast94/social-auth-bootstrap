@@ -8,4 +8,10 @@
     <color name="secondary_text">#727272</color>
     <color name="icons">#FFFFFF</color>
     <color name="divider">#B6B6B6</color>
+    <color name="edittext_underline">#B6B6B6</color>
+    <color name="edittext_hint">#B6B6B6</color>
+    <color name="google">#d34836</color>
+    <color name="facebook">#3b5998</color>
+    <color name="github">#444</color>
+    <color name="linkedin">#007bb6</color>
 </resources>

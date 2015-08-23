@@ -10,9 +10,13 @@
     <string name="hint_name">Name</string>
     <string name="hint_confirm_password">Confirm password</string>
     <string name="button_create_account">Submit</string>
-    <string name="button_login">Submit</string>
+    <string name="button_login">Login</string>
     <string name="button_google_login">Login with Google</string>
     <string name="button_facebook_login">Login with Facebook</string>
     <string name="button_github_login">Login with Github</string>
     <string name="button_linkedin_login">Login with Linkedin</string>
+    <string name="error_base">Error:\u0020</string>
+    <string name="error_required_field">This field is required</string>
+    <string name="error_invalid_email">Invalid email address format</string>
+    <string name="error_short_password">Password must be at least 8 characters long</string>
 </resources>
