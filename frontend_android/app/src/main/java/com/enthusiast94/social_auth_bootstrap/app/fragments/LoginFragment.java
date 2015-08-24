@@ -3,7 +3,6 @@ package com.enthusiast94.social_auth_bootstrap.app.fragments;
 import android.os.Bundle;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
-import android.util.Patterns;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -14,7 +13,11 @@ import android.widget.ProgressBar;
 import com.enthusiast94.social_auth_bootstrap.app.R;
 import com.enthusiast94.social_auth_bootstrap.app.network.AuthManager;
 import com.enthusiast94.social_auth_bootstrap.app.network.Callback;
+import com.enthusiast94.social_auth_bootstrap.app.utils.Helpers;
 import org.json.JSONObject;
+
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Created by manas on 22-08-2015.
@@ -74,19 +77,29 @@ public class LoginFragment extends Fragment {
 
             @Override
             public void onClick(View view) {
+                Helpers.hideSoftKeyboard(getActivity(), rootView.getWindowToken());
+
                 String email = emailEditText.getText().toString().trim();
                 String password = passwordEditText.getText().toString().trim();
 
-                if (email.length() == 0) {
-                    emailEditText.setError(getResources().getString(R.string.error_required_field));
-                } else if (password.length() == 0) {
-                    passwordEditText.setError(getResources().getString(R.string.error_required_field));
-                } else if (!Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
-                    emailEditText.setError(getResources().getString(R.string.error_invalid_email));
-                } else if (password.length() < 8) {
-                    passwordEditText.setError(getResources().getString(R.string.error_short_password));
-                } else {
-                    AuthManager.basicAuth(email, password, "existing", new Callback() {
+                String emailError = Helpers.validateEmail(email, getResources());
+                String passwordError = Helpers.validatePassword(password, getResources());
+
+                if (emailError != null) {
+                    emailEditText.setError(emailError);
+                }
+
+                if (passwordError != null) {
+                    passwordEditText.setError(passwordError);
+                }
+
+                // if all input validations pass, send request to server
+                if (emailError == null && passwordError == null) {
+                    Map<String, String> userDetails = new HashMap<String, String>();
+                    userDetails.put("email", email);
+                    userDetails.put("password", password);
+
+                    AuthManager.basicAuth(userDetails, "existing", new Callback() {
                         @Override
                         public void onSuccess(JSONObject data) {
                             Snackbar.make(rootView, "success", Snackbar.LENGTH_SHORT).show();

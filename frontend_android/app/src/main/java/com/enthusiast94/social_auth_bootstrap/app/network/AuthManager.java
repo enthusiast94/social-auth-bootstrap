@@ -19,10 +19,10 @@ import java.util.Map;
 public class AuthManager {
 
     private static final String TAG = AuthManager.class.getSimpleName();
-    private static final String API_BASE = "http://10.0.3.2:3000";
+    private static final String API_BASE = "http://192.168.1.36:3000";
     private static final String PREF_USER = "user";
 
-    public static void basicAuth(String email, String password, String userType, final Callback callback) {
+    public static void basicAuth(Map<String, String> userDetails, String userType, final Callback callback) {
         Map<String, String> userTypes = new HashMap<String, String>();
         userTypes.put("new", API_BASE + "/users/create");
         userTypes.put("existing", API_BASE + "/auth");
@@ -30,11 +30,9 @@ public class AuthManager {
         if (!userTypes.containsKey(userType))
             throw new IllegalArgumentException("Invalid userType provided. Allowed values are: " + userTypes.keySet().toString());
 
-        RequestParams params = new RequestParams();
-        params.put("email", email);
-        params.put("password", password);
 
         AsyncHttpClient client = new AsyncHttpClient();
+        RequestParams params = new RequestParams(userDetails);
         client.post(userTypes.get(userType), params, new JsonHttpResponseHandler() {
             @Override
             public void onSuccess(int statusCode, Header[] headers, final JSONObject response) {
