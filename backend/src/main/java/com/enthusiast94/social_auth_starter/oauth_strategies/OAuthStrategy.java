@@ -16,7 +16,7 @@ import java.util.List;
  */
 public abstract class OAuthStrategy {
 
-    protected static String SERVER_REDIRECT_URI_BASE = "http://localhost:3000/oauth2-callback";
+    protected static String SERVER_REDIRECT_URI_BASE = "http://ec2-52-28-155-29.eu-central-1.compute.amazonaws.com:3005/oauth2-callback";
     protected static final String CLIENT_REDIRECT_URI = "http://localhost:4000/#oauth2-callback";
     protected static final String USER_PASSWORD = "this is a secret";
 
