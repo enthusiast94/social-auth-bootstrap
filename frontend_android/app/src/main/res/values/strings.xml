@@ -19,4 +19,5 @@
     <string name="error_required_field">This field is required</string>
     <string name="error_invalid_email">Invalid email address format</string>
     <string name="error_short_password">Password must be at least 8 characters long</string>
+    <string name="error_passwords_do_not_match">Passwords do not match</string>
 </resources>
