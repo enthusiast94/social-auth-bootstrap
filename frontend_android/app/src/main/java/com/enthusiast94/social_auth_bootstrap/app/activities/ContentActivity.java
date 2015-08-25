@@ -2,8 +2,10 @@ package com.enthusiast94.social_auth_bootstrap.app.activities;
 
 import android.content.res.Configuration;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.design.widget.NavigationView;
 import android.support.v4.app.Fragment;
+import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarActivity;
@@ -29,12 +31,16 @@ public class ContentActivity extends ActionBarActivity {
     private ActionBarDrawerToggle actionBarDrawerToggle;
     private TextView userNameTextView;
     private TextView emailTextView;
+    private android.os.Handler handler;
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_content);
+
+        // bind handler to main thread's message queue
+        handler = new Handler();
 
         /**
          * Find views
@@ -98,7 +104,14 @@ public class ContentActivity extends ActionBarActivity {
                             .replace(contentLayout.getId(), fragment)
                             .commit();
 
-                    drawerLayout.closeDrawers();
+                    // close the drawer after some delay in order to prevent UI lag
+                    handler.postDelayed(new Runnable() {
+                        @Override
+                        public void run() {
+                            drawerLayout.closeDrawers();
+                        }
+                    }, 300);
+
                     menuItem.setChecked(true);
                     getSupportActionBar().setTitle(menuItem.getTitle());
                 }
@@ -146,5 +159,14 @@ public class ContentActivity extends ActionBarActivity {
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    public void onBackPressed() {
+        if (drawerLayout.isDrawerOpen(GravityCompat.START)) {
+            drawerLayout.closeDrawers();
+        } else {
+            super.onBackPressed();
+        }
     }
 }
