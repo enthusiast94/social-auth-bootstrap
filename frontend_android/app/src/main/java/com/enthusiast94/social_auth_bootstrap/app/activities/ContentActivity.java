@@ -3,6 +3,7 @@ package com.enthusiast94.social_auth_bootstrap.app.activities;
 import android.content.res.Configuration;
 import android.os.Bundle;
 import android.support.design.widget.NavigationView;
+import android.support.v4.app.Fragment;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarActivity;
@@ -13,6 +14,8 @@ import android.view.MenuItem;
 import android.widget.FrameLayout;
 import android.widget.TextView;
 import com.enthusiast94.social_auth_bootstrap.app.R;
+import com.enthusiast94.social_auth_bootstrap.app.fragments.HomeFragment;
+import com.enthusiast94.social_auth_bootstrap.app.fragments.UserProfileFragment;
 import com.enthusiast94.social_auth_bootstrap.app.network.AuthManager;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -74,6 +77,40 @@ public class ContentActivity extends ActionBarActivity {
         } catch (JSONException e) {
             throw new RuntimeException(e);
         }
+
+        NavigationView.OnNavigationItemSelectedListener navigationItemSelectedListener = new NavigationView.OnNavigationItemSelectedListener() {
+            @Override
+            public boolean onNavigationItemSelected(MenuItem menuItem) {
+                Fragment fragment = null;
+
+                switch (menuItem.getItemId()) {
+                    case R.id.nav_home:
+                        fragment = new HomeFragment();
+                        break;
+                    case R.id.nav_user:
+                        fragment = new UserProfileFragment();
+                        break;
+                }
+
+                if (fragment != null) {
+                    getSupportFragmentManager()
+                            .beginTransaction()
+                            .replace(contentLayout.getId(), fragment)
+                            .commit();
+
+                    drawerLayout.closeDrawers();
+                    menuItem.setChecked(true);
+                    getSupportActionBar().setTitle(menuItem.getTitle());
+                }
+
+                return true;
+            }
+        };
+
+        navigationView.setNavigationItemSelectedListener(navigationItemSelectedListener);
+
+        // display home fragment on startup
+        navigationItemSelectedListener.onNavigationItemSelected(navigationView.getMenu().getItem(0));
 
     }
 
