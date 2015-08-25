@@ -14,11 +14,13 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.FrameLayout;
+import android.widget.ImageView;
 import android.widget.TextView;
 import com.enthusiast94.social_auth_bootstrap.app.R;
 import com.enthusiast94.social_auth_bootstrap.app.fragments.HomeFragment;
 import com.enthusiast94.social_auth_bootstrap.app.fragments.UserProfileFragment;
 import com.enthusiast94.social_auth_bootstrap.app.network.AuthManager;
+import com.squareup.picasso.Picasso;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -29,8 +31,9 @@ public class ContentActivity extends ActionBarActivity {
     private NavigationView navigationView;
     private Toolbar toolbar;
     private ActionBarDrawerToggle actionBarDrawerToggle;
-    private TextView userNameTextView;
+    private TextView nameTextView;
     private TextView emailTextView;
+    private ImageView avatarImageView;
     private android.os.Handler handler;
 
 
@@ -50,8 +53,9 @@ public class ContentActivity extends ActionBarActivity {
         contentLayout = (FrameLayout) findViewById(R.id.content_layout);
         navigationView = (NavigationView) findViewById(R.id.navigation_view);
         toolbar = (Toolbar) findViewById(R.id.app_bar);
-        userNameTextView = (TextView) navigationView.findViewById(R.id.textview_user_name);
+        nameTextView = (TextView) navigationView.findViewById(R.id.textview_name);
         emailTextView = (TextView) navigationView.findViewById(R.id.textview_email);
+        avatarImageView = (ImageView) navigationView.findViewById(R.id.imageview_avatar);
 
         /**
          * Setup AppBar
@@ -78,15 +82,16 @@ public class ContentActivity extends ActionBarActivity {
 
         JSONObject currentUser = AuthManager.getUserFromCache();
         try {
-            userNameTextView.setText(currentUser.getString("userName"));
+            nameTextView.setText(currentUser.getString("userName"));
             emailTextView.setText(currentUser.getString("userEmail"));
+            Picasso.with(this).load(currentUser.getString("userAvatar")).into(avatarImageView);
         } catch (JSONException e) {
             throw new RuntimeException(e);
         }
 
         NavigationView.OnNavigationItemSelectedListener navigationItemSelectedListener = new NavigationView.OnNavigationItemSelectedListener() {
             @Override
-            public boolean onNavigationItemSelected(MenuItem menuItem) {
+            public boolean onNavigationItemSelected(final MenuItem menuItem) {
                 Fragment fragment = null;
 
                 switch (menuItem.getItemId()) {
@@ -99,21 +104,23 @@ public class ContentActivity extends ActionBarActivity {
                 }
 
                 if (fragment != null) {
-                    getSupportFragmentManager()
-                            .beginTransaction()
-                            .replace(contentLayout.getId(), fragment)
-                            .commit();
+                    drawerLayout.closeDrawers();
 
                     // close the drawer after some delay in order to prevent UI lag
+                    final Fragment finalFragment = fragment;
                     handler.postDelayed(new Runnable() {
                         @Override
                         public void run() {
-                            drawerLayout.closeDrawers();
+                            getSupportFragmentManager()
+                                    .beginTransaction()
+                                    .setCustomAnimations(android.R.anim.fade_in, 0)
+                                    .replace(contentLayout.getId(), finalFragment)
+                                    .commit();
+                            getSupportActionBar().setTitle(menuItem.getTitle());
                         }
                     }, 300);
 
                     menuItem.setChecked(true);
-                    getSupportActionBar().setTitle(menuItem.getTitle());
                 }
 
                 return true;
@@ -135,26 +142,15 @@ public class ContentActivity extends ActionBarActivity {
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.menu_content, menu);
-        return true;
+        return super.onCreateOptionsMenu(menu);
     }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
-        int id = item.getItemId();
-
         // Pass the event to ActionBarDrawerToggle, if it returns
         // true, then it has handled the app icon touch event
+        // noinspection SimplifiableIfStatement
         if (actionBarDrawerToggle.onOptionsItemSelected(item)) {
-            return true;
-        }
-
-        //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
             return true;
         }
 
