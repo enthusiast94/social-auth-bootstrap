@@ -40,7 +40,7 @@
             android:layout_gravity="start"
             app:itemTextColor="@color/nav_item_text_color"
             app:itemIconTint="@color/nav_item_icon_tint"
-            app:itemBackground="?attr/selectableItemBackground"
+            app:itemBackground="@drawable/nav_item_background"
             app:menu="@menu/menu_nav"
             app:headerLayout="@layout/header_nav"
             />
