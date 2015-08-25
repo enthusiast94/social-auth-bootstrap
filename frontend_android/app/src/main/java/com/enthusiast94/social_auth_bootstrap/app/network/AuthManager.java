@@ -116,6 +116,7 @@ public class AuthManager {
 
                         JSONObject jsonToSave = new JSONObject();
                         jsonToSave.put("userId", userId);
+                        jsonToSave.put("userEmail", data.getString("email"));
                         jsonToSave.put("accessToken", accessToken);
                         jsonToSave.put("userName", data.getString("name"));
                         jsonToSave.put("userAvatar", data.getString("avatar"));

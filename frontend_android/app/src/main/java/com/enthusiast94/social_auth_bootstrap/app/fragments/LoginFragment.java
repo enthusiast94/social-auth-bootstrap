@@ -11,6 +11,7 @@ import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import com.enthusiast94.social_auth_bootstrap.app.R;
+import com.enthusiast94.social_auth_bootstrap.app.events.AuthenticatedEvent;
 import com.enthusiast94.social_auth_bootstrap.app.events.OauthLoginButtonClickedEvent;
 import com.enthusiast94.social_auth_bootstrap.app.network.AuthManager;
 import com.enthusiast94.social_auth_bootstrap.app.network.Callback;
@@ -116,7 +117,12 @@ public class LoginFragment extends Fragment {
                     AuthManager.basicAuth(userDetails, "existing", new Callback() {
                         @Override
                         public void onSuccess(JSONObject data) {
-                            Snackbar.make(rootView, "success", Snackbar.LENGTH_SHORT).show();
+                            try {
+                                String userName = AuthManager.getUserFromCache().getString("userName");
+                                EventBus.getDefault().post(new AuthenticatedEvent(userName));
+                            } catch (JSONException e) {
+                                e.printStackTrace();
+                            }
                         }
 
                         @Override

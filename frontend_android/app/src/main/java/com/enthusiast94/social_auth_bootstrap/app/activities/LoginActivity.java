@@ -1,5 +1,6 @@
 package com.enthusiast94.social_auth_bootstrap.app.activities;
 
+import android.content.Intent;
 import android.content.res.Resources;
 import android.os.Bundle;
 import android.support.design.widget.Snackbar;
@@ -15,7 +16,9 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.FrameLayout;
+import android.widget.Toast;
 import com.enthusiast94.social_auth_bootstrap.app.R;
+import com.enthusiast94.social_auth_bootstrap.app.events.AuthenticatedEvent;
 import com.enthusiast94.social_auth_bootstrap.app.events.OauthCallbackEvent;
 import com.enthusiast94.social_auth_bootstrap.app.events.OauthLoginButtonClickedEvent;
 import com.enthusiast94.social_auth_bootstrap.app.fragments.CreateAccountFragment;
@@ -24,6 +27,7 @@ import com.enthusiast94.social_auth_bootstrap.app.fragments.OauthHelperFragment;
 import com.enthusiast94.social_auth_bootstrap.app.network.AuthManager;
 import com.enthusiast94.social_auth_bootstrap.app.network.Callback;
 import de.greenrobot.event.EventBus;
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.HashMap;
@@ -41,34 +45,39 @@ public class LoginActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_login);
 
-        /**
-         * Find views
-         */
+        if (AuthManager.isAuthenticated()) {
+            startContentActivity();
+        } else {
+            setContentView(R.layout.activity_login);
 
-        rootView = (FrameLayout) findViewById(R.id.root_view);
-        toolbar = (Toolbar) findViewById(R.id.app_bar);
-        tabLayout = (TabLayout) findViewById(R.id.tab_layout);
-        viewPager = (ViewPager) findViewById(R.id.view_pager);
+            /**
+             * Find views
+             */
 
-        /**
-         * Setup AppBar
-         */
+            rootView = (FrameLayout) findViewById(R.id.root_view);
+            toolbar = (Toolbar) findViewById(R.id.app_bar);
+            tabLayout = (TabLayout) findViewById(R.id.tab_layout);
+            viewPager = (ViewPager) findViewById(R.id.view_pager);
 
-        setSupportActionBar(toolbar);
+            /**
+             * Setup AppBar
+             */
 
-        ActionBar appBar = getSupportActionBar();
-        if (appBar != null) {
-            appBar.setHomeButtonEnabled(true);
+            setSupportActionBar(toolbar);
+
+            ActionBar appBar = getSupportActionBar();
+            if (appBar != null) {
+                appBar.setHomeButtonEnabled(true);
+            }
+
+            /**
+             * Setup view pager to work with tabs
+             */
+
+            viewPager.setAdapter(new LoginPagerAdapter(getSupportFragmentManager(), getResources()));
+            tabLayout.setupWithViewPager(viewPager);
         }
-
-        /**
-         * Setup view pager to work with tabs
-         */
-
-        viewPager.setAdapter(new LoginPagerAdapter(getSupportFragmentManager(), getResources()));
-        tabLayout.setupWithViewPager(viewPager);
     }
 
     @Override
@@ -102,7 +111,12 @@ public class LoginActivity extends AppCompatActivity {
             AuthManager.oauth(userDetails, new Callback() {
                 @Override
                 public void onSuccess(JSONObject data) {
-                    Snackbar.make(rootView, "success", Snackbar.LENGTH_SHORT).show();
+                    try {
+                        String userName = AuthManager.getUserFromCache().getString("userName");
+                        EventBus.getDefault().post(new AuthenticatedEvent(userName));
+                    } catch (JSONException e) {
+                        throw new RuntimeException(e);
+                    }
                 }
 
                 @Override
@@ -121,6 +135,18 @@ public class LoginActivity extends AppCompatActivity {
                     Snackbar.LENGTH_SHORT
             ).show();
         }
+    }
+
+    public void onEventMainThread(AuthenticatedEvent event) {
+        Toast.makeText(this, getResources().getString(R.string.success_login_base) + event.getUserName(), Toast.LENGTH_LONG)
+                .show();
+        startContentActivity();
+    }
+
+    private void startContentActivity() {
+        Intent goToContentActivity = new Intent(this, ContentActivity.class);
+        startActivity(goToContentActivity);
+        finish();
     }
 
     @Override
