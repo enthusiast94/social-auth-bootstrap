@@ -4,6 +4,7 @@
         xmlns:tools="http://schemas.android.com/tools"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:fitsSystemWindows="true"
         tools:context="com.enthusiast94.social_auth_bootstrap.app.activities.ContentActivity"
         xmlns:app="http://schemas.android.com/apk/res-auto">
 
@@ -13,7 +14,15 @@
             android:orientation="vertical"
             >
 
-        <include layout="@layout/app_bar"/>
+        <android.support.design.widget.AppBarLayout
+                xmlns:android="http://schemas.android.com/apk/res/android"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                >
+
+            <include layout="@layout/app_bar"/>
+
+        </android.support.design.widget.AppBarLayout>
 
         <FrameLayout
                 android:id="@+id/content_layout"

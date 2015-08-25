@@ -7,12 +7,10 @@
     <color name="primary_text">#212121</color>
     <color name="secondary_text">#727272</color>
     <color name="icons">#FFFFFF</color>
-    <color name="divider">#cbcbcb</color>
-    <color name="edittext_underline">#cbcbcb</color>
-    <color name="edittext_hint">#cbcbcb</color>
+    <color name="divider">#bebebe</color>
+    <color name="edittext_underline">#bebebe</color>
     <color name="google">#d34836</color>
     <color name="facebook">#3b5998</color>
     <color name="github">#444</color>
     <color name="linkedin">#007bb6</color>
-    <color name="nav_background_checked">#f9f9f9</color>
 </resources>

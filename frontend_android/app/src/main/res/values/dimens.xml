@@ -13,5 +13,5 @@
     <dimen name="spacing_tiny">5dp</dimen>
 
     <dimen name="divider_height">1dp</dimen>
-    <dimen name="nav_header_height">192dp</dimen>
+    <dimen name="nav_header_height">180dp</dimen>
 </resources>

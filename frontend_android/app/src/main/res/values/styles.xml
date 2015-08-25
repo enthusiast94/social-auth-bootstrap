@@ -9,6 +9,9 @@
         <item name="colorPrimary">@color/primary</item>
         <item name="colorPrimaryDark">@color/primary_dark</item>
         <item name="colorAccent">@color/accent</item>
+    </style>
+
+    <style name="edittext_custom">
         <item name="colorControlNormal">@color/edittext_underline</item>
         <item name="android:textSize">@dimen/font_normal</item>
     </style>
