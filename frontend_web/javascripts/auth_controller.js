@@ -3,7 +3,7 @@
  */
 
 var $ = require("jquery");
-var API_BASE = "http://localhost:3000";
+var API_BASE = "http://ec2-52-28-155-29.eu-central-1.compute.amazonaws.com:3005";
 
 var authController = {
     basicAuth: function (options) {

@@ -11,9 +11,12 @@ import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import com.enthusiast94.social_auth_bootstrap.app.R;
+import com.enthusiast94.social_auth_bootstrap.app.events.OauthLoginButtonClickedEvent;
 import com.enthusiast94.social_auth_bootstrap.app.network.AuthManager;
 import com.enthusiast94.social_auth_bootstrap.app.network.Callback;
 import com.enthusiast94.social_auth_bootstrap.app.utils.Helpers;
+import de.greenrobot.event.EventBus;
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.HashMap;
@@ -30,6 +33,11 @@ public class LoginFragment extends Fragment {
     private EditText emailEditText;
     private EditText passwordEditText;
     private Button loginButton;
+    private Button googleButton;
+    private Button facebookButton;
+    private Button githubButton;
+    private Button linkedinButton;
+    private JSONObject oauth2Urls;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -45,6 +53,10 @@ public class LoginFragment extends Fragment {
         emailEditText = (EditText) view.findViewById(R.id.edittext_email);
         passwordEditText = (EditText) view.findViewById(R.id.edittext_password);
         loginButton = (Button) view.findViewById(R.id.button_login);
+        googleButton = (Button) view.findViewById(R.id.button_google);
+        facebookButton = (Button) view.findViewById(R.id.button_facebook);
+        githubButton = (Button) view.findViewById(R.id.button_github);
+        linkedinButton = (Button) view.findViewById(R.id.button_linkedin);
 
         /**
          * Fetch OAuth2 urls and then make the form visible. These OAuth2 urls will be used for the social sign in
@@ -54,7 +66,8 @@ public class LoginFragment extends Fragment {
         AuthManager.getAllOauth2Urls(new Callback() {
             @Override
             public void onSuccess(JSONObject data) {
-                System.out.println(data.toString());
+                oauth2Urls = data;
+
                 progressBar.setVisibility(View.GONE);
                 formLayout.setVisibility(View.VISIBLE);
             }
@@ -65,12 +78,13 @@ public class LoginFragment extends Fragment {
                         rootView,
                         getResources().getString(R.string.error_base) + message + " [" + statusCode + "]",
                         Snackbar.LENGTH_LONG
-                );
+                ).show();
             }
         });
 
         /**
-         * Setup event listeners
+         * Handle login button click by validation the form input and sending the authentication request to the server
+         * if validation passes.
          */
 
         loginButton.setOnClickListener(new View.OnClickListener() {
@@ -113,6 +127,46 @@ public class LoginFragment extends Fragment {
                 }
             }
         });
+
+        /**
+         * Handle oauth button click events by posting an event along with the appropriate URL. This event is then
+         * used by the parent activity to load the provided URL into the web view fragment so that user can proceed
+         * with the login process.
+         */
+
+        View.OnClickListener oauthLoginButtonClickListener = new View.OnClickListener() {
+
+            @Override
+            public void onClick(View view) {
+                try {
+                    String urlToLoad = null;
+
+                    switch (view.getId()) {
+                        case R.id.button_google:
+                            urlToLoad = oauth2Urls.getString("google");
+                            break;
+                        case R.id.button_facebook:
+                            urlToLoad = oauth2Urls.getString("facebook");
+                            break;
+                        case R.id.button_github:
+                            urlToLoad = oauth2Urls.getString("github");
+                            break;
+                        case R.id.button_linkedin:
+                            urlToLoad = oauth2Urls.getString("linkedin");
+                            break;
+                    }
+
+                    EventBus.getDefault().post(new OauthLoginButtonClickedEvent(urlToLoad));
+                } catch (JSONException e) {
+                    throw new RuntimeException(e);
+                }
+            }
+        };
+
+        googleButton.setOnClickListener(oauthLoginButtonClickListener);
+        facebookButton.setOnClickListener(oauthLoginButtonClickListener);
+        githubButton.setOnClickListener(oauthLoginButtonClickListener);
+        linkedinButton.setOnClickListener(oauthLoginButtonClickListener);
 
         return view;
     }

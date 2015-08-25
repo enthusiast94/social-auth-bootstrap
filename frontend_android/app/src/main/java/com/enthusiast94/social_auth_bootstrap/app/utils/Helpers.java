@@ -11,6 +11,9 @@ import com.enthusiast94.social_auth_bootstrap.app.R;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.util.HashMap;
+import java.util.Map;
+
 /**
  * Created by manas on 23-08-2015.
  */
@@ -67,5 +70,18 @@ public class Helpers {
         } else {
             return null;
         }
+    }
+
+    public static Map<String, String> parseQueryParams(String url) {
+        url = url.substring(url.indexOf("?") + 1, url.length());
+        String[] split = url.split("&");
+
+        Map<String, String> params = new HashMap<String, String>();
+        for (String item : split) {
+            String[] split2 = item.split("=");
+            params.put(split2[0], split2[1]);
+        }
+
+        return params;
     }
 }

@@ -89,14 +89,16 @@
                                                 android:layout_height="wrap_content"
                                                 android:layout_weight="50"
                                                 android:textAllCaps="false"
-                                                android:text="@string/button_google_login"/>
+                                                android:text="@string/button_google_login"
+                                                android:id="@+id/button_google"/>
 
                                         <Button
                                                 android:layout_width="0dp"
                                                 android:layout_height="wrap_content"
                                                 android:layout_weight="50"
                                                 android:textAllCaps="false"
-                                                android:text="@string/button_facebook_login"/>
+                                                android:text="@string/button_facebook_login"
+                                                android:id="@+id/button_facebook"/>
 
                                 </LinearLayout>
 
@@ -112,14 +114,16 @@
                                                 android:layout_height="wrap_content"
                                                 android:layout_weight="50"
                                                 android:textAllCaps="false"
-                                                android:text="@string/button_github_login"/>
+                                                android:text="@string/button_github_login"
+                                                android:id="@+id/button_github"/>
 
                                         <Button
                                                 android:layout_width="0dp"
                                                 android:layout_height="wrap_content"
                                                 android:layout_weight="50"
                                                 android:textAllCaps="false"
-                                                android:text="@string/button_linkedin_login"/>
+                                                android:text="@string/button_linkedin_login"
+                                                android:id="@+id/button_linkedin"/>
 
                                 </LinearLayout>
 

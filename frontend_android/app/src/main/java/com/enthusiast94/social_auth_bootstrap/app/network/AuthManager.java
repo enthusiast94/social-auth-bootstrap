@@ -1,5 +1,6 @@
 package com.enthusiast94.social_auth_bootstrap.app.network;
 
+import android.util.Log;
 import com.enthusiast94.social_auth_bootstrap.app.App;
 import com.enthusiast94.social_auth_bootstrap.app.utils.Helpers;
 import com.loopj.android.http.AsyncHttpClient;
@@ -19,7 +20,8 @@ import java.util.Map;
 public class AuthManager {
 
     private static final String TAG = AuthManager.class.getSimpleName();
-    private static final String API_BASE = "http://192.168.1.36:3000";
+    private static final String API_BASE = "http://ec2-52-28-155-29.eu-central-1.compute.amazonaws.com:3005";
+    public static final String OAUTH_CLIENT_REDIRECT_URI_BASE = "http://localhost:4000";
     private static final String PREF_USER = "user";
 
     public static void basicAuth(Map<String, String> userDetails, String userType, final Callback callback) {
@@ -29,7 +31,6 @@ public class AuthManager {
 
         if (!userTypes.containsKey(userType))
             throw new IllegalArgumentException("Invalid userType provided. Allowed values are: " + userTypes.keySet().toString());
-
 
         AsyncHttpClient client = new AsyncHttpClient();
         RequestParams params = new RequestParams(userDetails);
@@ -69,18 +70,40 @@ public class AuthManager {
         });
     }
 
+    public static void oauth(Map<String, String> userDetails, final Callback callback) {
+        getUser(userDetails, new Callback() {
+            @Override
+            public void onSuccess(JSONObject data) {
+                if (callback != null) callback.onSuccess(null);
+            }
+
+            @Override
+            public void onFailure(int statusCode, String message) {
+                if (callback != null) callback.onFailure(statusCode, message);
+            }
+        });
+    }
+
     /**
      * Gets currently authenticated user and saves it in cache. If this method is invoked when there is no authenticated user in cache, then
-     * userId and accessToken of the newly authenticated user must be a part of the provided options object.
+     * userId and accessToken of the newly authenticated user must be a part of the provided userDetails map.
      */
-    public static void getUser(Map<String, String> optionalUserDetails, final Callback callback) throws JSONException {
+    private static void getUser(Map<String, String> userDetails, final Callback callback) {
         final JSONObject userJson = getUserFromCache();
 
-        if (userJson == null && optionalUserDetails == null)
+        if (userJson == null && userDetails == null)
             throw new IllegalArgumentException("userId and accessToken are both required");
 
-        final String userId = userJson != null ? userJson.getString("userId") : optionalUserDetails.get("userId");
-        final String accessToken = userJson != null ? userJson.getString("accessToken") : optionalUserDetails.get("accessToken");
+        final String userId;
+        final String accessToken;
+        try {
+            userId = userDetails != null ? userDetails.get("userId") : userJson.getString("userId");
+            accessToken = userDetails != null ? userDetails.get("accessToken") : userJson.getString("accessToken");
+        } catch (JSONException e) {
+            throw new RuntimeException(e);
+        }
+
+        Log.d(TAG, accessToken);
 
         AsyncHttpClient client = new AsyncHttpClient();
         client.addHeader("Authorization", "Token " + accessToken);

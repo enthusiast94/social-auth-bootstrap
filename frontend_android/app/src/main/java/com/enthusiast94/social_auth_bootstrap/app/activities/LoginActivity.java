@@ -2,22 +2,41 @@ package com.enthusiast94.social_auth_bootstrap.app.activities;
 
 import android.content.res.Resources;
 import android.os.Bundle;
+import android.support.design.widget.Snackbar;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.FrameLayout;
 import com.enthusiast94.social_auth_bootstrap.app.R;
+import com.enthusiast94.social_auth_bootstrap.app.events.OauthCallbackEvent;
+import com.enthusiast94.social_auth_bootstrap.app.events.OauthLoginButtonClickedEvent;
 import com.enthusiast94.social_auth_bootstrap.app.fragments.CreateAccountFragment;
 import com.enthusiast94.social_auth_bootstrap.app.fragments.LoginFragment;
+import com.enthusiast94.social_auth_bootstrap.app.fragments.OauthHelperFragment;
+import com.enthusiast94.social_auth_bootstrap.app.network.AuthManager;
+import com.enthusiast94.social_auth_bootstrap.app.network.Callback;
+import de.greenrobot.event.EventBus;
+import org.json.JSONObject;
+
+import java.util.HashMap;
+import java.util.Map;
 
 
 public class LoginActivity extends AppCompatActivity {
+
+    public static final String TAG = LoginActivity.class.getSimpleName();
+    private FrameLayout rootView;
+    private Toolbar toolbar;
+    private TabLayout tabLayout;
+    private ViewPager viewPager;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -28,9 +47,10 @@ public class LoginActivity extends AppCompatActivity {
          * Find views
          */
 
-        Toolbar toolbar = (Toolbar) findViewById(R.id.app_bar);
-        TabLayout tabLayout = (TabLayout) findViewById(R.id.tab_layout);
-        ViewPager viewPager = (ViewPager) findViewById(R.id.view_pager);
+        rootView = (FrameLayout) findViewById(R.id.root_view);
+        toolbar = (Toolbar) findViewById(R.id.app_bar);
+        tabLayout = (TabLayout) findViewById(R.id.tab_layout);
+        viewPager = (ViewPager) findViewById(R.id.view_pager);
 
         /**
          * Setup AppBar
@@ -49,6 +69,58 @@ public class LoginActivity extends AppCompatActivity {
 
         viewPager.setAdapter(new LoginPagerAdapter(getSupportFragmentManager(), getResources()));
         tabLayout.setupWithViewPager(viewPager);
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+
+        EventBus.getDefault().register(this);
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+
+        EventBus.getDefault().unregister(this);
+    }
+
+    public void onEventMainThread(OauthLoginButtonClickedEvent event) {
+        OauthHelperFragment oauthHelperFragment = OauthHelperFragment.newInstance(event.getUrlToLoad());
+        FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
+        fragmentTransaction.add(R.id.root_view, oauthHelperFragment);
+        fragmentTransaction.addToBackStack(null);
+        fragmentTransaction.commit();
+    }
+
+    public void onEventMainThread(OauthCallbackEvent event) {
+        if (event.getError() == null) {
+            Map<String, String> userDetails = new HashMap<String, String>();
+            userDetails.put("userId", event.getUserId());
+            userDetails.put("accessToken", event.getAccessToken());
+
+            AuthManager.oauth(userDetails, new Callback() {
+                @Override
+                public void onSuccess(JSONObject data) {
+                    Snackbar.make(rootView, "success", Snackbar.LENGTH_SHORT).show();
+                }
+
+                @Override
+                public void onFailure(int statusCode, String message) {
+                    Snackbar.make(
+                            rootView,
+                            getResources().getString(R.string.error_base) + message + " [" + statusCode + "]",
+                            Snackbar.LENGTH_LONG
+                    ).show();
+                }
+            });
+        } else {
+            Snackbar.make(
+                    rootView,
+                    getResources().getString(R.string.error_base) + event.getError(),
+                    Snackbar.LENGTH_SHORT
+            ).show();
+        }
     }
 
     @Override
@@ -71,6 +143,15 @@ public class LoginActivity extends AppCompatActivity {
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    public void onBackPressed() {
+        if (getSupportFragmentManager().getBackStackEntryCount() == 0) {
+            super.onBackPressed();
+        } else {
+            getSupportFragmentManager().popBackStack();
+        }
     }
 
     private static class LoginPagerAdapter extends FragmentPagerAdapter {
