@@ -44,7 +44,7 @@
                             android:layout_height="wrap_content"
                             android:hint="@string/hint_email"
                             android:inputType="textEmailAddress"
-                            android:theme="@style/edittext_custom"
+                            android:theme="@style/edittext"
                             />
 
                 </android.support.design.widget.TextInputLayout>
@@ -60,7 +60,7 @@
                             android:layout_height="wrap_content"
                             android:hint="@string/hint_password"
                             android:inputType="textPassword"
-                            android:theme="@style/edittext_custom"
+                            android:theme="@style/edittext"
                             />
 
                 </android.support.design.widget.TextInputLayout>
@@ -70,7 +70,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_gravity="end"
-                        android:text="@string/button_login"
+                        android:text="@string/action_login"
                         style="@style/Widget.AppCompat.Button.ButtonBar.AlertDialog"
                         />
 
@@ -93,7 +93,7 @@
                     <TextView android:layout_width="0dp"
                               android:layout_height="wrap_content"
                               android:layout_weight="15"
-                              android:text="@string/or"
+                              android:text="@string/label_or"
                               android:layout_gravity="center_vertical"
                               android:gravity="center"
                             />
@@ -121,7 +121,7 @@
                             android:layout_height="wrap_content"
                             android:layout_weight="50"
                             android:textAllCaps="false"
-                            android:text="@string/button_google_login"
+                            android:text="@string/action_google_login"
                             android:id="@+id/button_google"/>
 
                     <Button
@@ -129,7 +129,7 @@
                             android:layout_height="wrap_content"
                             android:layout_weight="50"
                             android:textAllCaps="false"
-                            android:text="@string/button_facebook_login"
+                            android:text="@string/action_facebook_login"
                             android:id="@+id/button_facebook"/>
 
                 </LinearLayout>
@@ -146,7 +146,7 @@
                             android:layout_height="wrap_content"
                             android:layout_weight="50"
                             android:textAllCaps="false"
-                            android:text="@string/button_github_login"
+                            android:text="@string/action_github_login"
                             android:id="@+id/button_github"/>
 
                     <Button
@@ -154,7 +154,7 @@
                             android:layout_height="wrap_content"
                             android:layout_weight="50"
                             android:textAllCaps="false"
-                            android:text="@string/button_linkedin_login"
+                            android:text="@string/action_linkedin_login"
                             android:id="@+id/button_linkedin"/>
 
                 </LinearLayout>

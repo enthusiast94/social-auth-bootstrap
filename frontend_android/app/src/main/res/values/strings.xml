@@ -5,15 +5,16 @@
     <string name="tab_create_account">Create account</string>
     <string name="hint_email">Email</string>
     <string name="hint_password">Password</string>
+    <string name="hint_new_password">New password</string>
     <string name="hint_name">Name</string>
     <string name="hint_confirm_password">Confirm password</string>
     <string name="message_please_wait">Please wait…</string>
-    <string name="button_create_account">Create</string>
-    <string name="button_login">Login</string>
-    <string name="button_google_login">Login with Google</string>
-    <string name="button_facebook_login">Login with Facebook</string>
-    <string name="button_github_login">Login with Github</string>
-    <string name="button_linkedin_login">Login with Linkedin</string>
+    <string name="action_create_account">Create</string>
+    <string name="action_login">Login</string>
+    <string name="action_google_login">Login with Google</string>
+    <string name="action_facebook_login">Login with Facebook</string>
+    <string name="action_github_login">Login with Github</string>
+    <string name="action_linkedin_login">Login with Linkedin</string>
     <string name="error_base">Error:\u0020</string>
     <string name="error_required_field">This field is required</string>
     <string name="error_invalid_email">Invalid email address format</string>
@@ -32,5 +33,8 @@
         Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vestibulum auctor enim nunc.
         Duis porttitor diam massa, facilisis vulputate ipsum malesuada non.</string>
     <string name="action_logout">Log out</string>
-    <string name="or">OR</string>
+    <string name="label_or">OR</string>
+    <string name="label_basic_information">Basic Information</string>
+    <string name="action_update">Update</string>
+    <string name="action_change_password">Change Password</string>
 </resources>

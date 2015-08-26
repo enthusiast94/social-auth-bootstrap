@@ -32,7 +32,7 @@
                         android:layout_height="wrap_content"
                         android:hint="@string/hint_name"
                         android:inputType="text"
-                        android:theme="@style/edittext_custom"
+                        android:theme="@style/edittext"
                         />
 
             </android.support.design.widget.TextInputLayout>
@@ -48,7 +48,7 @@
                         android:layout_height="wrap_content"
                         android:hint="@string/hint_email"
                         android:inputType="textEmailAddress"
-                        android:theme="@style/edittext_custom"
+                        android:theme="@style/edittext"
                         />
 
             </android.support.design.widget.TextInputLayout>
@@ -64,7 +64,7 @@
                         android:layout_height="wrap_content"
                         android:hint="@string/hint_password"
                         android:inputType="textPassword"
-                        android:theme="@style/edittext_custom"
+                        android:theme="@style/edittext"
                         />
 
             </android.support.design.widget.TextInputLayout>
@@ -80,7 +80,7 @@
                         android:layout_height="wrap_content"
                         android:hint="@string/hint_confirm_password"
                         android:inputType="textPassword"
-                        android:theme="@style/edittext_custom"
+                        android:theme="@style/edittext"
                         />
 
             </android.support.design.widget.TextInputLayout>
@@ -89,7 +89,7 @@
                     android:id="@+id/button_create_account"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="@string/button_create_account"
+                    android:text="@string/action_create_account"
                     android:layout_gravity="right"
                     style="@style/Widget.AppCompat.Button.ButtonBar.AlertDialog"
                     />

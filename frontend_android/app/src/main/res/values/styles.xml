@@ -11,9 +11,15 @@
         <item name="colorAccent">@color/accent</item>
     </style>
 
-    <style name="edittext_custom">
+    <style name="edittext">
         <item name="colorControlNormal">@color/edittext_underline</item>
-        <item name="android:textSize">@dimen/font_normal</item>
+        <item name="android:textSize">@dimen/font_small</item>
+    </style>
+
+    <style name="textview_label">
+        <item name="android:textSize">@dimen/font_small</item>
+        <item name="android:textColor">@color/primary_text</item>
+        <item name="android:textStyle">bold</item>
     </style>
 
 </resources>
