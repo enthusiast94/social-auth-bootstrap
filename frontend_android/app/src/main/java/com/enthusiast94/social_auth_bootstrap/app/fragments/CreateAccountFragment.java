@@ -8,9 +8,12 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
 import com.enthusiast94.social_auth_bootstrap.app.R;
+import com.enthusiast94.social_auth_bootstrap.app.events.AuthenticatedEvent;
 import com.enthusiast94.social_auth_bootstrap.app.network.AuthManager;
 import com.enthusiast94.social_auth_bootstrap.app.network.Callback;
 import com.enthusiast94.social_auth_bootstrap.app.utils.Helpers;
+import de.greenrobot.event.EventBus;
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.HashMap;
@@ -90,7 +93,12 @@ public class CreateAccountFragment extends Fragment {
                     AuthManager.basicAuth(userDetails, "new", new Callback() {
                         @Override
                         public void onSuccess(JSONObject data) {
-                            Helpers.showSnackbar(rootView, "success", "Success", getResources());
+                            try {
+                                String userName = AuthManager.getUserFromCache().getString("userName");
+                                EventBus.getDefault().post(new AuthenticatedEvent(userName));
+                            } catch (JSONException e) {
+                                e.printStackTrace();
+                            }
                         }
 
                         @Override
