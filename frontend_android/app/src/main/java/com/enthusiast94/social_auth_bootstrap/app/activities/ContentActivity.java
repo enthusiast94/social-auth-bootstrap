@@ -19,6 +19,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import com.enthusiast94.social_auth_bootstrap.app.R;
 import com.enthusiast94.social_auth_bootstrap.app.events.DeauthenticatedEvent;
+import com.enthusiast94.social_auth_bootstrap.app.events.UserInfoUpdatedEvent;
 import com.enthusiast94.social_auth_bootstrap.app.fragments.HomeFragment;
 import com.enthusiast94.social_auth_bootstrap.app.fragments.UserProfileFragment;
 import com.enthusiast94.social_auth_bootstrap.app.network.AuthManager;
@@ -85,14 +86,7 @@ public class ContentActivity extends AppCompatActivity {
          * Populate navigation view header with user data
          */
 
-        JSONObject currentUser = AuthManager.getUserFromCache();
-        try {
-            nameTextView.setText(currentUser.getString("userName"));
-            emailTextView.setText(currentUser.getString("userEmail"));
-            Picasso.with(this).load(currentUser.getString("userAvatar")).into(avatarImageView);
-        } catch (JSONException e) {
-            throw new RuntimeException(e);
-        }
+        populateNavViewHeader();
 
         /**
          * Handle navigation view menu item clicks by displaying appropriate fragments.
@@ -116,6 +110,17 @@ public class ContentActivity extends AppCompatActivity {
         selectNavMenuItem(navigationView.getMenu().getItem(selectedNavMenuItemIndex));
     }
 
+    private void populateNavViewHeader() {
+        JSONObject currentUser = AuthManager.getUserFromCache();
+        try {
+            nameTextView.setText(currentUser.getString("userName"));
+            emailTextView.setText(currentUser.getString("userEmail"));
+            Picasso.with(this).load(currentUser.getString("userAvatar")).into(avatarImageView);
+        } catch (JSONException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
     @Override
     protected void onResume() {
         super.onResume();
@@ -134,6 +139,10 @@ public class ContentActivity extends AppCompatActivity {
         Intent goToLoginActivity = new Intent(this, LoginActivity.class);
         startActivity(goToLoginActivity);
         finish();
+    }
+
+    public void onEventMainThread(UserInfoUpdatedEvent event) {
+        populateNavViewHeader();
     }
 
     private void selectNavMenuItem(MenuItem menuItem) {

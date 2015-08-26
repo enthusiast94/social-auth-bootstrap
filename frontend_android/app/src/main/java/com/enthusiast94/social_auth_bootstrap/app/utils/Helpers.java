@@ -5,7 +5,10 @@ import android.content.SharedPreferences;
 import android.content.res.Resources;
 import android.os.IBinder;
 import android.preference.PreferenceManager;
+import android.support.design.widget.Snackbar;
+import android.text.Html;
 import android.util.Patterns;
+import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import com.enthusiast94.social_auth_bootstrap.app.R;
 import org.json.JSONException;
@@ -87,5 +90,24 @@ public class Helpers {
         }
 
         return params;
+    }
+
+    public static void showSnackbar(View view, String type, String message, Resources res) {
+        Map<String, String> typesMap = new HashMap<String, String>();
+        typesMap.put("success", res.getString(R.string.success_base));
+        typesMap.put("error", res.getString(R.string.error_base));
+
+        if (!typesMap.containsKey(type))
+            throw new IllegalArgumentException("Allowed values for 'type' are: " + typesMap.keySet().toString());
+
+        Snackbar.make(
+                view,
+                Html.fromHtml(typesMap.get(type) + message),
+                Snackbar.LENGTH_SHORT
+        ).show();
+    }
+
+    public static void showSnackbar(View view, String type, int resId, Resources res) {
+        showSnackbar(view, type, res.getString(resId), res);
     }
 }

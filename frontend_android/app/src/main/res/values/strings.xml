@@ -15,7 +15,8 @@
     <string name="action_facebook_login">Login with Facebook</string>
     <string name="action_github_login">Login with Github</string>
     <string name="action_linkedin_login">Login with Linkedin</string>
-    <string name="error_base">Error:\u0020</string>
+    <string name="error_base">&lt;strong&gt;Error!&lt;/strong&gt;\u0020</string>
+    <string name="success_base">&lt;strong&gt;Success!&lt;/strong&gt;\u0020</string>
     <string name="error_required_field">This field is required</string>
     <string name="error_invalid_email">Invalid email address format</string>
     <string name="error_short_password">Password must be at least 8 characters long</string>
@@ -25,14 +26,15 @@
     <string name="menu_nav_user">User Profile</string>
     <string name="nav_open">Open</string>
     <string name="nav_close">Close</string>
-    <string name="success_login_base">Logged in as:\u0020</string>
+    <string name="success_login_base">Success! Logged in as:\u0020</string>
+    <string name="success_account_information_updated">Account information successfully updated.</string>
     <string name="lorem_ipsum">Lorem ipsum dolor sit amet, consectetur adipiscing elit.
         Vestibulum auctor enim nunc. Duis porttitor diam massa, facilisis vulputate ipsum
         malesuada non. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vestibulum
         auctor enim nunc. Duis porttitor diam massa, facilisis vulputate ipsum malesuada non.
         Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vestibulum auctor enim nunc.
         Duis porttitor diam massa, facilisis vulputate ipsum malesuada non.</string>
-    <string name="action_logout">Log out</string>
+    <string name="action_logout">Log out</string>w
     <string name="label_or">OR</string>
     <string name="label_basic_information">Basic Information</string>
     <string name="action_update">Update</string>

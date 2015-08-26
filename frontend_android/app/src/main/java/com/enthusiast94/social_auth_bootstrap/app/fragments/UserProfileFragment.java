@@ -2,17 +2,21 @@ package com.enthusiast94.social_auth_bootstrap.app.fragments;
 
 import android.app.ProgressDialog;
 import android.os.Bundle;
-import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.view.*;
 import android.widget.*;
 import com.enthusiast94.social_auth_bootstrap.app.R;
 import com.enthusiast94.social_auth_bootstrap.app.events.DeauthenticatedEvent;
+import com.enthusiast94.social_auth_bootstrap.app.events.UserInfoUpdatedEvent;
 import com.enthusiast94.social_auth_bootstrap.app.network.AuthManager;
 import com.enthusiast94.social_auth_bootstrap.app.network.Callback;
+import com.enthusiast94.social_auth_bootstrap.app.utils.Helpers;
 import de.greenrobot.event.EventBus;
 import org.json.JSONException;
 import org.json.JSONObject;
+
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Created by manas on 25-08-2015.
@@ -76,11 +80,62 @@ public class UserProfileFragment extends Fragment {
 
             @Override
             public void onFailure(int statusCode, String message) {
-                Snackbar.make(
-                        rootView,
-                        getResources().getString(R.string.error_base) + message + " [" + statusCode + "]",
-                        Snackbar.LENGTH_LONG
-                ).show();
+                Helpers.showSnackbar(rootView, "error", message, getResources());
+            }
+        });
+
+        /**
+         * Bind event listeners
+         */
+
+        // handle update button click event
+        updateButton.setOnClickListener(new View.OnClickListener() {
+
+            @Override
+            public void onClick(View view) {
+                Helpers.hideSoftKeyboard(getActivity(), rootView.getWindowToken());
+
+                String name = nameEditText.getText().toString().trim();
+                String email = emailEditText.getText().toString().trim();
+
+                String nameError = Helpers.validateName(name, getResources());
+                String emailError = Helpers.validateEmail(email, getResources());
+
+                if (nameError != null) {
+                    nameEditText.setError(nameError);
+                }
+
+                if (emailError != null) {
+                    emailEditText.setError(emailError);
+                }
+
+                // if all input validations pass, send request to server
+                if (nameError == null && emailError == null) {
+                    progressDialog.show();
+
+                    Map<String, String> userDetails = new HashMap<String, String>();
+                    userDetails.put("name", name);
+                    userDetails.put("email", email);
+
+                    AuthManager.updateAccount(userDetails, new Callback() {
+                        @Override
+                        public void onSuccess(JSONObject data) {
+                            progressDialog.hide();
+
+                            Helpers.showSnackbar(rootView, "success", R.string.success_account_information_updated, getResources());
+
+                            EventBus.getDefault().post(new UserInfoUpdatedEvent());
+
+                        }
+
+                        @Override
+                        public void onFailure(int statusCode, String message) {
+                            progressDialog.hide();
+
+                            Helpers.showSnackbar(rootView, "error", message, getResources());
+                        }
+                    });
+                }
             }
         });
 
@@ -111,11 +166,7 @@ public class UserProfileFragment extends Fragment {
                     public void onFailure(int statusCode, String message) {
                         progressDialog.hide();
 
-                        Snackbar.make(
-                                rootView,
-                                getResources().getString(R.string.error_base) + message + " [" + statusCode + "]",
-                                Snackbar.LENGTH_LONG
-                        ).show();
+                        Helpers.showSnackbar(rootView, "error", message, getResources());
                     }
                 });
                 return true;
