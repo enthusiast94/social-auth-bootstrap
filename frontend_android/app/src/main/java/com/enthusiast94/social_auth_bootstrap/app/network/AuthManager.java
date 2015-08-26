@@ -1,6 +1,5 @@
 package com.enthusiast94.social_auth_bootstrap.app.network;
 
-import android.util.Log;
 import com.enthusiast94.social_auth_bootstrap.app.App;
 import com.enthusiast94.social_auth_bootstrap.app.utils.Helpers;
 import com.loopj.android.http.AsyncHttpClient;
@@ -84,6 +83,36 @@ public class AuthManager {
         });
     }
 
+    public static void deauth(final Callback callback) {
+        JSONObject userJson = getUserFromCache();
+
+        if (userJson == null) throw new IllegalStateException("Current user is not authenticated");
+
+        try {
+            AsyncHttpClient client = new AsyncHttpClient();
+            client.addHeader("Authorization", "Token " + userJson.getString("accessToken"));
+            client.post(API_BASE + "/deauth", new JsonHttpResponseHandler() {
+
+                @Override
+                public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
+                    try {
+                        if (response.getInt("status") == 200) {
+                            Helpers.clearPrefs(App.getAppContext());
+                            if (callback != null) callback.onSuccess(null);
+                        } else {
+                            if (callback != null)
+                                callback.onFailure(response.getInt("status"), response.getString("error"));
+                        }
+                    } catch (JSONException e) {
+                        throw new RuntimeException(e);
+                    }
+                }
+            });
+        } catch (JSONException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
     /**
      * Gets currently authenticated user and saves it in cache. If this method is invoked when there is no authenticated user in cache, then
      * userId and accessToken of the newly authenticated user must be a part of the provided user details map.
@@ -102,8 +131,6 @@ public class AuthManager {
         } catch (JSONException e) {
             throw new RuntimeException(e);
         }
-
-        Log.d(TAG, accessToken);
 
         AsyncHttpClient client = new AsyncHttpClient();
         client.addHeader("Authorization", "Token " + accessToken);

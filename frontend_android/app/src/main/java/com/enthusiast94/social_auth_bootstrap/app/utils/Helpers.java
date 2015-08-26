@@ -38,6 +38,10 @@ public class Helpers {
         }
     }
 
+    public static void clearPrefs(Context context) {
+        PreferenceManager.getDefaultSharedPreferences(context).edit().clear().apply();
+    }
+
     public static void hideSoftKeyboard(Context context, IBinder windowToken) {
         InputMethodManager inputMethodManager =
                 (InputMethodManager) context.getSystemService(Context.INPUT_METHOD_SERVICE);

@@ -1,5 +1,6 @@
 package com.enthusiast94.social_auth_bootstrap.app.activities;
 
+import android.content.Intent;
 import android.content.res.Configuration;
 import android.os.Bundle;
 import android.os.Handler;
@@ -8,8 +9,8 @@ import android.support.v4.app.Fragment;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBar;
-import android.support.v7.app.ActionBarActivity;
 import android.support.v7.app.ActionBarDrawerToggle;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -17,14 +18,16 @@ import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.TextView;
 import com.enthusiast94.social_auth_bootstrap.app.R;
+import com.enthusiast94.social_auth_bootstrap.app.events.DeauthenticatedEvent;
 import com.enthusiast94.social_auth_bootstrap.app.fragments.HomeFragment;
 import com.enthusiast94.social_auth_bootstrap.app.fragments.UserProfileFragment;
 import com.enthusiast94.social_auth_bootstrap.app.network.AuthManager;
 import com.squareup.picasso.Picasso;
+import de.greenrobot.event.EventBus;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-public class ContentActivity extends ActionBarActivity {
+public class ContentActivity extends AppCompatActivity {
 
     private DrawerLayout drawerLayout;
     private FrameLayout contentLayout;
@@ -111,6 +114,26 @@ public class ContentActivity extends ActionBarActivity {
         }
 
         selectNavMenuItem(navigationView.getMenu().getItem(selectedNavMenuItemIndex));
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+
+        EventBus.getDefault().register(this);
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+
+        EventBus.getDefault().unregister(this);
+    }
+
+    public void onEventMainThread(DeauthenticatedEvent event) {
+        Intent goToLoginActivity = new Intent(this, LoginActivity.class);
+        startActivity(goToLoginActivity);
+        finish();
     }
 
     private void selectNavMenuItem(MenuItem menuItem) {
