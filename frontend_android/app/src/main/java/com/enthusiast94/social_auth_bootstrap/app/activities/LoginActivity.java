@@ -3,7 +3,6 @@ package com.enthusiast94.social_auth_bootstrap.app.activities;
 import android.content.Intent;
 import android.content.res.Resources;
 import android.os.Bundle;
-import android.support.design.widget.Snackbar;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -26,6 +25,7 @@ import com.enthusiast94.social_auth_bootstrap.app.fragments.LoginFragment;
 import com.enthusiast94.social_auth_bootstrap.app.fragments.OauthHelperFragment;
 import com.enthusiast94.social_auth_bootstrap.app.network.AuthManager;
 import com.enthusiast94.social_auth_bootstrap.app.network.Callback;
+import com.enthusiast94.social_auth_bootstrap.app.utils.Helpers;
 import de.greenrobot.event.EventBus;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -121,19 +121,11 @@ public class LoginActivity extends AppCompatActivity {
 
                 @Override
                 public void onFailure(int statusCode, String message) {
-                    Snackbar.make(
-                            rootView,
-                            getResources().getString(R.string.error_base) + message + " [" + statusCode + "]",
-                            Snackbar.LENGTH_LONG
-                    ).show();
+                    Helpers.showSnackbar(rootView, "error", message, getResources());
                 }
             });
         } else {
-            Snackbar.make(
-                    rootView,
-                    getResources().getString(R.string.error_base) + event.getError(),
-                    Snackbar.LENGTH_SHORT
-            ).show();
+            Helpers.showSnackbar(rootView, "error", event.getError(), getResources());
         }
     }
 

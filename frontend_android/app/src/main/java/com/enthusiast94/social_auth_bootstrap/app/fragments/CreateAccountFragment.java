@@ -1,7 +1,6 @@
 package com.enthusiast94.social_auth_bootstrap.app.fragments;
 
 import android.os.Bundle;
-import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -91,12 +90,12 @@ public class CreateAccountFragment extends Fragment {
                     AuthManager.basicAuth(userDetails, "new", new Callback() {
                         @Override
                         public void onSuccess(JSONObject data) {
-                            Snackbar.make(rootView, "success", Snackbar.LENGTH_SHORT).show();
+                            Helpers.showSnackbar(rootView, "success", "Success", getResources());
                         }
 
                         @Override
                         public void onFailure(int statusCode, String message) {
-                            Snackbar.make(rootView, getResources().getString(R.string.error_base) + message, Snackbar.LENGTH_SHORT).show();
+                            Helpers.showSnackbar(rootView, "error", message, getResources());
                         }
                     });
                 }
