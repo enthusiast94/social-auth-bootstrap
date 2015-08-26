@@ -19,7 +19,6 @@
     <string name="error_invalid_email">Invalid email address format</string>
     <string name="error_short_password">Password must be at least 8 characters long</string>
     <string name="error_passwords_do_not_match">Passwords do not match</string>
-    <string name="title_activity_login">Welcome</string>
     <string name="title_activity_content">ContentActivity</string>
     <string name="menu_nav_home">Home</string>
     <string name="menu_nav_user">User Profile</string>
