@@ -86,19 +86,19 @@ public class AuthManager {
 
     /**
      * Gets currently authenticated user and saves it in cache. If this method is invoked when there is no authenticated user in cache, then
-     * userId and accessToken of the newly authenticated user must be a part of the provided userDetails map.
+     * userId and accessToken of the newly authenticated user must be a part of the provided user details map.
      */
-    private static void getUser(Map<String, String> userDetails, final Callback callback) {
+    public static void getUser(Map<String, String> optionalUserDetails, final Callback callback) {
         final JSONObject userJson = getUserFromCache();
 
-        if (userJson == null && userDetails == null)
+        if (userJson == null && optionalUserDetails == null)
             throw new IllegalArgumentException("userId and accessToken are both required");
 
         final String userId;
         final String accessToken;
         try {
-            userId = userDetails != null ? userDetails.get("userId") : userJson.getString("userId");
-            accessToken = userDetails != null ? userDetails.get("accessToken") : userJson.getString("accessToken");
+            userId = optionalUserDetails != null ? optionalUserDetails.get("userId") : userJson.getString("userId");
+            accessToken = optionalUserDetails != null ? optionalUserDetails.get("accessToken") : userJson.getString("accessToken");
         } catch (JSONException e) {
             throw new RuntimeException(e);
         }
