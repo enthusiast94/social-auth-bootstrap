@@ -35,6 +35,8 @@ public class ContentActivity extends ActionBarActivity {
     private TextView emailTextView;
     private ImageView avatarImageView;
     private android.os.Handler handler;
+    private int selectedNavMenuItemIndex;
+    private static final String SELECTED_NAV_MENU_ITEM_INDEX_KEY = "selectedNavMenuItemIndex";
 
 
     @Override
@@ -77,7 +79,7 @@ public class ContentActivity extends ActionBarActivity {
         actionBarDrawerToggle.syncState();
 
         /**
-         * Setup navigation view
+         * Populate navigation view header with user data
          */
 
         JSONObject currentUser = AuthManager.getUserFromCache();
@@ -89,49 +91,78 @@ public class ContentActivity extends ActionBarActivity {
             throw new RuntimeException(e);
         }
 
-        NavigationView.OnNavigationItemSelectedListener navigationItemSelectedListener = new NavigationView.OnNavigationItemSelectedListener() {
+        /**
+         * Handle navigation view menu item clicks by displaying appropriate fragments.
+         */
+
+        navigationView.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
+
             @Override
-            public boolean onNavigationItemSelected(final MenuItem menuItem) {
-                Fragment fragment = null;
-
-                switch (menuItem.getItemId()) {
-                    case R.id.nav_home:
-                        fragment = new HomeFragment();
-                        break;
-                    case R.id.nav_user:
-                        fragment = new UserProfileFragment();
-                        break;
-                }
-
-                if (fragment != null) {
-                    drawerLayout.closeDrawers();
-
-                    // close the drawer after some delay in order to prevent UI lag
-                    final Fragment finalFragment = fragment;
-                    handler.postDelayed(new Runnable() {
-                        @Override
-                        public void run() {
-                            getSupportFragmentManager()
-                                    .beginTransaction()
-                                    .setCustomAnimations(android.R.anim.fade_in, 0)
-                                    .replace(contentLayout.getId(), finalFragment)
-                                    .commit();
-                            getSupportActionBar().setTitle(menuItem.getTitle());
-                        }
-                    }, 300);
-
-                    menuItem.setChecked(true);
-                }
-
-                return true;
+            public boolean onNavigationItemSelected(MenuItem menuItem) {
+                selectNavMenuItem(menuItem);
+                return false;
             }
-        };
+        });
 
-        navigationView.setNavigationItemSelectedListener(navigationItemSelectedListener);
+        if (savedInstanceState == null) {
+            selectedNavMenuItemIndex = 0;
+        } else {
+            selectedNavMenuItemIndex = savedInstanceState.getInt(SELECTED_NAV_MENU_ITEM_INDEX_KEY);
+        }
 
-        // display home fragment on startup
-        navigationItemSelectedListener.onNavigationItemSelected(navigationView.getMenu().getItem(0));
+        selectNavMenuItem(navigationView.getMenu().getItem(selectedNavMenuItemIndex));
+    }
 
+    private void selectNavMenuItem(MenuItem menuItem) {
+        Fragment fragment = null;
+        String tag = null;
+
+        switch (menuItem.getItemId()) {
+            case R.id.nav_home:
+                if (getSupportFragmentManager().findFragmentByTag(HomeFragment.TAG) == null) {
+                    fragment = new HomeFragment();
+                }
+
+                tag = HomeFragment.TAG;
+                break;
+            case R.id.nav_user:
+                if (getSupportFragmentManager().findFragmentByTag(UserProfileFragment.TAG) == null) {
+                    fragment = new UserProfileFragment();
+                }
+
+                tag = UserProfileFragment.TAG;
+                break;
+        }
+
+        // only perform fragment transaction if fragment is not already present
+        if (fragment != null) {
+            // perform fragment transaction after some delay in order to prevent UI lag
+            handler.postDelayed(new ReplaceFragmentRunnable(fragment, tag), 300);
+        }
+
+        drawerLayout.closeDrawers();
+        menuItem.setChecked(true);
+        setTitle(menuItem.getTitle());
+
+        selectedNavMenuItemIndex = getMenuItemIndex(menuItem, navigationView.getMenu());
+    }
+
+    private int getMenuItemIndex(MenuItem menuItem, Menu menu) {
+        for (int i=0; i<menu.size(); i++) {
+            MenuItem currentMenuItem = menu.getItem(i);
+            if (currentMenuItem.getItemId() == menuItem.getItemId()) {
+                return i;
+            }
+        }
+
+        return -1;
+    }
+
+    @Override
+    protected void onSaveInstanceState(Bundle savedInstanceState) {
+        super.onSaveInstanceState(savedInstanceState);
+
+        savedInstanceState.putInt(SELECTED_NAV_MENU_ITEM_INDEX_KEY, selectedNavMenuItemIndex);
     }
 
     @Override
@@ -163,6 +194,25 @@ public class ContentActivity extends ActionBarActivity {
             drawerLayout.closeDrawers();
         } else {
             super.onBackPressed();
+        }
+    }
+
+    private class ReplaceFragmentRunnable implements Runnable {
+
+        private Fragment fragment;
+        private String tag;
+
+        public ReplaceFragmentRunnable(Fragment fragment, String tag) {
+            this.fragment = fragment;
+            this.tag = tag;
+        }
+
+        @Override
+        public void run() {
+            getSupportFragmentManager()
+                    .beginTransaction()
+                    .replace(contentLayout.getId(), fragment, tag)
+                    .commit();
         }
     }
 }
