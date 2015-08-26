@@ -75,28 +75,30 @@ public class CreateAccountFragment extends Fragment {
                     passwordEditText.setError(passwordError);
                 }
 
-                if (!password.equals(confirmPassword)) {
+                boolean doPasswordsMatch = password.equals(confirmPassword);
+
+                if (!doPasswordsMatch) {
                     confirmPasswordEditText.setError(getResources().getString(R.string.error_passwords_do_not_match));
-                } else {
-                    // if all input validations pass, send request to server
-                    if (nameError == null && emailError == null && passwordError == null) {
-                        Map<String, String> userDetails = new HashMap<String, String>();
-                        userDetails.put("name", name);
-                        userDetails.put("email", email);
-                        userDetails.put("password", password);
+                }
 
-                        AuthManager.basicAuth(userDetails, "new", new Callback() {
-                            @Override
-                            public void onSuccess(JSONObject data) {
-                                Snackbar.make(rootView, "success", Snackbar.LENGTH_SHORT).show();
-                            }
+                // if all input validations pass, send request to server
+                if (nameError == null && emailError == null && passwordError == null && doPasswordsMatch) {
+                    Map<String, String> userDetails = new HashMap<String, String>();
+                    userDetails.put("name", name);
+                    userDetails.put("email", email);
+                    userDetails.put("password", password);
 
-                            @Override
-                            public void onFailure(int statusCode, String message) {
-                                Snackbar.make(rootView, getResources().getString(R.string.error_base) + message, Snackbar.LENGTH_SHORT).show();
-                            }
-                        });
-                    }
+                    AuthManager.basicAuth(userDetails, "new", new Callback() {
+                        @Override
+                        public void onSuccess(JSONObject data) {
+                            Snackbar.make(rootView, "success", Snackbar.LENGTH_SHORT).show();
+                        }
+
+                        @Override
+                        public void onFailure(int statusCode, String message) {
+                            Snackbar.make(rootView, getResources().getString(R.string.error_base) + message, Snackbar.LENGTH_SHORT).show();
+                        }
+                    });
                 }
             }
         });
