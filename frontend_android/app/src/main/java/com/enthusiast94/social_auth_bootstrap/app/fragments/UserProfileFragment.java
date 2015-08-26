@@ -30,6 +30,9 @@ public class UserProfileFragment extends Fragment {
     private EditText nameEditText;
     private EditText emailEditText;
     private Button updateButton;
+    private EditText passwordEditText;
+    private EditText confirmPasswordEditText;
+    private Button changePasswordButton;
     private ProgressDialog progressDialog;
 
     @Override
@@ -49,6 +52,9 @@ public class UserProfileFragment extends Fragment {
         nameEditText = (EditText) view.findViewById(R.id.edittext_name);
         emailEditText = (EditText) view.findViewById(R.id.edittext_email);
         updateButton = (Button) view.findViewById(R.id.button_update);
+        passwordEditText = (EditText) view.findViewById(R.id.edittext_new_password);
+        confirmPasswordEditText = (EditText) view.findViewById(R.id.edittext_confirm_password);
+        changePasswordButton = (Button) view.findViewById(R.id.button_change_password);
 
         /**
          * Setup progress dialog which will be displayed for several network actions
@@ -109,7 +115,6 @@ public class UserProfileFragment extends Fragment {
                     emailEditText.setError(emailError);
                 }
 
-                // if all input validations pass, send request to server
                 if (nameError == null && emailError == null) {
                     progressDialog.show();
 
@@ -126,6 +131,53 @@ public class UserProfileFragment extends Fragment {
 
                             EventBus.getDefault().post(new UserInfoUpdatedEvent());
 
+                        }
+
+                        @Override
+                        public void onFailure(int statusCode, String message) {
+                            progressDialog.hide();
+
+                            Helpers.showSnackbar(rootView, "error", message, getResources());
+                        }
+                    });
+                }
+            }
+        });
+
+        // handle change password button click event
+        changePasswordButton.setOnClickListener(new View.OnClickListener() {
+
+            @Override
+            public void onClick(View view) {
+                Helpers.hideSoftKeyboard(getActivity(), rootView.getWindowToken());
+
+                String password = passwordEditText.getText().toString().trim();
+                String confirmPassword = confirmPasswordEditText.getText().toString().trim();
+
+                String passwordError = Helpers.validatePassword(password, getResources());
+
+                if (passwordError != null) {
+                    passwordEditText.setError(passwordError);
+                }
+
+                boolean doPasswordsMatch = password.equals(confirmPassword);
+
+                if (!doPasswordsMatch) {
+                    confirmPasswordEditText.setError(getResources().getString(R.string.error_passwords_do_not_match));
+                }
+
+                if (passwordError == null && doPasswordsMatch) {
+                    progressDialog.show();
+
+                    Map<String, String> userDetails = new HashMap<String, String>();
+                    userDetails.put("password", password);
+
+                    AuthManager.updateAccount(userDetails, new Callback() {
+                        @Override
+                        public void onSuccess(JSONObject data) {
+                            progressDialog.hide();
+
+                            Helpers.showSnackbar(rootView, "success", R.string.success_password_changed, getResources());
                         }
 
                         @Override

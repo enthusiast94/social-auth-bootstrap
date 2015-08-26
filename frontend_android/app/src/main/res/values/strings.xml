@@ -28,6 +28,7 @@
     <string name="nav_close">Close</string>
     <string name="success_login_base">Success! Logged in as:\u0020</string>
     <string name="success_account_information_updated">Account information successfully updated.</string>
+    <string name="success_password_changed">Password successfully changed.</string>
     <string name="lorem_ipsum">Lorem ipsum dolor sit amet, consectetur adipiscing elit.
         Vestibulum auctor enim nunc. Duis porttitor diam massa, facilisis vulputate ipsum
         malesuada non. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vestibulum
