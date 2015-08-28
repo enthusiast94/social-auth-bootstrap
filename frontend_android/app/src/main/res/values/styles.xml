@@ -24,13 +24,35 @@
 
     <style name="button">
         <item name="android:textSize">@dimen/font_small</item>
-        <item name="android:padding">12dp</item>
         <item name="android:textAllCaps">false</item>
+        <item name="android:padding">12dp</item>
+        <item name="android:minWidth">88dp</item>
+        <item name="android:minHeight">36dp</item>
     </style>
 
     <style name="button.danger" parent="button">
         <item name="android:background">@drawable/button_danger</item>
         <item name="android:textColor">@android:color/white</item>s
+    </style>
+
+    <style name="button.google" parent="button">
+        <item name="android:background">@drawable/button_google</item>
+        <item name="android:textColor">@android:color/white</item>
+    </style>
+
+    <style name="button.facebook" parent="button">
+        <item name="android:background">@drawable/button_facebook</item>
+        <item name="android:textColor">@android:color/white</item>
+    </style>
+
+    <style name="button.linkedin" parent="button">
+        <item name="android:background">@drawable/button_linkedin</item>
+        <item name="android:textColor">@android:color/white</item>
+    </style>
+
+    <style name="button.github" parent="button">
+        <item name="android:background">@drawable/button_github</item>
+        <item name="android:textColor">@android:color/white</item>
     </style>
 
 </resources>

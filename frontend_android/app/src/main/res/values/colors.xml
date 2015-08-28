@@ -11,9 +11,13 @@
     <color name="edittext_underline">#bebebe</color>
     <color name="nav_checked_background">#dbdbdb</color>
     <color name="google">#d34836</color>
+    <color name="google_dark">#b03626</color>
     <color name="facebook">#3b5998</color>
-    <color name="github">#444</color>
+    <color name="facebook_dark">#2d4373</color>
+    <color name="github">#444444</color>
+    <color name="github_dark">#2a2a2a</color>
     <color name="linkedin">#007bb6</color>
+    <color name="linkedin_dark">#005983</color>
     <color name="danger">#d9534f</color>
     <color name="danger_dark">#c9302c</color>
 </resources>

@@ -71,7 +71,7 @@
                         android:layout_height="wrap_content"
                         android:layout_gravity="end"
                         android:text="@string/action_login"
-                        style="@style/Widget.AppCompat.Button.ButtonBar.AlertDialog"
+                        style="@style/button"
                         />
 
                 <LinearLayout
@@ -115,22 +115,27 @@
                         android:layout_height="wrap_content"
                         android:orientation="horizontal"
                         android:weightSum="100"
+                        android:layout_marginBottom="@dimen/spacing_tiny"
                         >
-                    <Button
-                            android:layout_width="0dp"
-                            android:layout_height="wrap_content"
-                            android:layout_weight="50"
-                            android:textAllCaps="false"
-                            android:text="@string/action_google_login"
-                            android:id="@+id/button_google"/>
 
                     <Button
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
                             android:layout_weight="50"
-                            android:textAllCaps="false"
+                            android:text="@string/action_google_login"
+                            android:id="@+id/button_google"
+                            android:layout_marginRight="@dimen/spacing_tiny"
+                            style="@style/button.google"
+                            />
+
+                    <Button
+                            android:id="@+id/button_facebook"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="50"
                             android:text="@string/action_facebook_login"
-                            android:id="@+id/button_facebook"/>
+                            style="@style/button.facebook"
+                            />
 
                 </LinearLayout>
 
@@ -142,20 +147,23 @@
                         >
 
                     <Button
+                            android:id="@+id/button_github"
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
                             android:layout_weight="50"
-                            android:textAllCaps="false"
                             android:text="@string/action_github_login"
-                            android:id="@+id/button_github"/>
+                            android:layout_marginRight="@dimen/spacing_tiny"
+                            style="@style/button.github"
+                            />
 
                     <Button
+                            android:id="@+id/button_linkedin"
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
                             android:layout_weight="50"
-                            android:textAllCaps="false"
                             android:text="@string/action_linkedin_login"
-                            android:id="@+id/button_linkedin"/>
+                            style="@style/button.linkedin"
+                            />
 
                 </LinearLayout>
 

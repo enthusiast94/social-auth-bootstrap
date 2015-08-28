@@ -91,7 +91,7 @@
                     android:layout_height="wrap_content"
                     android:text="@string/action_create_account"
                     android:layout_gravity="right"
-                    style="@style/Widget.AppCompat.Button.ButtonBar.AlertDialog"
+                    style="@style/button"
                     />
 
         </LinearLayout>
