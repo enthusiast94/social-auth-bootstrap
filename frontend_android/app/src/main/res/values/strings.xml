@@ -26,7 +26,8 @@
     <string name="menu_nav_user">User Profile</string>
     <string name="nav_open">Open</string>
     <string name="nav_close">Close</string>
-    <string name="success_login_base">Success! Logged in as:\u0020</string>
+    <string name="success_login_base">Success! Logged in as\u0020</string>
+    <string name="success_account_deleted">Success! Account deleted successfully.</string>
     <string name="success_account_information_updated">Account information successfully updated.</string>
     <string name="success_password_changed">Password successfully changed.</string>
     <string name="lorem_ipsum">Lorem ipsum dolor sit amet, consectetur adipiscing elit.
@@ -40,4 +41,5 @@
     <string name="label_basic_information">Basic Information</string>
     <string name="action_update">Update</string>
     <string name="action_change_password">Change Password</string>
+    <string name="action_delete_account">Delete Account</string>
 </resources>

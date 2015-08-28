@@ -19,13 +19,14 @@
             android:orientation="vertical"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:visibility="invisible"
+            android:layout_margin="@dimen/spacing_tiny"
+            android:visibility="visible"
             >
 
         <android.support.v7.widget.CardView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_margin="@dimen/spacing_tiny"
+                android:layout_marginBottom="@dimen/spacing_tiny"
                 card_view:cardCornerRadius="@dimen/card_corner_radius"
                 >
 
@@ -76,15 +77,13 @@
                 </android.support.design.widget.TextInputLayout>
 
                 <Button
+                        android:id="@+id/button_update"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="@string/action_update"
                         android:layout_gravity="end"
-                        android:textAllCaps="false"
-                        style="@style/Widget.AppCompat.Button.Small"
-                        android:textSize="@dimen/font_small"
-                        android:id="@+id/button_update"/>
-
+                        style="@style/button"
+                        />
 
             </LinearLayout>
 
@@ -94,9 +93,7 @@
         <android.support.v7.widget.CardView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginLeft="@dimen/spacing_tiny"
                 android:layout_marginBottom="@dimen/spacing_tiny"
-                android:layout_marginRight="@dimen/spacing_tiny"
                 card_view:cardCornerRadius="@dimen/card_corner_radius"
                 >
 
@@ -146,18 +143,25 @@
                 </android.support.design.widget.TextInputLayout>
 
                 <Button
+                        android:id="@+id/button_change_password"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="@string/action_change_password"
-                        android:textAllCaps="false"
-                        style="@style/Widget.AppCompat.Button.Small"
-                        android:textSize="@dimen/font_small"
                         android:layout_gravity="end"
-                        android:id="@+id/button_change_password"/>
+                        style="@style/button"
+                        />
 
             </LinearLayout>
 
         </android.support.v7.widget.CardView>
+
+        <Button
+                android:id="@+id/button_delete_account"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/action_delete_account"
+                style="@style/button.danger"
+                />
 
     </LinearLayout>
 

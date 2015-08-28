@@ -33,6 +33,7 @@ public class UserProfileFragment extends Fragment {
     private EditText passwordEditText;
     private EditText confirmPasswordEditText;
     private Button changePasswordButton;
+    private Button deleteAccountButton;
     private ProgressDialog progressDialog;
 
     @Override
@@ -55,6 +56,7 @@ public class UserProfileFragment extends Fragment {
         passwordEditText = (EditText) view.findViewById(R.id.edittext_new_password);
         confirmPasswordEditText = (EditText) view.findViewById(R.id.edittext_confirm_password);
         changePasswordButton = (Button) view.findViewById(R.id.button_change_password);
+        deleteAccountButton = (Button) view.findViewById(R.id.button_delete_account);
 
         /**
          * Setup progress dialog which will be displayed for several network actions
@@ -188,6 +190,35 @@ public class UserProfileFragment extends Fragment {
                         }
                     });
                 }
+            }
+        });
+
+        // handle delete account button click event
+        deleteAccountButton.setOnClickListener(new View.OnClickListener() {
+
+            @Override
+            public void onClick(View view) {
+                progressDialog.show();
+
+                AuthManager.deleteAccount(new Callback() {
+
+                    @Override
+                    public void onSuccess(JSONObject data) {
+                        progressDialog.hide();
+
+                        Toast.makeText(getActivity(), R.string.success_account_deleted, Toast.LENGTH_SHORT)
+                                .show();
+
+                        EventBus.getDefault().post(new DeauthenticatedEvent());
+                    }
+
+                    @Override
+                    public void onFailure(int statusCode, String message) {
+                        progressDialog.hide();
+
+                        Helpers.showSnackbar(rootView, "error", message, getResources());
+                    }
+                });
             }
         });
 

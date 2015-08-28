@@ -98,6 +98,7 @@ public class AuthManager {
                     try {
                         if (response.getInt("status") == 200) {
                             Helpers.clearPrefs(App.getAppContext());
+
                             if (callback != null) callback.onSuccess(null);
                         } else {
                             if (callback != null)
@@ -200,6 +201,36 @@ public class AuthManager {
                 }
             }
         });
+    }
+
+    public static void deleteAccount(final Callback callback) {
+        JSONObject userJson = getUserFromCache();
+
+        if (userJson == null) throw new IllegalStateException("Current user is not authenticated");
+
+        try {
+            AsyncHttpClient client = new AsyncHttpClient();
+            client.addHeader("Authorization", "Token " + userJson.getString("accessToken"));
+            client.post(API_BASE + "/users/destroy/" + userJson.getString("userId"), new JsonHttpResponseHandler() {
+
+                @Override
+                public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
+                    try {
+                        if (response.getInt("status") == 200) {
+                            Helpers.clearPrefs(App.getAppContext());
+
+                            if (callback != null) callback.onSuccess(null);
+                        } else {
+                            if (callback != null) callback.onFailure(response.getInt("status"), response.getString("error"));
+                        }
+                    } catch (JSONException e) {
+                        throw new RuntimeException(e);
+                    }
+                }
+            });
+        } catch (JSONException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     public static JSONObject getUserFromCache() {
