@@ -1,5 +1,6 @@
 package com.enthusiast94.social_auth_bootstrap.app.fragments;
 
+import android.app.ProgressDialog;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
@@ -38,6 +39,7 @@ public class LoginFragment extends Fragment {
     private Button githubButton;
     private Button linkedinButton;
     private JSONObject oauth2Urls;
+    private ProgressDialog progressDialog;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -57,6 +59,15 @@ public class LoginFragment extends Fragment {
         facebookButton = (Button) view.findViewById(R.id.button_facebook);
         githubButton = (Button) view.findViewById(R.id.button_github);
         linkedinButton = (Button) view.findViewById(R.id.button_linkedin);
+
+        /**
+         * Setup progress dialog which will be displayed while performing network operations
+         */
+
+        progressDialog = new ProgressDialog(getActivity());
+        progressDialog.setIndeterminate(true);
+        progressDialog.setMessage(getResources().getString(R.string.message_please_wait));
+        progressDialog.setCancelable(false);
 
         /**
          * Fetch OAuth2 urls and then make the form visible. These OAuth2 urls will be used for the social sign in
@@ -105,6 +116,8 @@ public class LoginFragment extends Fragment {
 
                 // if all input validations pass, send request to server
                 if (emailError == null && passwordError == null) {
+                    progressDialog.show();
+
                     Map<String, String> userDetails = new HashMap<String, String>();
                     userDetails.put("email", email);
                     userDetails.put("password", password);
@@ -113,6 +126,8 @@ public class LoginFragment extends Fragment {
                         @Override
                         public void onSuccess(JSONObject data) {
                             try {
+                                progressDialog.hide();
+
                                 String userName = AuthManager.getUserFromCache().getString("userName");
                                 EventBus.getDefault().post(new AuthenticatedEvent(userName));
                             } catch (JSONException e) {
@@ -122,6 +137,8 @@ public class LoginFragment extends Fragment {
 
                         @Override
                         public void onFailure(int statusCode, String message) {
+                            progressDialog.hide();
+
                             Helpers.showSnackbar(rootView, "error", message, getResources());
                         }
                     });
@@ -170,5 +187,13 @@ public class LoginFragment extends Fragment {
         linkedinButton.setOnClickListener(oauthLoginButtonClickListener);
 
         return view;
+    }
+
+    @Override
+    public void onDestroyView() {
+        // make sure to dismiss dialog in order to prevent 'leaked window' error
+        progressDialog.dismiss();
+
+        super.onDestroyView();
     }
 }

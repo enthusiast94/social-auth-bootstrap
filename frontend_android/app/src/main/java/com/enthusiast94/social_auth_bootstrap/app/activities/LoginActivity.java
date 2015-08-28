@@ -1,5 +1,6 @@
 package com.enthusiast94.social_auth_bootstrap.app.activities;
 
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.content.res.Resources;
 import android.os.Bundle;
@@ -41,6 +42,7 @@ public class LoginActivity extends AppCompatActivity {
     private Toolbar toolbar;
     private TabLayout tabLayout;
     private ViewPager viewPager;
+    private ProgressDialog progressDialog;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -59,6 +61,15 @@ public class LoginActivity extends AppCompatActivity {
             toolbar = (Toolbar) findViewById(R.id.app_bar);
             tabLayout = (TabLayout) findViewById(R.id.tab_layout);
             viewPager = (ViewPager) findViewById(R.id.view_pager);
+
+            /**
+             * Setup progress dialog which will be displayed while performing network operations
+             */
+
+            progressDialog = new ProgressDialog(this);
+            progressDialog.setIndeterminate(true);
+            progressDialog.setMessage(getResources().getString(R.string.message_please_wait));
+            progressDialog.setCancelable(false);
 
             /**
              * Setup AppBar
@@ -104,6 +115,8 @@ public class LoginActivity extends AppCompatActivity {
 
     public void onEventMainThread(OauthCallbackEvent event) {
         if (event.getError() == null) {
+            progressDialog.show();
+
             Map<String, String> userDetails = new HashMap<String, String>();
             userDetails.put("userId", event.getUserId());
             userDetails.put("accessToken", event.getAccessToken());
@@ -112,6 +125,8 @@ public class LoginActivity extends AppCompatActivity {
                 @Override
                 public void onSuccess(JSONObject data) {
                     try {
+                        progressDialog.hide();
+
                         String userName = AuthManager.getUserFromCache().getString("userName");
                         EventBus.getDefault().post(new AuthenticatedEvent(userName));
                     } catch (JSONException e) {
@@ -121,6 +136,8 @@ public class LoginActivity extends AppCompatActivity {
 
                 @Override
                 public void onFailure(int statusCode, String message) {
+                    progressDialog.hide();
+
                     Helpers.showSnackbar(rootView, "error", message, getResources());
                 }
             });
@@ -170,6 +187,16 @@ public class LoginActivity extends AppCompatActivity {
         } else {
             getSupportFragmentManager().popBackStack();
         }
+    }
+
+    @Override
+    protected void onDestroy() {
+        // make sure to dismiss dialog in order to prevent 'leaked window' error
+        if (progressDialog != null) {
+            progressDialog.dismiss();
+        }
+
+        super.onDestroy();
     }
 
     private static class LoginPagerAdapter extends FragmentPagerAdapter {

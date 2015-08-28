@@ -59,7 +59,7 @@ public class UserProfileFragment extends Fragment {
         deleteAccountButton = (Button) view.findViewById(R.id.button_delete_account);
 
         /**
-         * Setup progress dialog which will be displayed for several network actions
+         * Setup progress dialog which will be displayed while performing network operations
          */
 
         progressDialog = new ProgressDialog(getActivity());

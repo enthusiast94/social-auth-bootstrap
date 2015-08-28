@@ -1,5 +1,6 @@
 package com.enthusiast94.social_auth_bootstrap.app.fragments;
 
+import android.app.ProgressDialog;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
@@ -30,6 +31,7 @@ public class CreateAccountFragment extends Fragment {
     private EditText passwordEditText;
     private EditText confirmPasswordEditText;
     private Button createAccountButton;
+    private ProgressDialog progressDialog;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -45,6 +47,15 @@ public class CreateAccountFragment extends Fragment {
         passwordEditText = (EditText) view.findViewById(R.id.edittext_password);
         confirmPasswordEditText = (EditText) view.findViewById(R.id.edittext_confirm_password);
         createAccountButton = (Button) view.findViewById(R.id.button_create_account);
+
+        /**
+         * Setup progress dialog which will be displayed while performing network operations
+         */
+
+        progressDialog = new ProgressDialog(getActivity());
+        progressDialog.setIndeterminate(true);
+        progressDialog.setMessage(getResources().getString(R.string.message_please_wait));
+        progressDialog.setCancelable(false);
 
         /**
          * Setup event listeners
@@ -85,6 +96,8 @@ public class CreateAccountFragment extends Fragment {
 
                 // if all input validations pass, send request to server
                 if (nameError == null && emailError == null && passwordError == null && doPasswordsMatch) {
+                    progressDialog.show();
+
                     Map<String, String> userDetails = new HashMap<String, String>();
                     userDetails.put("name", name);
                     userDetails.put("email", email);
@@ -94,6 +107,8 @@ public class CreateAccountFragment extends Fragment {
                         @Override
                         public void onSuccess(JSONObject data) {
                             try {
+                                progressDialog.hide();
+
                                 String userName = AuthManager.getUserFromCache().getString("userName");
                                 EventBus.getDefault().post(new AuthenticatedEvent(userName));
                             } catch (JSONException e) {
@@ -103,6 +118,8 @@ public class CreateAccountFragment extends Fragment {
 
                         @Override
                         public void onFailure(int statusCode, String message) {
+                            progressDialog.hide();
+
                             Helpers.showSnackbar(rootView, "error", message, getResources());
                         }
                     });
@@ -111,5 +128,13 @@ public class CreateAccountFragment extends Fragment {
         });
 
         return view;
+    }
+
+    @Override
+    public void onDestroyView() {
+        // make sure to dismiss dialog in order to prevent 'leaked window' error
+        progressDialog.dismiss();
+
+        super.onDestroyView();
     }
 }
