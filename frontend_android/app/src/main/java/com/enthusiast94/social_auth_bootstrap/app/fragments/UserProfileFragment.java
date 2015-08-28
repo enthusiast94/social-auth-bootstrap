@@ -12,6 +12,7 @@ import com.enthusiast94.social_auth_bootstrap.app.network.AuthManager;
 import com.enthusiast94.social_auth_bootstrap.app.network.Callback;
 import com.enthusiast94.social_auth_bootstrap.app.utils.Helpers;
 import de.greenrobot.event.EventBus;
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -34,6 +35,7 @@ public class UserProfileFragment extends Fragment {
     private EditText confirmPasswordEditText;
     private Button changePasswordButton;
     private Button deleteAccountButton;
+    private LinearLayout linkedAccountsContainer;
     private ProgressDialog progressDialog;
 
     @Override
@@ -56,6 +58,7 @@ public class UserProfileFragment extends Fragment {
         passwordEditText = (EditText) view.findViewById(R.id.edittext_new_password);
         confirmPasswordEditText = (EditText) view.findViewById(R.id.edittext_confirm_password);
         changePasswordButton = (Button) view.findViewById(R.id.button_change_password);
+        linkedAccountsContainer = (LinearLayout) view.findViewById(R.id.linked_accounts_container);
         deleteAccountButton = (Button) view.findViewById(R.id.button_delete_account);
 
         /**
@@ -76,11 +79,37 @@ public class UserProfileFragment extends Fragment {
             @Override
             public void onSuccess(JSONObject data) {
                 try {
-                    progressBar.setVisibility(View.INVISIBLE);
-                    contentLayout.setVisibility(View.VISIBLE);
-
                     nameEditText.setText(data.getString("name"));
                     emailEditText.setText(data.getString("email"));
+
+                    // populate linked accounts
+                    JSONArray linkedAccounts = data.getJSONArray("linkedAccounts");
+                    for (int i=0; i<linkedAccounts.length(); i++) {
+                        JSONObject linkedAccount = linkedAccounts.getJSONObject(i);
+                        View itemView = LayoutInflater.from(getActivity()).inflate(R.layout.item_linked_accounts,
+                                linkedAccountsContainer, false);
+
+                        final TextView providerNameTextView = (TextView) itemView.findViewById(R.id.textview_provider_info);
+                        String providerName = linkedAccount.getString("providerName");
+                        // capitalize first letter
+                        providerName = Character.toUpperCase(providerName.charAt(0)) + providerName.substring(1, providerName.length());
+                        String userEmail = linkedAccount.getString("userEmail");
+                        providerNameTextView.setText(providerName + " (" + userEmail + ")");
+
+                        ImageButton deleteButton = (ImageButton) itemView.findViewById(R.id.button_delete_linked_account);
+                        deleteButton.setOnClickListener(new View.OnClickListener() {
+
+                            @Override
+                            public void onClick(View view) {
+                                Helpers.showSnackbar(rootView, "success", providerNameTextView.getText().toString(), getResources());
+                            }
+                        });
+
+                        linkedAccountsContainer.addView(itemView);
+                    }
+
+                    progressBar.setVisibility(View.INVISIBLE);
+                    contentLayout.setVisibility(View.VISIBLE);
                 } catch (JSONException e) {
                     throw new RuntimeException(e);
                 }

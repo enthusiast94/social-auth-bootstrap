@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        android:layout_height="wrap_content"
+        android:layout_width="match_parent"
+        >
+
+    <TextView
+            android:id="@+id/textview_provider_info"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true" android:layout_alignParentLeft="true"
+            android:layout_alignParentStart="true"
+            android:textColor="@color/primary_text"
+            android:layout_toLeftOf="@+id/button_delete_linked_account" android:layout_toStartOf="@+id/button_delete_linked_account"
+            />
+
+    <ImageButton
+            android:id="@+id/button_delete_linked_account"
+            android:layout_width="45dp"
+            android:layout_height="45dp"
+            android:scaleType="centerInside"
+            android:src="@drawable/ic_action_action_delete"
+            android:contentDescription="@string/action_delete_linked_account"
+            android:layout_alignParentTop="true"
+            android:layout_alignParentRight="true"
+            android:layout_alignParentEnd="true"
+            />
+X
+</RelativeLayout>
