@@ -12,12 +12,14 @@
             android:layout_gravity="center_horizontal|center_vertical"/>
 
     <ScrollView
+            android:id="@+id/root_scroll_view"
             android:layout_width="match_parent"
-            android:layout_height="match_parent">
+            android:layout_height="match_parent"
+            android:visibility="invisible"
+            >
 
         <android.support.v7.widget.CardView
                 xmlns:card_view="http://schemas.android.com/apk/res-auto"
-                android:id="@+id/card_view"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_margin="@dimen/spacing_tiny"
@@ -25,11 +27,9 @@
                 >
 
             <LinearLayout
-                    android:id="@+id/form_layout"
                     android:orientation="vertical"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:visibility="visible"
                     android:padding="@dimen/spacing_small"
                     >
 

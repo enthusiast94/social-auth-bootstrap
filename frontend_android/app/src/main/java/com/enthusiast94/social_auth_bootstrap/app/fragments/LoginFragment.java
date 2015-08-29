@@ -6,10 +6,7 @@ import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
-import android.widget.EditText;
-import android.widget.LinearLayout;
-import android.widget.ProgressBar;
+import android.widget.*;
 import com.enthusiast94.social_auth_bootstrap.app.R;
 import com.enthusiast94.social_auth_bootstrap.app.events.AuthenticatedEvent;
 import com.enthusiast94.social_auth_bootstrap.app.events.OauthLoginButtonClickedEvent;
@@ -30,7 +27,7 @@ public class LoginFragment extends Fragment {
 
     private View rootView;
     private ProgressBar progressBar;
-    private LinearLayout formLayout;
+    private ScrollView rootScrollView;
     private EditText emailEditText;
     private EditText passwordEditText;
     private Button loginButton;
@@ -51,7 +48,7 @@ public class LoginFragment extends Fragment {
 
         rootView = view.getRootView();
         progressBar = (ProgressBar) view.findViewById(R.id.progress_bar);
-        formLayout = (LinearLayout) view.findViewById(R.id.form_layout);
+        rootScrollView = (ScrollView) view.findViewById(R.id.root_scroll_view);
         emailEditText = (EditText) view.findViewById(R.id.edittext_email);
         passwordEditText = (EditText) view.findViewById(R.id.edittext_password);
         loginButton = (Button) view.findViewById(R.id.button_login);
@@ -79,8 +76,8 @@ public class LoginFragment extends Fragment {
             public void onSuccess(JSONObject data) {
                 oauth2Urls = data;
 
-                progressBar.setVisibility(View.GONE);
-                formLayout.setVisibility(View.VISIBLE);
+                progressBar.setVisibility(View.INVISIBLE);
+                rootScrollView.setVisibility(View.VISIBLE);
             }
 
             @Override
