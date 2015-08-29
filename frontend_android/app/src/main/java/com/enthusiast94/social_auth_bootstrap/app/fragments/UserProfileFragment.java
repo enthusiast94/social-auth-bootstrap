@@ -36,6 +36,7 @@ public class UserProfileFragment extends Fragment {
     private Button changePasswordButton;
     private Button deleteAccountButton;
     private LinearLayout linkedAccountsContainer;
+    private LinearLayout noLinkedAccountsContainer;
     private ProgressDialog progressDialog;
 
     @Override
@@ -59,6 +60,7 @@ public class UserProfileFragment extends Fragment {
         confirmPasswordEditText = (EditText) view.findViewById(R.id.edittext_confirm_password);
         changePasswordButton = (Button) view.findViewById(R.id.button_change_password);
         linkedAccountsContainer = (LinearLayout) view.findViewById(R.id.linked_accounts_container);
+        noLinkedAccountsContainer = (LinearLayout) view.findViewById(R.id.no_linked_accounts_container);
         deleteAccountButton = (Button) view.findViewById(R.id.button_delete_account);
 
         /**
@@ -79,37 +81,68 @@ public class UserProfileFragment extends Fragment {
             @Override
             public void onSuccess(JSONObject data) {
                 try {
+                    progressBar.setVisibility(View.INVISIBLE);
+                    contentLayout.setVisibility(View.VISIBLE);
+
                     nameEditText.setText(data.getString("name"));
                     emailEditText.setText(data.getString("email"));
 
                     // populate linked accounts
                     JSONArray linkedAccounts = data.getJSONArray("linkedAccounts");
-                    for (int i=0; i<linkedAccounts.length(); i++) {
-                        JSONObject linkedAccount = linkedAccounts.getJSONObject(i);
-                        View itemView = LayoutInflater.from(getActivity()).inflate(R.layout.item_linked_accounts,
-                                linkedAccountsContainer, false);
 
-                        final TextView providerNameTextView = (TextView) itemView.findViewById(R.id.textview_provider_info);
-                        String providerName = linkedAccount.getString("providerName");
-                        // capitalize first letter
-                        providerName = Character.toUpperCase(providerName.charAt(0)) + providerName.substring(1, providerName.length());
-                        String userEmail = linkedAccount.getString("userEmail");
-                        providerNameTextView.setText(providerName + " (" + userEmail + ")");
+                    if (linkedAccounts.length() == 0) {
+                        linkedAccountsContainer.setVisibility(View.INVISIBLE);
+                        noLinkedAccountsContainer.setVisibility(View.VISIBLE);
+                    } else {
+                        for (int i=0; i<linkedAccounts.length(); i++) {
+                            JSONObject linkedAccount = linkedAccounts.getJSONObject(i);
+                            final View itemView = LayoutInflater.from(getActivity()).inflate(R.layout.item_linked_accounts,
+                                    linkedAccountsContainer, false);
 
-                        ImageButton deleteButton = (ImageButton) itemView.findViewById(R.id.button_delete_linked_account);
-                        deleteButton.setOnClickListener(new View.OnClickListener() {
+                            final TextView providerNameTextView = (TextView) itemView.findViewById(R.id.textview_provider_info);
+                            final String providerName = linkedAccount.getString("providerName");
+                            String userEmail = linkedAccount.getString("userEmail");
+                            providerNameTextView.setText(Character.toUpperCase(providerName.charAt(0)) +
+                                    providerName.substring(1, providerName.length()) + " (" + userEmail + ")");
 
-                            @Override
-                            public void onClick(View view) {
-                                Helpers.showSnackbar(rootView, "success", providerNameTextView.getText().toString(), getResources());
-                            }
-                        });
+                            ImageButton deleteButton = (ImageButton) itemView.findViewById(R.id.button_delete_linked_account);
+                            deleteButton.setOnClickListener(new View.OnClickListener() {
 
-                        linkedAccountsContainer.addView(itemView);
+                                @Override
+                                public void onClick(View view) {
+                                    progressDialog.show();
+
+                                    AuthManager.unlinkAccount(providerName, new Callback() {
+
+                                        @Override
+                                        public void onSuccess(JSONObject data) {
+                                            progressDialog.hide();
+
+                                            linkedAccountsContainer.removeView(itemView);
+                                            Helpers.showSnackbar(rootView, "success", providerName + " " +
+                                                    getResources().getString(R.string.success_account_unlinked), getResources());
+
+                                            // if there's only one child view left (heading label), then show 'no linked
+                                            // accounts' message
+                                            if (linkedAccountsContainer.getChildCount() == 1) {
+                                                linkedAccountsContainer.setVisibility(View.INVISIBLE);
+                                                noLinkedAccountsContainer.setVisibility(View.VISIBLE);
+                                            }
+                                        }
+
+                                        @Override
+                                        public void onFailure(int statusCode, String message) {
+                                            progressDialog.hide();
+
+                                            Helpers.showSnackbar(rootView, "error", message, getResources());
+                                        }
+                                    });
+                                }
+                            });
+
+                            linkedAccountsContainer.addView(itemView);
+                        }
                     }
-
-                    progressBar.setVisibility(View.INVISIBLE);
-                    contentLayout.setVisibility(View.VISIBLE);
                 } catch (JSONException e) {
                     throw new RuntimeException(e);
                 }

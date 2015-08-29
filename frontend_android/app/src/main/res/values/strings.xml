@@ -30,6 +30,7 @@
     <string name="success_account_deleted">Success! Account deleted successfully.</string>
     <string name="success_account_information_updated">Account information successfully updated.</string>
     <string name="success_password_changed">Password successfully changed.</string>
+    <string name="success_account_unlinked">account successfully unlinked.</string>
     <string name="lorem_ipsum">Lorem ipsum dolor sit amet, consectetur adipiscing elit.
         Vestibulum auctor enim nunc. Duis porttitor diam massa, facilisis vulputate ipsum
         malesuada non. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vestibulum
@@ -45,4 +46,5 @@
     <string name="action_change_password">Change Password</string>
     <string name="action_delete_account">Delete Account</string>
     <string name="action_delete_linked_account">Delete Linked Account</string>
+    <string name="label_no_accounts_linked">No accounts linked</string>
 </resources>

@@ -233,6 +233,34 @@ public class AuthManager {
         }
     }
 
+    public static void unlinkAccount(String providerName, final Callback callback) {
+        JSONObject userJson = getUserFromCache();
+
+        if (userJson == null) throw new IllegalStateException("Current user is not authenticated");
+
+        try {
+            AsyncHttpClient client = new AsyncHttpClient();
+            client.addHeader("Authorization", "Token " + userJson.getString("accessToken"));
+            client.post(API_BASE + "/linked-accounts/destroy/" + providerName, new JsonHttpResponseHandler() {
+
+                @Override
+                public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
+                    try {
+                        if (response.getInt("status") == 200) {
+                            if (callback != null) callback.onSuccess(null);
+                        } else {
+                            if (callback != null) callback.onFailure(response.getInt("status"), response.getString("error"));
+                        }
+                    } catch (JSONException e) {
+                        throw new RuntimeException(e);
+                    }
+                }
+            });
+        } catch (JSONException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
     public static JSONObject getUserFromCache() {
         return Helpers.readJsonFromPrefs(App.getAppContext(), PREF_USER);
     }

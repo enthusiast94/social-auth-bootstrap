@@ -117,7 +117,34 @@
                             android:layout_height="wrap_content"
                             android:layout_marginBottom="@dimen/spacing_tiny"
                             android:text="@string/label_linked_accounts"
-                            style="@style/textview_label"/>
+                            style="@style/textview_label"
+                            />
+
+                </LinearLayout>
+
+                <LinearLayout
+                        android:id="@+id/no_linked_accounts_container"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:orientation="vertical"
+                        android:padding="@dimen/spacing_small"
+                        android:visibility="invisible"
+                        >
+
+                    <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginBottom="@dimen/spacing_tiny"
+                            android:text="@string/label_linked_accounts"
+                            style="@style/textview_label"
+                            />
+
+                    <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="@dimen/spacing_tiny"
+                            android:text="@string/label_no_accounts_linked"
+                            />
 
                 </LinearLayout>
 
