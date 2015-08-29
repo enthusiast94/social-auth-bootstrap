@@ -10,6 +10,8 @@
     <color name="divider">#bebebe</color>
     <color name="edittext_underline">#bebebe</color>
     <color name="nav_checked_background">#dbdbdb</color>
+    <color name="nav_text">#B3000000</color>
+    <color name="nav_icon">#99000000</color>
     <color name="google">#d34836</color>
     <color name="google_dark">#b03626</color>
     <color name="facebook">#3b5998</color>
