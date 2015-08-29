@@ -154,55 +154,6 @@ public class AuthManager {
         }
     }
 
-    /**
-     * Gets currently authenticated user and saves it in cache. If this method is invoked when there is no authenticated user in cache, then
-     * userId and accessToken of the newly authenticated user must be a part of the provided user details map.
-     */
-    public static void getUser(Map<String, String> optionalUserDetails, final Callback callback) {
-        final JSONObject userJson = getUserFromCache();
-
-        if (userJson == null && optionalUserDetails == null)
-            throw new IllegalArgumentException("userId and accessToken are both required");
-
-        final String userId;
-        final String accessToken;
-        try {
-            userId = optionalUserDetails != null ? optionalUserDetails.get("userId") : userJson.getString("userId");
-            accessToken = optionalUserDetails != null ? optionalUserDetails.get("accessToken") : userJson.getString("accessToken");
-        } catch (JSONException e) {
-            throw new RuntimeException(e);
-        }
-
-        AsyncHttpClient client = new AsyncHttpClient();
-        client.addHeader("Authorization", "Token " + accessToken);
-        client.get(API_BASE + "/users/" + userId, new JsonHttpResponseHandler() {
-            @Override
-            public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
-                try {
-                    if (response.getInt("status") == 200) {
-                        JSONObject data = response.getJSONObject("data");
-
-                        JSONObject jsonToSave = new JSONObject();
-                        jsonToSave.put("userId", userId);
-                        jsonToSave.put("userEmail", data.getString("email"));
-                        jsonToSave.put("accessToken", accessToken);
-                        jsonToSave.put("userName", data.getString("name"));
-                        jsonToSave.put("userAvatar", data.getString("avatar"));
-
-                        Helpers.writeJsonToPrefs(App.getAppContext(), PREF_USER, jsonToSave);
-
-                        if (callback != null) callback.onSuccess(data);
-                    } else {
-                        if (callback != null)
-                            callback.onFailure(response.getInt("status"), response.getString("error"));
-                    }
-                } catch (JSONException e) {
-                    throw new RuntimeException(e);
-                }
-            }
-        });
-    }
-
     public static void deleteAccount(final Callback callback) {
         JSONObject userJson = getUserFromCache();
 
@@ -259,6 +210,55 @@ public class AuthManager {
         } catch (JSONException e) {
             throw new RuntimeException(e);
         }
+    }
+
+    /**
+     * Gets currently authenticated user and saves it in cache. If this method is invoked when there is no authenticated user in cache, then
+     * userId and accessToken of the newly authenticated user must be a part of the provided user details map.
+     */
+    public static void getUser(Map<String, String> optionalUserDetails, final Callback callback) {
+        final JSONObject userJson = getUserFromCache();
+
+        if (userJson == null && optionalUserDetails == null)
+            throw new IllegalArgumentException("userId and accessToken are both required");
+
+        final String userId;
+        final String accessToken;
+        try {
+            userId = optionalUserDetails != null ? optionalUserDetails.get("userId") : userJson.getString("userId");
+            accessToken = optionalUserDetails != null ? optionalUserDetails.get("accessToken") : userJson.getString("accessToken");
+        } catch (JSONException e) {
+            throw new RuntimeException(e);
+        }
+
+        AsyncHttpClient client = new AsyncHttpClient();
+        client.addHeader("Authorization", "Token " + accessToken);
+        client.get(API_BASE + "/users/" + userId, new JsonHttpResponseHandler() {
+            @Override
+            public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
+                try {
+                    if (response.getInt("status") == 200) {
+                        JSONObject data = response.getJSONObject("data");
+
+                        JSONObject jsonToSave = new JSONObject();
+                        jsonToSave.put("userId", userId);
+                        jsonToSave.put("userEmail", data.getString("email"));
+                        jsonToSave.put("accessToken", accessToken);
+                        jsonToSave.put("userName", data.getString("name"));
+                        jsonToSave.put("userAvatar", data.getString("avatar"));
+
+                        Helpers.writeJsonToPrefs(App.getAppContext(), PREF_USER, jsonToSave);
+
+                        if (callback != null) callback.onSuccess(data);
+                    } else {
+                        if (callback != null)
+                            callback.onFailure(response.getInt("status"), response.getString("error"));
+                    }
+                } catch (JSONException e) {
+                    throw new RuntimeException(e);
+                }
+            }
+        });
     }
 
     public static JSONObject getUserFromCache() {
