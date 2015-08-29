@@ -1,6 +1,8 @@
 package com.enthusiast94.social_auth_bootstrap.app.fragments;
 
+import android.app.AlertDialog;
 import android.app.ProgressDialog;
+import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.view.*;
@@ -88,7 +90,7 @@ public class UserProfileFragment extends Fragment {
                     emailEditText.setText(data.getString("email"));
 
                     // populate linked accounts
-                    JSONArray linkedAccounts = data.getJSONArray("linkedAccounts");
+                    final JSONArray linkedAccounts = data.getJSONArray("linkedAccounts");
 
                     if (linkedAccounts.length() == 0) {
                         linkedAccountsContainer.setVisibility(View.INVISIBLE);
@@ -110,9 +112,7 @@ public class UserProfileFragment extends Fragment {
 
                                 @Override
                                 public void onClick(View view) {
-                                    progressDialog.show();
-
-                                    AuthManager.unlinkAccount(providerName, new Callback() {
+                                    final Callback unlinAccountCallback = new Callback() {
 
                                         @Override
                                         public void onSuccess(JSONObject data) {
@@ -136,7 +136,30 @@ public class UserProfileFragment extends Fragment {
 
                                             Helpers.showSnackbar(rootView, "error", message, getResources());
                                         }
-                                    });
+                                    };
+
+                                    // display a confirmation dialog if the last linked account is being unlinked
+                                    if (linkedAccountsContainer.getChildCount() == 2) {
+                                        AlertDialog dialog = new AlertDialog.Builder(getActivity())
+                                                .setMessage(R.string.warning_last_linked_account)
+                                                .setPositiveButton(R.string.action_ok, new DialogInterface.OnClickListener() {
+
+                                                    @Override
+                                                    public void onClick(DialogInterface dialogInterface, int i) {
+                                                        progressDialog.show();
+
+                                                        AuthManager.unlinkAccount(providerName, unlinAccountCallback);
+                                                    }
+                                                })
+                                                .setNegativeButton(R.string.action_cancel, null)
+                                                .setTitle(R.string.label_warning)
+                                                .create();
+                                        dialog.show();
+                                    } else {
+                                        progressDialog.show();
+
+                                        AuthManager.unlinkAccount(providerName, unlinAccountCallback);
+                                    }
                                 }
                             });
 
