@@ -31,12 +31,12 @@ public class UserController {
     private LinkedAccountService linkedAccountService;
     private OAuthStrategyFactory oAuthStrategyFactory;
 
-    public UserController(UserService userService, AccessTokenService accessTokenService, LinkedAccountService linkedAccountService) {
+    public UserController(UserService userService, AccessTokenService accessTokenService,
+                          LinkedAccountService linkedAccountService, OAuthStrategyFactory oAuthStrategyFactory) {
         this.userService = userService;
         this.accessTokenService = accessTokenService;
         this.linkedAccountService = linkedAccountService;
-
-        this.oAuthStrategyFactory = new OAuthStrategyFactory(userService, accessTokenService, linkedAccountService);
+        this.oAuthStrategyFactory = oAuthStrategyFactory;
     }
 
     public void setupEndpoints() {

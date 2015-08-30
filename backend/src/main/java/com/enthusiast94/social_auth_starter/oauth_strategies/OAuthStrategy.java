@@ -7,6 +7,7 @@ import com.enthusiast94.social_auth_starter.services.AccessTokenService;
 import com.enthusiast94.social_auth_starter.services.LinkedAccountService;
 import com.enthusiast94.social_auth_starter.services.UserService;
 import com.enthusiast94.social_auth_starter.utils.Helpers;
+import com.enthusiast94.social_auth_starter.utils.OauthCredentialsParser;
 
 import java.util.HashMap;
 import java.util.List;
@@ -16,15 +17,14 @@ import java.util.List;
  */
 public abstract class OAuthStrategy {
 
-    protected static String SERVER_REDIRECT_URI_BASE = "http://ec2-52-28-155-29.eu-central-1.compute.amazonaws.com:3005/oauth2-callback";
-    protected static final String CLIENT_REDIRECT_URI = "http://localhost:4000/#oauth2-callback";
-    protected static final String USER_PASSWORD = "this is a secret";
-
+    protected OauthCredentialsParser oauthCredentialsParser;
     protected UserService userService;
     protected AccessTokenService accessTokenService;
     protected LinkedAccountService linkedAccountService;
 
-    public OAuthStrategy(UserService userService, AccessTokenService accessTokenService, LinkedAccountService linkedAccountService) {
+    public OAuthStrategy(OauthCredentialsParser oauthCredentialsParser, UserService userService,
+                         AccessTokenService accessTokenService, LinkedAccountService linkedAccountService) {
+        this.oauthCredentialsParser = oauthCredentialsParser;
         this.userService = userService;
         this.accessTokenService = accessTokenService;
         this.linkedAccountService = linkedAccountService;
@@ -89,9 +89,9 @@ public abstract class OAuthStrategy {
                 }
             } else {
                 if (avatar != null) {
-                    user2 = userService.createUser(email, name, avatar, USER_PASSWORD);
+                    user2 = userService.createUser(email, name, avatar, oauthCredentialsParser.getDefaultUserPassword());
                 } else {
-                    user2 = userService.createUser(email, name, Helpers.getGravatar(email), USER_PASSWORD);
+                    user2 = userService.createUser(email, name, Helpers.getGravatar(email), oauthCredentialsParser.getDefaultUserPassword());
                 }
 
                 accessToken = accessTokenService.createAccessToken(user2.getId());

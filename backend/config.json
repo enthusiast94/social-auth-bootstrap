@@ -1,0 +1,27 @@
+{
+  "server_redirect_uri_base": "http://ec2-52-28-155-29.eu-central-1.compute.amazonaws.com:3005/oauth2-callback",
+  "client_redirect_uri": "http://localhost:4000/#oauth2-callback",
+  "default_user_password": "this_is_a_secret",
+  "oauth2_credentials": {
+    "google": {
+      "id": "22650997142-72e53ltr1648it12eqjvlo79fh8l7l7o.apps.googleusercontent.com",
+      "secret": "_Vt6ORzdvJ0K7j_-XQovtotO",
+      "server_redirect_uri_path": "/google"
+    },
+    "facebook": {
+      "id": "1481355242174753",
+      "secret": "62a96bbdf56b9046b89892461a7b172b",
+      "server_redirect_uri_path": "/facebook"
+    },
+    "github": {
+      "id": "1ffc3eb1fa0c7faa6f86",
+      "secret": "eca5e03e495ad7c2413ef84d1269d2badc175c7d",
+      "server_redirect_uri_path": "/github"
+    },
+    "linkedin": {
+      "id": "75vf5mbs1olw7k",
+      "secret": "PKXuNWIranFvRRVv",
+      "server_redirect_uri_path": "/linkedin"
+    }
+  }
+}

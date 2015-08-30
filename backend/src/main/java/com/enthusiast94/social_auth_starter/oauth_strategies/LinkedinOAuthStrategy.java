@@ -5,6 +5,7 @@ import com.enthusiast94.social_auth_starter.services.AccessTokenService;
 import com.enthusiast94.social_auth_starter.services.LinkedAccountService;
 import com.enthusiast94.social_auth_starter.services.UserService;
 import com.enthusiast94.social_auth_starter.utils.Helpers;
+import com.enthusiast94.social_auth_starter.utils.OauthCredentialsParser;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 
@@ -17,15 +18,15 @@ import java.util.Map;
 public class LinkedinOAuthStrategy extends OAuthStrategy {
 
     public static final String PROVIDER_NAME = "linkedin";
-    private static final String CLIENT_ID = "75vf5mbs1olw7k";
-    private static final String CLIENT_SECRET = "PKXuNWIranFvRRVv";
-    private static final String REDIRECT_URI = SERVER_REDIRECT_URI_BASE + "/linkedin";
     private static final String AUTH_ENDPOINT = "https://www.linkedin.com/uas/oauth2/authorization";
     private static final String TOKEN_ENDPOINT = "https://www.linkedin.com/uas/oauth2/accessToken";
     private static final String USER_ENDPOINT = "https://api.linkedin.com/v1/people/~:(email-address,first-name,last-name,picture-url)";
+    private Map<String, String> credentialsMap;
 
-    public LinkedinOAuthStrategy(UserService userService, AccessTokenService accessTokenService, LinkedAccountService linkedAccountService) {
-        super(userService, accessTokenService, linkedAccountService);
+    public LinkedinOAuthStrategy(OauthCredentialsParser oauthCredentialsParser, UserService userService, AccessTokenService accessTokenService, LinkedAccountService linkedAccountService) {
+        super(oauthCredentialsParser, userService, accessTokenService, linkedAccountService);
+
+        credentialsMap = oauthCredentialsParser.getOauth2Credentials(PROVIDER_NAME);
     }
 
     @Override
@@ -39,9 +40,9 @@ public class LinkedinOAuthStrategy extends OAuthStrategy {
             Map<String, String> postParams = new HashMap<>();
             postParams.put("grant_type", "authorization_code");
             postParams.put("code", code);
-            postParams.put("redirect_uri", REDIRECT_URI);
-            postParams.put("client_id", CLIENT_ID);
-            postParams.put("client_secret", CLIENT_SECRET);
+            postParams.put("redirect_uri", credentialsMap.get("redirect_uri"));
+            postParams.put("client_id", credentialsMap.get("id"));
+            postParams.put("client_secret", credentialsMap.get("secret"));
 
             String tokenResponse = Helpers.httpPost(TOKEN_ENDPOINT, postParams);
             HashMap<String, String> parsedTokenResponse = parseAccessToken(tokenResponse);
@@ -61,15 +62,15 @@ public class LinkedinOAuthStrategy extends OAuthStrategy {
             responseParams.put("accessToken", accessToken.getValue());
         }
 
-        return CLIENT_REDIRECT_URI + "?" + Helpers.stringifyParams(responseParams);
+        return oauthCredentialsParser.getClientRedirectUri() + "?" + Helpers.stringifyParams(responseParams);
     }
 
     @Override
     public String getAuthUrl() {
         Map<String, String> queryParams = new HashMap<>();
         queryParams.put("response_type", "code");
-        queryParams.put("client_id", CLIENT_ID);
-        queryParams.put("redirect_uri", REDIRECT_URI);
+        queryParams.put("client_id", credentialsMap.get("id"));
+        queryParams.put("redirect_uri", credentialsMap.get("redirect_uri"));
         queryParams.put("state", "to_be_implemented");
         queryParams.put("scope", "r_basicprofile r_emailaddress");
 

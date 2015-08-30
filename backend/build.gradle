@@ -20,4 +20,5 @@ dependencies {
     compile 'org.mindrot:jbcrypt:0.3m'
     compile 'commons-validator:commons-validator:1.4.1'
     compile 'commons-codec:commons-codec:1.10'
+    compile 'org.json:json:20141113'
 }

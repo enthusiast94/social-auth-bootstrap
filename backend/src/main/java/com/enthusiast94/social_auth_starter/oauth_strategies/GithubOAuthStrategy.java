@@ -5,6 +5,7 @@ import com.enthusiast94.social_auth_starter.services.AccessTokenService;
 import com.enthusiast94.social_auth_starter.services.LinkedAccountService;
 import com.enthusiast94.social_auth_starter.services.UserService;
 import com.enthusiast94.social_auth_starter.utils.Helpers;
+import com.enthusiast94.social_auth_starter.utils.OauthCredentialsParser;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 
@@ -17,15 +18,15 @@ import java.util.Map;
 public class GithubOAuthStrategy extends OAuthStrategy {
 
     public static final String PROVIDER_NAME = "github";
-    private static final String CLIENT_ID = "1ffc3eb1fa0c7faa6f86";
-    private static final String CLIENT_SECRET = "eca5e03e495ad7c2413ef84d1269d2badc175c7d";
-    private static final String REDIRECT_URI = SERVER_REDIRECT_URI_BASE + "/github";
     private static final String AUTH_ENDPOINT = "https://github.com/login/oauth/authorize";
     private static final String TOKEN_ENDPOINT = "https://github.com/login/oauth/access_token";
     private static final String USER_ENDPOINT = "https://api.github.com/user";
+    private Map<String, String> credentialsMap;
 
-    public GithubOAuthStrategy(UserService userService, AccessTokenService accessTokenService, LinkedAccountService linkedAccountService) {
-        super(userService, accessTokenService, linkedAccountService);
+    public GithubOAuthStrategy(OauthCredentialsParser oauthCredentialsParser, UserService userService, AccessTokenService accessTokenService, LinkedAccountService linkedAccountService) {
+        super(oauthCredentialsParser, userService, accessTokenService, linkedAccountService);
+
+        credentialsMap = oauthCredentialsParser.getOauth2Credentials(PROVIDER_NAME);
     }
 
     @Override
@@ -38,9 +39,9 @@ public class GithubOAuthStrategy extends OAuthStrategy {
             // get access token
             Map<String, String> postParams = new HashMap<>();
             postParams.put("code", code);
-            postParams.put("client_id", CLIENT_ID);
-            postParams.put("client_secret", CLIENT_SECRET);
-            postParams.put("redirect_uri", REDIRECT_URI);
+            postParams.put("client_id", credentialsMap.get("id"));
+            postParams.put("client_secret", credentialsMap.get("secret"));
+            postParams.put("redirect_uri", credentialsMap.get("redirect_uri"));
 
             String tokenResponse = Helpers.httpPost(TOKEN_ENDPOINT, postParams);
             HashMap<String, String> parsedTokenResponse = parseAccessToken(tokenResponse);
@@ -56,14 +57,14 @@ public class GithubOAuthStrategy extends OAuthStrategy {
             responseParams.put("accessToken", accessToken.getValue());
         }
 
-        return CLIENT_REDIRECT_URI + "?" + Helpers.stringifyParams(responseParams);
+        return oauthCredentialsParser.getClientRedirectUri() + "?" + Helpers.stringifyParams(responseParams);
     }
 
     @Override
     public String getAuthUrl() {
         Map<String, String> queryParams = new HashMap<>();
-        queryParams.put("client_id", CLIENT_ID);
-        queryParams.put("redirect_uri", REDIRECT_URI);
+        queryParams.put("client_id", credentialsMap.get("id"));
+        queryParams.put("redirect_uri", credentialsMap.get("redirect_uri"));
         queryParams.put("scope", "user:email");
 
         return AUTH_ENDPOINT + "?" + Helpers.stringifyParams(queryParams);

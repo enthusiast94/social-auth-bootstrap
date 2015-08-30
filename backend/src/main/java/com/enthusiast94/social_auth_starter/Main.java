@@ -5,9 +5,11 @@ package com.enthusiast94.social_auth_starter;
  */
 
 import com.enthusiast94.social_auth_starter.controllers.UserController;
+import com.enthusiast94.social_auth_starter.oauth_strategies.OAuthStrategyFactory;
 import com.enthusiast94.social_auth_starter.services.AccessTokenService;
 import com.enthusiast94.social_auth_starter.services.LinkedAccountService;
 import com.enthusiast94.social_auth_starter.services.UserService;
+import com.enthusiast94.social_auth_starter.utils.OauthCredentialsParser;
 import com.mongodb.MongoClient;
 import org.mongodb.morphia.Datastore;
 import org.mongodb.morphia.Morphia;
@@ -67,7 +69,11 @@ public class Main {
         AccessTokenService accessTokenService = new AccessTokenService(db);
         UserService userService = new UserService(db);
         LinkedAccountService linkedAccountService = new LinkedAccountService(db);
+        OauthCredentialsParser oauthCredentialsParser = new OauthCredentialsParser("config.json");
+        OAuthStrategyFactory oAuthStrategyFactory = new OAuthStrategyFactory(oauthCredentialsParser, userService,
+                accessTokenService, linkedAccountService);
 
-        new UserController(userService, accessTokenService, linkedAccountService).setupEndpoints();
+        new UserController(userService, accessTokenService, linkedAccountService, oAuthStrategyFactory)
+                .setupEndpoints();
     }
 }

@@ -5,6 +5,7 @@ import com.enthusiast94.social_auth_starter.services.AccessTokenService;
 import com.enthusiast94.social_auth_starter.services.LinkedAccountService;
 import com.enthusiast94.social_auth_starter.services.UserService;
 import com.enthusiast94.social_auth_starter.utils.Helpers;
+import com.enthusiast94.social_auth_starter.utils.OauthCredentialsParser;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 
@@ -17,15 +18,15 @@ import java.util.Map;
 public class FacebookOAuthStrategy extends OAuthStrategy {
 
     public static final String PROVIDER_NAME = "facebook";
-    private static final String CLIENT_ID = "1481355242174753";
-    private static final String CLIENT_SECRET = "62a96bbdf56b9046b89892461a7b172b";
-    private static final String REDIRECT_URI = SERVER_REDIRECT_URI_BASE + "/facebook";
     private static final String AUTH_ENDPOINT = "https://www.facebook.com/dialog/oauth";
     private static final String TOKEN_ENDPOINT = "https://graph.facebook.com/v2.3/oauth/access_token";
     private static final String USER_ENDPOINT = "https://graph.facebook.com/me";
+    private Map<String, String> credentialsMap;
 
-    public FacebookOAuthStrategy(UserService userService, AccessTokenService accessTokenService, LinkedAccountService linkedAccountService) {
-        super(userService, accessTokenService, linkedAccountService);
+    public FacebookOAuthStrategy(OauthCredentialsParser oauthCredentialsParser, UserService userService, AccessTokenService accessTokenService, LinkedAccountService linkedAccountService) {
+        super(oauthCredentialsParser, userService, accessTokenService, linkedAccountService);
+
+        credentialsMap = oauthCredentialsParser.getOauth2Credentials(PROVIDER_NAME);
     }
 
     @Override
@@ -38,9 +39,9 @@ public class FacebookOAuthStrategy extends OAuthStrategy {
             // get access token
             Map<String, String> postParams = new HashMap<>();
             postParams.put("code", code);
-            postParams.put("client_id", CLIENT_ID);
-            postParams.put("client_secret", CLIENT_SECRET);
-            postParams.put("redirect_uri", REDIRECT_URI);
+            postParams.put("client_id", credentialsMap.get("id"));
+            postParams.put("client_secret", credentialsMap.get("secret"));
+            postParams.put("redirect_uri", credentialsMap.get("redirect-uri"));
 
             String tokenResponse = Helpers.httpPost(TOKEN_ENDPOINT, postParams);
             HashMap<String, String> parsedTokenResponse = parseAccessToken(tokenResponse);
@@ -57,14 +58,14 @@ public class FacebookOAuthStrategy extends OAuthStrategy {
             responseParams.put("accessToken", accessToken.getValue());
         }
 
-        return CLIENT_REDIRECT_URI + "?" + Helpers.stringifyParams(responseParams);
+        return oauthCredentialsParser.getClientRedirectUri() + "?" + Helpers.stringifyParams(responseParams);
     }
 
     @Override
     public String getAuthUrl() {
         Map<String, String> queryParams = new HashMap<>();
-        queryParams.put("client_id", CLIENT_ID);
-        queryParams.put("redirect_uri", REDIRECT_URI);
+        queryParams.put("client_id", credentialsMap.get("id"));
+        queryParams.put("redirect_uri", credentialsMap.get("redirect_uri"));
         queryParams.put("response_type", "code");
         queryParams.put("scope", "email");
 
