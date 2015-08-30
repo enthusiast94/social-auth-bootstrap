@@ -200,13 +200,13 @@ public class UserController {
 
                     if (!user.getId().equals(req.params("id"))) return new ApiResponse(401, "Invalid access token", null);
 
-                    // delete currently authenticated user's access token
-                    accessTokenService.deleteAccessToken(accessToken);
+                    // delete currently authenticated user's access tokens
+                    accessTokenService.getAccessTokensByUserId(user.getId())
+                            .forEach((accessTokenService::deleteAccessToken));
 
                     // delete currently authenticated user's linked accounts
-                    linkedAccountService.getLinkedAccountsByUserId(user.getId()).forEach((linkedAccount ->
-                                    linkedAccountService.deleteLinkedAccount(linkedAccount))
-                    );
+                    linkedAccountService.getLinkedAccountsByUserId(user.getId())
+                            .forEach((linkedAccountService::deleteLinkedAccount));
 
                     // delete currently authenticated user
                     userService.deleteUser(user);
@@ -243,11 +243,8 @@ public class UserController {
                     if (!userService.doesPasswordMatch(password, requestedUser.getPassword()))
                         return new ApiResponse(401, "Incorrect credentials", null);
 
-                    // if an access token already exists, simply return it, else create a new one
-                    AccessToken accessToken = accessTokenService.getAccessTokenByUserId(requestedUser.getId());
-                    if (accessToken == null) {
-                        accessToken = accessTokenService.createAccessToken(requestedUser.getId());
-                    }
+                    // create new access token
+                    AccessToken accessToken = accessTokenService.createAccessToken(requestedUser.getId());
 
                     // prepare response
                     HashMap<String, Object> responseMap = new HashMap<>();

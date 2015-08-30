@@ -40,11 +40,12 @@ public abstract class OAuthStrategy {
 
     protected AccessToken generateAccessToken(String providerName, String providerAccessToken, String email, String name, String avatar) {
         AccessToken accessToken;
+        User user;
 
         List<LinkedAccount> linkedAccounts = linkedAccountService.getLinkedAccountsByEmail(email);
 
         if (linkedAccounts.size() > 0) {
-            User user = userService.getUserById(linkedAccounts.get(0).getUserId());
+            user = userService.getUserById(linkedAccounts.get(0).getUserId());
 
             boolean alreadyLinkedWithSameProvider = false;
 
@@ -64,41 +65,31 @@ public abstract class OAuthStrategy {
                     userService.updateUser(user);
                 }
             }
-
-            // if an access token already exists, simply return it, else create a new one
-            accessToken = accessTokenService.getAccessTokenByUserId(user.getId());
-            if (accessToken == null) {
-                accessToken = accessTokenService.createAccessToken(user.getId());
-            }
         } else {
             // Since there are no linked accounts, there are two possibilities: either the user doesn't exist, or
             // the user authenticated without using any oauth2 strategy.
-            User user2 = userService.getUserByEmail(email);
+            user = userService.getUserByEmail(email);
 
-            if (user2 != null) {
+            if (user != null) {
                 // update user avatar
                 if (avatar != null) {
-                    user2.setAvatar(avatar);
-                    userService.updateUser(user2);
+                    user.setAvatar(avatar);
+                    userService.updateUser(user);
                 }
 
-                // if an access token already exists, simply return it, else create a new one
-                accessToken = accessTokenService.getAccessTokenByUserId(user2.getId());
-                if (accessToken == null) {
-                    accessToken = accessTokenService.createAccessToken(user2.getId());
-                }
             } else {
                 if (avatar != null) {
-                    user2 = userService.createUser(email, name, avatar, oauthCredentialsParser.getDefaultUserPassword());
+                    user = userService.createUser(email, name, avatar, oauthCredentialsParser.getDefaultUserPassword());
                 } else {
-                    user2 = userService.createUser(email, name, Helpers.getGravatar(email), oauthCredentialsParser.getDefaultUserPassword());
+                    user = userService.createUser(email, name, Helpers.getGravatar(email), oauthCredentialsParser.getDefaultUserPassword());
                 }
-
-                accessToken = accessTokenService.createAccessToken(user2.getId());
             }
 
-            linkedAccountService.createLinkedAccount(user2.getId(), providerName, providerAccessToken, name, email);
+            linkedAccountService.createLinkedAccount(user.getId(), providerName, providerAccessToken, name, email);
         }
+
+        // create new access token
+        accessToken = accessTokenService.createAccessToken(user.getId());
 
         return accessToken;
     }

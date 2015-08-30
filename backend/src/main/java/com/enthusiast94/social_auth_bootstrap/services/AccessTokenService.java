@@ -3,6 +3,8 @@ package com.enthusiast94.social_auth_bootstrap.services;
 import com.enthusiast94.social_auth_bootstrap.models.AccessToken;
 import org.mongodb.morphia.Datastore;
 
+import java.util.List;
+
 /**
  * Created by ManasB on 7/28/2015.
  */
@@ -28,10 +30,10 @@ public class AccessTokenService {
                 .get();
     }
 
-    public AccessToken getAccessTokenByUserId(String userId) {
+    public List<AccessToken> getAccessTokensByUserId(String userId) {
         return db.createQuery(AccessToken.class)
                 .field("userId").equal(userId)
-                .get();
+                .asList();
     }
 
     public void deleteAccessToken(AccessToken accessTokenToDelete) {
