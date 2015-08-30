@@ -1,8 +1,7 @@
-package com.enthusiast94.social_auth_starter.services;
+package com.enthusiast94.social_auth_bootstrap.services;
 
-import com.enthusiast94.social_auth_starter.models.AccessToken;
+import com.enthusiast94.social_auth_bootstrap.models.AccessToken;
 import org.mongodb.morphia.Datastore;
-import spark.Access;
 
 /**
  * Created by ManasB on 7/28/2015.

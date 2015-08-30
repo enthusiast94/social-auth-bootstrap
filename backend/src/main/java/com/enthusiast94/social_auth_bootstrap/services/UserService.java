@@ -1,6 +1,6 @@
-package com.enthusiast94.social_auth_starter.services;
+package com.enthusiast94.social_auth_bootstrap.services;
 
-import com.enthusiast94.social_auth_starter.models.User;
+import com.enthusiast94.social_auth_bootstrap.models.User;
 import org.apache.commons.validator.routines.EmailValidator;
 import org.mindrot.jbcrypt.BCrypt;
 import org.mongodb.morphia.Datastore;

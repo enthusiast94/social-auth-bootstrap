@@ -1,6 +1,6 @@
-package com.enthusiast94.social_auth_starter.services;
+package com.enthusiast94.social_auth_bootstrap.services;
 
-import com.enthusiast94.social_auth_starter.models.LinkedAccount;
+import com.enthusiast94.social_auth_bootstrap.models.LinkedAccount;
 import org.mongodb.morphia.Datastore;
 
 import java.util.List;

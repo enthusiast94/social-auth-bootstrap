@@ -1,4 +1,4 @@
-package com.enthusiast94.social_auth_starter.models;
+package com.enthusiast94.social_auth_bootstrap.models;
 
 import org.bson.types.ObjectId;
 import org.mongodb.morphia.annotations.Entity;

@@ -1,16 +1,16 @@
-package com.enthusiast94.social_auth_starter.controllers;
+package com.enthusiast94.social_auth_bootstrap.controllers;
 
-import com.enthusiast94.social_auth_starter.models.AccessToken;
-import com.enthusiast94.social_auth_starter.models.LinkedAccount;
-import com.enthusiast94.social_auth_starter.models.User;
-import com.enthusiast94.social_auth_starter.oauth_strategies.OAuthStrategy;
-import com.enthusiast94.social_auth_starter.oauth_strategies.OAuthStrategyFactory;
-import com.enthusiast94.social_auth_starter.services.AccessTokenService;
-import com.enthusiast94.social_auth_starter.services.LinkedAccountService;
-import com.enthusiast94.social_auth_starter.services.UserService;
-import com.enthusiast94.social_auth_starter.utils.ApiResponse;
-import com.enthusiast94.social_auth_starter.utils.Helpers;
-import com.enthusiast94.social_auth_starter.utils.JsonTranformer;
+import com.enthusiast94.social_auth_bootstrap.models.AccessToken;
+import com.enthusiast94.social_auth_bootstrap.models.LinkedAccount;
+import com.enthusiast94.social_auth_bootstrap.models.User;
+import com.enthusiast94.social_auth_bootstrap.oauth_strategies.OAuthStrategy;
+import com.enthusiast94.social_auth_bootstrap.oauth_strategies.OAuthStrategyFactory;
+import com.enthusiast94.social_auth_bootstrap.services.AccessTokenService;
+import com.enthusiast94.social_auth_bootstrap.services.LinkedAccountService;
+import com.enthusiast94.social_auth_bootstrap.services.UserService;
+import com.enthusiast94.social_auth_bootstrap.utils.ApiResponse;
+import com.enthusiast94.social_auth_bootstrap.utils.Helpers;
+import com.enthusiast94.social_auth_bootstrap.utils.JsonTranformer;
 
 import java.util.HashMap;
 import java.util.LinkedHashMap;

@@ -1,7 +1,7 @@
-package com.enthusiast94.social_auth_starter.utils;
+package com.enthusiast94.social_auth_bootstrap.utils;
 
-import com.enthusiast94.social_auth_starter.models.AccessToken;
-import com.enthusiast94.social_auth_starter.services.AccessTokenService;
+import com.enthusiast94.social_auth_bootstrap.models.AccessToken;
+import com.enthusiast94.social_auth_bootstrap.services.AccessTokenService;
 import org.apache.commons.codec.digest.DigestUtils;
 import spark.Request;
 

@@ -1,4 +1,4 @@
-package com.enthusiast94.social_auth_starter.utils;
+package com.enthusiast94.social_auth_bootstrap.utils;
 
 import com.google.gson.Gson;
 import spark.ResponseTransformer;

@@ -1,11 +1,13 @@
-package com.enthusiast94.social_auth_starter.oauth_strategies;
+package com.enthusiast94.social_auth_bootstrap.oauth_strategies;
 
-import com.enthusiast94.social_auth_starter.models.AccessToken;
-import com.enthusiast94.social_auth_starter.services.AccessTokenService;
-import com.enthusiast94.social_auth_starter.services.LinkedAccountService;
-import com.enthusiast94.social_auth_starter.services.UserService;
-import com.enthusiast94.social_auth_starter.utils.Helpers;
-import com.enthusiast94.social_auth_starter.utils.OauthCredentialsParser;
+import com.enthusiast94.social_auth_bootstrap.models.AccessToken;
+import com.enthusiast94.social_auth_bootstrap.services.AccessTokenService;
+import com.enthusiast94.social_auth_bootstrap.services.LinkedAccountService;
+import com.enthusiast94.social_auth_bootstrap.services.UserService;
+import com.enthusiast94.social_auth_bootstrap.utils.Helpers;
+import com.enthusiast94.social_auth_bootstrap.utils.OauthCredentialsParser;
+import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 
@@ -13,17 +15,17 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * Created by manas on 05-08-2015.
+ * Created by ManasB on 8/1/2015.
  */
-public class FacebookOAuthStrategy extends OAuthStrategy {
+public class GoogleOAuthStrategy extends OAuthStrategy {
 
-    public static final String PROVIDER_NAME = "facebook";
-    private static final String AUTH_ENDPOINT = "https://www.facebook.com/dialog/oauth";
-    private static final String TOKEN_ENDPOINT = "https://graph.facebook.com/v2.3/oauth/access_token";
-    private static final String USER_ENDPOINT = "https://graph.facebook.com/me";
+    public static final String PROVIDER_NAME = "google";
+    private static final String AUTH_ENDPOINT = "https://accounts.google.com/o/oauth2/auth";
+    private static final String TOKEN_ENDPOINT = "https://www.googleapis.com/oauth2/v3/token";
+    private static final String USER_ENDPOINT = "https://www.googleapis.com/plus/v1/people/me";
     private Map<String, String> credentialsMap;
 
-    public FacebookOAuthStrategy(OauthCredentialsParser oauthCredentialsParser, UserService userService, AccessTokenService accessTokenService, LinkedAccountService linkedAccountService) {
+    public GoogleOAuthStrategy(OauthCredentialsParser oauthCredentialsParser, UserService userService, AccessTokenService accessTokenService, LinkedAccountService linkedAccountService) {
         super(oauthCredentialsParser, userService, accessTokenService, linkedAccountService);
 
         credentialsMap = oauthCredentialsParser.getOauth2Credentials(PROVIDER_NAME);
@@ -41,13 +43,13 @@ public class FacebookOAuthStrategy extends OAuthStrategy {
             postParams.put("code", code);
             postParams.put("client_id", credentialsMap.get("id"));
             postParams.put("client_secret", credentialsMap.get("secret"));
-            postParams.put("redirect_uri", credentialsMap.get("redirect-uri"));
+            postParams.put("redirect_uri", credentialsMap.get("redirect_uri"));
+            postParams.put("grant_type", "authorization_code");
 
             String tokenResponse = Helpers.httpPost(TOKEN_ENDPOINT, postParams);
             HashMap<String, String> parsedTokenResponse = parseAccessToken(tokenResponse);
 
             // get required user info
-            parsedTokenResponse.put("fields", "name,email,picture");
             String userResponse = Helpers.httpGet(USER_ENDPOINT, parsedTokenResponse, null);
             HashMap<String, String> parsedUserResponse = parseUserInfo(userResponse);
 
@@ -64,15 +66,16 @@ public class FacebookOAuthStrategy extends OAuthStrategy {
     @Override
     public String getAuthUrl() {
         Map<String, String> queryParams = new HashMap<>();
+        queryParams.put("response_type", "code");
         queryParams.put("client_id", credentialsMap.get("id"));
         queryParams.put("redirect_uri", credentialsMap.get("redirect_uri"));
-        queryParams.put("response_type", "code");
         queryParams.put("scope", "email");
+        queryParams.put("access_type", "online");
+        queryParams.put("approval_prompt", "auto");
 
         return AUTH_ENDPOINT + "?" + Helpers.stringifyParams(queryParams);
     }
 
-    @Override
     protected HashMap<String, String> parseAccessToken(String response) {
         HashMap<String, String> parsed = new HashMap<>();
 
@@ -84,20 +87,30 @@ public class FacebookOAuthStrategy extends OAuthStrategy {
         return parsed;
     }
 
-    @Override
-    protected HashMap<String, String> parseUserInfo(String response) {
+     protected HashMap<String, String> parseUserInfo(String response) {
         HashMap<String, String> parsed = new HashMap<>();
 
         JsonParser parser = new JsonParser();
         JsonObject json = (JsonObject) parser.parse(response);
+        JsonArray emailsJson = json.getAsJsonArray("emails");
 
-        parsed.put("email", json.get("email").getAsString());
-        parsed.put("name", json.get("name").getAsString());
-        try {
-            parsed.put("avatar", json.getAsJsonObject("picture").getAsJsonObject("data").get("url").getAsString());
-        } catch (NullPointerException e) {
-            parsed.put("avatar", null);
+        parsed.put("name", json.get("displayName").getAsString());
+
+        for (JsonElement element : emailsJson) {
+            JsonObject emailJson = (JsonObject) element;
+            if (emailJson.get("type").getAsString().equals("account")) {
+                parsed.put("email", emailJson.get("value").getAsString());
+                break;
+            }
         }
+
+         JsonObject imageJson = json.getAsJsonObject("image");
+         if (imageJson != null) {
+             JsonElement avatar = imageJson.get("url");
+             if (avatar != null) {
+                 parsed.put("avatar", avatar.getAsString());
+             }
+         }
 
         return parsed;
     }

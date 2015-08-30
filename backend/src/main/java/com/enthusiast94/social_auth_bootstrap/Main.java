@@ -1,15 +1,15 @@
-package com.enthusiast94.social_auth_starter;
+package com.enthusiast94.social_auth_bootstrap;
 
 /**
  * Created by ManasB on 7/28/2015.
  */
 
-import com.enthusiast94.social_auth_starter.controllers.UserController;
-import com.enthusiast94.social_auth_starter.oauth_strategies.OAuthStrategyFactory;
-import com.enthusiast94.social_auth_starter.services.AccessTokenService;
-import com.enthusiast94.social_auth_starter.services.LinkedAccountService;
-import com.enthusiast94.social_auth_starter.services.UserService;
-import com.enthusiast94.social_auth_starter.utils.OauthCredentialsParser;
+import com.enthusiast94.social_auth_bootstrap.controllers.UserController;
+import com.enthusiast94.social_auth_bootstrap.oauth_strategies.OAuthStrategyFactory;
+import com.enthusiast94.social_auth_bootstrap.services.AccessTokenService;
+import com.enthusiast94.social_auth_bootstrap.services.LinkedAccountService;
+import com.enthusiast94.social_auth_bootstrap.services.UserService;
+import com.enthusiast94.social_auth_bootstrap.utils.OauthCredentialsParser;
 import com.mongodb.MongoClient;
 import org.mongodb.morphia.Datastore;
 import org.mongodb.morphia.Morphia;
@@ -37,7 +37,7 @@ public class Main {
 
         // tell Morphia where to find your classes
         // can be called multiple times with different packages or classes
-        morphia.mapPackage("com.enthusiast94.social_auth_starter.models");
+        morphia.mapPackage("com.enthusiast94.social_auth_bootstrap.models");
 
         // create the Datastore connecting to the default port on the local host
         Datastore db = morphia.createDatastore(new MongoClient("localhost"), "social_auth_starter_db");
