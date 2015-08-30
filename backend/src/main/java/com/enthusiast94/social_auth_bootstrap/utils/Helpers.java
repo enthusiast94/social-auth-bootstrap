@@ -125,12 +125,17 @@ public class Helpers {
         String authHeader = req.headers("Authorization");
 
         if (authHeader == null) {
-            halt(new ApiResponse(401, "authorization header not found", null).toJson());
+            halt(new ApiResponse(401, "Authorization header not found.", null).toJson());
+            return;
+        }
+
+        if (!authHeader.startsWith("Token")) {
+            halt(new ApiResponse(401, "Invalid access token.", null).toJson());
             return;
         }
 
         if (authHeader.length() < (36 /* Access Token is 36 characters long */ + "Token".length() + 1 /* SPACE after 'Token' */)) {
-            halt(new ApiResponse(401, "invalid access token", null).toJson());
+            halt(new ApiResponse(401, "Invalid access token.", null).toJson());
             return;
         }
 
@@ -138,7 +143,7 @@ public class Helpers {
         AccessToken accessToken = accessTokenService.getAccessTokenByValue(accessTokenValue);
 
         if (accessToken == null) {
-            halt(new ApiResponse(401, "invalid access token", null).toJson());
+            halt(new ApiResponse(401, "Invalid access token.", null).toJson());
             return;
         }
 
