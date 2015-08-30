@@ -1,5 +1,5 @@
 {
-  "name": "social-auth-reader-frontend-web",
+  "name": "social-auth-bootstrap",
   "version": "1.0.0",
   "dependencies": {
     "backbone": "latest",
