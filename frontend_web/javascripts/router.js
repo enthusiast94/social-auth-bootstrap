@@ -11,8 +11,8 @@ var meView = require("./views/me");
 var navView = require("./views/nav");
 var homeView = require("./views/home");
 var createAccountView = require("./views/create_account");
-var authController = require("./auth_controller");
-var Notification = require("./views/notification");
+var authController = require("./network/auth_controller");
+var Notification = require("./utils/notification");
 
 var AppRouter = Backbone.Router.extend({
     routes: {

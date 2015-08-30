@@ -4,9 +4,9 @@
 
 var Backbone = require("Backbone");
 var $ = require("jquery");
-var authController = require("../auth_controller");
+var authController = require("../network/auth_controller");
 var swig = require("swig");
-var Notification = require("./notification");
+var Notification = require("../utils/notification");
 
 var LoginView = Backbone.View.extend({
     el: "#content",

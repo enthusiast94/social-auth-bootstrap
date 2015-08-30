@@ -5,7 +5,7 @@
 var Backbone = require("Backbone");
 var $ = require("jquery");
 var swig = require("swig");
-var authController = require("../auth_controller");
+var authController = require("../network/auth_controller");
 
 var NavView = Backbone.View.extend({
     el: "#nav",
