@@ -25,10 +25,13 @@ var MeView = Backbone.View.extend({
                 var compiledTemplate = swig.render(self.template, {locals: {user: user}});
                 self.$el.html(compiledTemplate);
 
+                self.$updateAccountButton = $("#update-account-button");
+                self.$changePasswordButton = $("#change-password-button");
                 self.$updateAccountEmailInput = $("#update-account-email-input");
                 self.$updateAccountNameInput = $("#update-account-name-input");
                 self.$changePasswordNewPasswordInput = $("#change-password-new-password-input");
                 self.$changePasswordConfirmPasswordInput = $("#change-password-confirm-password-input");
+                self.$deleteAccountButton = $("#delete-account-button");
             },
             error: function (error) {
                 new Notification({
@@ -44,11 +47,15 @@ var MeView = Backbone.View.extend({
 
         var data;
         if (event.target.id == "update-account-form") {
+            this.$updateAccountButton.text("Loading...");
+
             data = {
                 email: this.$updateAccountEmailInput.val().trim(),
                 name: this.$updateAccountNameInput.val().trim()
             };
         } else if (event.target.id == "change-password-form") {
+            this.$changePasswordButton.text("Loading...");
+
             var newPassword = this.$changePasswordNewPasswordInput.val().trim();
             var confirmPassword = this.$changePasswordConfirmPasswordInput.val().trim();
 
@@ -66,9 +73,14 @@ var MeView = Backbone.View.extend({
             }
         }
 
+        var self = this;
+
         authController.updateAccount({
             data: data,
             success: function () {
+                self.$updateAccountButton.text("Update account");
+                self.$changePasswordButton.text("Change password");
+
                 Backbone.history.loadUrl();
 
                 new Notification({
@@ -78,6 +90,9 @@ var MeView = Backbone.View.extend({
                 }).notify("show");
             },
             error: function (error) {
+                self.$updateAccountButton.text("Update account");
+                self.$changePasswordButton.text("Change password");
+
                 new Notification({
                     $container: $("#notifications"),
                     message: "<strong>Error! </strong>" + error,
@@ -87,6 +102,8 @@ var MeView = Backbone.View.extend({
         });
     },
     unlinkAccount: function (event) {
+        var $unlinkButton = $(event.target);
+
         var canUnlink = false;
 
         // display a confirmation dialog if the last linked account is being unlinked
@@ -99,20 +116,26 @@ var MeView = Backbone.View.extend({
         }
 
         if (canUnlink) {
+            $unlinkButton.text("Loading...");
+
             var providerName = $(event.target).attr("data-provider-name");
 
             authController.unlinkAccount({
                 providerName: providerName,
                 success: function () {
+                    $unlinkButton.text("Unlink");
+
                     Backbone.history.loadUrl();
 
                     new Notification({
                         $container: $("#notifications"),
-                        message: "<strong>Success! </strong>" + providerName + " account successfully delinked.",
+                        message: "<strong>Success! </strong>" + providerName + " account successfully unlinked.",
                         style: "success"
                     }).notify("show");
                 },
                 error: function (error) {
+                    $unlinkButton.text("Unlink");
+
                     new Notification({
                         $container: $("#notifications"),
                         message: "<strong>Error! </strong>" + error,
@@ -123,8 +146,13 @@ var MeView = Backbone.View.extend({
         }
     },
     deleteAccount: function () {
+        this.$deleteAccountButton.text("Loading...");
+
+        var self = this;
         authController.deleteAccount({
             success: function () {
+                self.$deleteAccountButton.text("Delete my account");
+
                 Backbone.history.navigate("home", {trigger: true});
 
                 $(document).trigger("deauthenticated");
@@ -136,6 +164,8 @@ var MeView = Backbone.View.extend({
                 }).notify("show");
             },
             error: function (error) {
+                self.$deleteAccountButton.text("Delete my account");
+
                 new Notification({
                     $container: $("#notifications"),
                     message: "<strong>Error! </strong>" + error,
