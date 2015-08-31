@@ -29,8 +29,15 @@ Basically, the back-end exposes a REST API using which both the front-end applic
 	- Delete account
 
 ##Screenshots
+**[frontend_web] Login page:**
+
 ![1](https://github.com/enthusiast94/social-auth-bootstrap/blob/master/screenshots/1.png)
+
+**[frontend_web] My Account page:**
+
 ![2](https://github.com/enthusiast94/social-auth-bootstrap/blob/master/screenshots/2.png)
+
+**[frontend_android] Login view and User Profile view:**
 ![3](https://github.com/enthusiast94/social-auth-bootstrap/blob/master/screenshots/6.png)
 
 ##Getting Started
