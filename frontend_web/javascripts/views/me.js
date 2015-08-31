@@ -48,6 +48,7 @@ var MeView = Backbone.View.extend({
         var data;
         if (event.target.id == "update-account-form") {
             this.$updateAccountButton.text("Loading...");
+            this.$updateAccountButton.attr("disabled", true);
 
             data = {
                 email: this.$updateAccountEmailInput.val().trim(),
@@ -55,6 +56,7 @@ var MeView = Backbone.View.extend({
             };
         } else if (event.target.id == "change-password-form") {
             this.$changePasswordButton.text("Loading...");
+            this.$changePasswordButton.attr("disabled", true);
 
             var newPassword = this.$changePasswordNewPasswordInput.val().trim();
             var confirmPassword = this.$changePasswordConfirmPasswordInput.val().trim();
@@ -80,6 +82,8 @@ var MeView = Backbone.View.extend({
             success: function () {
                 self.$updateAccountButton.text("Update account");
                 self.$changePasswordButton.text("Change password");
+                self.$updateAccountButton.attr("disabled", false);
+                self.$changePasswordButton.attr("disabled", false);
 
                 Backbone.history.loadUrl();
 
@@ -117,6 +121,7 @@ var MeView = Backbone.View.extend({
 
         if (canUnlink) {
             $unlinkButton.text("Loading...");
+            $unlinkButton.attr("disabled", true);
 
             var providerName = $(event.target).attr("data-provider-name");
 
@@ -124,6 +129,7 @@ var MeView = Backbone.View.extend({
                 providerName: providerName,
                 success: function () {
                     $unlinkButton.text("Unlink");
+                    $unlinkButton.attr("disabled", false);
 
                     Backbone.history.loadUrl();
 
@@ -147,11 +153,13 @@ var MeView = Backbone.View.extend({
     },
     deleteAccount: function () {
         this.$deleteAccountButton.text("Loading...");
+        this.$deleteAccountButton.attr("disabled", true);
 
         var self = this;
         authController.deleteAccount({
             success: function () {
                 self.$deleteAccountButton.text("Delete my account");
+                self.$deleteAccountButton.attr("disabled", false);
 
                 Backbone.history.navigate("home", {trigger: true});
 
@@ -165,6 +173,7 @@ var MeView = Backbone.View.extend({
             },
             error: function (error) {
                 self.$deleteAccountButton.text("Delete my account");
+                self.$deleteAccountButton.attr("disabled", false);
 
                 new Notification({
                     $container: $("#notifications"),
