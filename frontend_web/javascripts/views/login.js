@@ -22,6 +22,7 @@ var LoginView = Backbone.View.extend({
                 var compiledTemplate = swig.render(self.template, {locals: {authUrls: authUrls}});
                 self.$el.html(compiledTemplate);
 
+                self.$loginButton = $("#login-submit-button");
                 self.$loginEmailInput = $("#login-email-input");
                 self.$loginPasswordInput = $("#login-password-input");
             },
@@ -33,9 +34,13 @@ var LoginView = Backbone.View.extend({
     login: function (event) {
         event.preventDefault();
 
+        this.$loginButton.text("Loading...");
+        this.$loginButton.attr("disabled", true);
+
         var email = this.$loginEmailInput.val().trim();
         var password = this.$loginPasswordInput.val().trim();
 
+        var self = this;
         authController.basicAuth({
             type: "existing",
             data: {
@@ -43,6 +48,9 @@ var LoginView = Backbone.View.extend({
                 password: password
             },
             success: function () {
+                self.$loginButton.text("Login");
+                self.$loginButton.attr("disabled", false);
+
                 Backbone.history.navigate("me", {trigger: true});
 
                 $(document).trigger("authenticated");
@@ -54,6 +62,9 @@ var LoginView = Backbone.View.extend({
                 }).notify("show");
             },
             error: function (error) {
+                self.$loginButton.text("Login");
+                self.$loginButton.attr("disabled", false);
+
                 new Notification({
                     $container: $("#notifications"),
                     message: "<strong>Error! </strong>" + error,

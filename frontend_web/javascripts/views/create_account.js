@@ -18,6 +18,7 @@ var CreateAccountView = Backbone.View.extend({
         var compiledTemplate = swig.render(this.template);
         this.$el.html(compiledTemplate);
 
+        this.$createAccountButton = $("#create-account-submit-button");
         this.$createAccountEmailInput = $("#create-account-email-input");
         this.$createAccountNameInput = $("#create-account-name-input");
         this.$createAccountPasswordInput = $("#create-account-password-input");
@@ -38,6 +39,10 @@ var CreateAccountView = Backbone.View.extend({
                 style: "danger"
             }).notify("show");
         } else {
+            this.$createAccountButton.text("Loadng...");
+            this.$createAccountButton.attr("disabled", true);
+
+            var self = this;
             authController.basicAuth({
                 type: "new",
                 data: {
@@ -46,6 +51,9 @@ var CreateAccountView = Backbone.View.extend({
                     password: password
                 },
                 success: function () {
+                    self.$createAccountButton.text("Create account");
+                    self.$createAccountButton.attr("disabled", false);
+
                     Backbone.history.navigate("me", {trigger: true});
 
                     $(document).trigger("authenticated");
@@ -57,6 +65,9 @@ var CreateAccountView = Backbone.View.extend({
                     }).notify("show");
                 },
                 error: function (error) {
+                    self.$createAccountButton.text("Create account");
+                    self.$createAccountButton.attr("disabled", false);
+                    
                     new Notification({
                         $container: $("#notifications"),
                         message: "<strong>Error! </strong>" + error,
