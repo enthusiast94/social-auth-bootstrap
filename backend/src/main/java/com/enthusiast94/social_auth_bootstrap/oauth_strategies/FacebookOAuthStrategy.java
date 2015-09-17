@@ -41,7 +41,7 @@ public class FacebookOAuthStrategy extends OAuthStrategy {
             postParams.put("code", code);
             postParams.put("client_id", credentialsMap.get("id"));
             postParams.put("client_secret", credentialsMap.get("secret"));
-            postParams.put("redirect_uri", credentialsMap.get("redirect-uri"));
+            postParams.put("redirect_uri", credentialsMap.get("redirect_uri"));
 
             String tokenResponse = Helpers.httpPost(TOKEN_ENDPOINT, postParams);
             HashMap<String, String> parsedTokenResponse = parseAccessToken(tokenResponse);
