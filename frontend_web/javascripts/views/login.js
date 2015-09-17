@@ -2,7 +2,7 @@
  * Created by ManasB on 7/31/2015.
  */
 
-var Backbone = require("Backbone");
+var Backbone = require("backbone");
 var $ = require("jquery");
 var authController = require("../network/auth_controller");
 var swig = require("swig");

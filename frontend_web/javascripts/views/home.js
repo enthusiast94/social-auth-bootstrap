@@ -2,7 +2,7 @@
  * Created by manas on 03-08-2015.
  */
 
-var Backbone = require("Backbone");
+var Backbone = require("backbone");
 var $ = require("jquery");
 var swig = require("swig");
 
