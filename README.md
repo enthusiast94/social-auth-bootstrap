@@ -1,4 +1,4 @@
-#Social Authentication Bootstrap 
+# Social Authentication Bootstrap 
 
 A boilerplate project that provides out-of-the-box support for token based basic authentication (Email/Password) and open authentication (OAuth 2.0) with various providers, using industry's best practices and modules. 
 
@@ -11,13 +11,13 @@ The project is divided into three parts:
 
 Basically, the back-end exposes a REST API using which both the front-end applications communicate with the server. 
 
-##Table of Contents
+## Table of Contents
 - [Features](#features) 
 - [Screenshots](#screenshots)
 - [Getting Started](#getting-started)
 - [Using Your Own API Keys](#using-your-own-api-keys)
 
-##Features
+## Features
 - **Basic Authentication** using Email and Password
 - **OAuth 2.0 Authentication** via Google, Facebook, Github and LinkedIn
 - **Bootstrap 3** UI on the single page app + **Material Design** on the Android app
@@ -28,7 +28,7 @@ Basically, the back-end exposes a REST API using which both the front-end applic
 	- Link multiple OAuth strategies to a single account (only if email is common to all strategies)
 	- Delete account
 
-##Screenshots
+## Screenshots
 **[frontend_web] Login page:**
 
 ![1](https://github.com/enthusiast94/social-auth-bootstrap/blob/master/screenshots/1.png)
@@ -40,7 +40,7 @@ Basically, the back-end exposes a REST API using which both the front-end applic
 **[frontend_android] Login view and User Profile view:**
 ![3](https://github.com/enthusiast94/social-auth-bootstrap/blob/master/screenshots/6.png)
 
-##Getting Started
+## Getting Started
 Tools you need to get started:
 - [MongoDB](https://www.mongodb.org/) 
 - [Gradle](https://gradle.org/gradle-download/)
@@ -66,7 +66,7 @@ The command `mongod` starts up the MongoDB server, while `gradle run` executes t
 
 And Finally, we'll move on to the Android application. First, you will have to import the Android project included in `frontend_android` into Android Studio or IntelliJ IDEA (with Android plugin). Once it has been imported, you can use the `Gradle Tool Window` to build and run the project. [See here if you would like to run the project via the command line](http://developer.android.com/tools/building/building-cmdline.html). 
    
-##Using Your Own API Keys
+## Using Your Own API Keys
 When you run the project as it is (without making any changes to `backend/config.json`, you'll notice that whenever you try to authenticate via an external provider, it asks you to authorize an app named `social-auth-starter`. This is because I have created an app with this name for all the supported providers separately, and then added their client IDs and secrets to `backend/config.json`. **This is where all OAuth client credentials are stored.** 
 
 Apart from the client ID and secret, you also have to provide the following information:
